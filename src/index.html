@@ -16,6 +16,7 @@
   <script src="/react-context/dist/index.28b0608.js"></script>
   <script>
     document.body.addEventListener('touchmove', function(e) {
+      if(e.scrollTop <= 10)
       e.preventDefault()
     }, { passive: false })
   </script>
