@@ -25,6 +25,7 @@
   <script src="/react-context/dist/index.28b0608.js"></script>
   <script>
     var _startPoint = null
+    var scrollTop = document.scrollingElement.scrollTop
     document.body.addEventListener('touchstart', function (e) {
         _startPoint = e.touches ? e.touches[0].pageY : e.pageY
       })
@@ -34,8 +35,8 @@
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
       var y2 = _startPoint
-      document.getElementById('alert').innerHTML =  y + ',' + y2
-      if(y - y2 > 0)
+      document.getElementById('alert').innerHTML =  y + ',' + y2 + ',' + scrollTop
+      if(y - y2 > 0 && c <= 0)
       e.preventDefault()
     }, { passive: false })
   </script>
