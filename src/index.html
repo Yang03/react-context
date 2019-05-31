@@ -35,7 +35,7 @@
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
       var y2 = _startPoint
-      document.getElementById('alert').innerHTML =  y + ',' + y2 + ',' + scrollTop
+      document.getElementById('alert').innerHTML =  y + ',' + y2 + ',scrollingElement' + scrollTop
       if(y - y2 > 0 && c <= 0)
       e.preventDefault()
     }, { passive: false })
