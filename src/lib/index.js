@@ -6,13 +6,10 @@ const createProvider = (setProvider, Provider, initialState) =>
     class EnhanceProvider extends Component {
         constructor(props) {
             super(props)
-            console.log(this)
             this.state = props.initialState || initialState
-            console.log(this.setState)
             setProvider(this)
         }
         render() {
-            console.log(Provider)
             return (<Provider value={this.state}>{this.props.children}</Provider>)
         }
     }
@@ -37,7 +34,7 @@ const createConnect = (Consumer) => {
                         {
                             (state) => {
                                 console.log(mapStateToProps)
-                                const filteredState = mapStateToProps(state || {})
+                                const filteredState = mapStateToProps(state || {}, props)
                                 return (<Prevent renderComponent={renderComponent} {...props} {...filteredState} />)
                             }
                         }
@@ -90,11 +87,15 @@ const createStore = ({
 
     const Provider = createProvider(setProvider, context.Provider, initialState)
     const connect = createConnect(context.Consumer)
+    const getState = () => {
+        return state
+    }
 
      return {
          Provider,
          connect,
-         actions 
+         actions,
+         getState 
      }
 }
 

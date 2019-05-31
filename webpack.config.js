@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 //const srcDir = __dirname + "../src";
-const distDir = __dirname + "dist";
+const distDir = __dirname + "/dist";
 
 module.exports = {
     entry: './src/main.js',
@@ -35,23 +35,22 @@ module.exports = {
                 use: ['babel-loader']
             },
             {
-                test: /\.(less|scss)$/,
+                test: /\.(css|scss)$/,
                 use: [
                     {loader: "style-loader"},
                     {loader: "css-loader"},
-                    {loader: "less-loader", options: { javascriptEnabled: true }},
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            plugins:[
+                                require('autoprefixer')({
+                                    browsers:['last 5 version']
+                                })
+                            ],
+                        }
+                    }
                 ]
-                    // {
-                    //     loader: "postcss-loader",
-                    //     options: {
-                    //         plugins:[
-                    //             require('autoprefixer')({
-                    //                 browsers:['last 5 version']
-                    //             })
-                    //         ],
-                    //         exclude: /node_modules/,
-                    //     }
-                     // }
+                    
                 
             },
             {
