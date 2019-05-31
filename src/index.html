@@ -16,9 +16,18 @@
   <div id="root"></div>
   <script src="/react-context/dist/index.28b0608.js"></script>
   <script>
+    var _startPoint = null
+    document.body.addEventListener('touchstart', function (e) {
+        _startPoint = e.touches ? e.touches[0].pageY : e.pageY
+      })
+      document.body.addEventListener('touchend', function (e) {
+         _startPoint = null
+      })
     document.body.addEventListener('touchmove', function(e) {
-      console.log(e.target.scrollTop);
-      if(e.target.scrollTop <= 10)
+      var y = e.touches ?e.touches[0].pageY: e.pageY,
+      var y2 = _startPoint.y
+      console.log(y, y2);
+      if(y - y2 > 0)
       e.preventDefault()
     }, { passive: false })
   </script>
