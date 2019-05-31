@@ -10,10 +10,17 @@
        overscroll-behavior-y: contain;
        /* overflow: hidden; */
      }
+     .alert {
+       position: absolute;
+       color: red;
+       top: 0;
+       left: 0;
+     }
    </style>
 </head>
 <body>
   <div id="root"></div>
+  <div id="alert"></div>
   <script src="/react-context/dist/index.28b0608.js"></script>
   <script>
     var _startPoint = null
@@ -26,7 +33,7 @@
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
       var y2 = _startPoint
-      alert(y +',' + y2);
+      document.getElementById('alert').html =  y + ',' + 'y2'
       if(y - y2 > 0)
       e.preventDefault()
     }, { passive: false })
