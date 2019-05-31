@@ -25,7 +25,7 @@
       })
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
-      var y2 = _startPoint.y
+      var y2 = _startPoint
       console.log(y, y2);
       if(y - y2 > 0)
       e.preventDefault()
