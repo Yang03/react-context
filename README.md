@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ### react hook
 `hook` 不能在`classes` 里面使用，但是你可以用来替代`classes`
 
@@ -109,8 +108,3 @@ useEffect(() => {
 
 
 
-=======
-# react-context
-
-react new context Api
->>>>>>> 7db230a935b87b021cbbcd8de7e205e891098f79
