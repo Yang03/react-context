@@ -15,7 +15,7 @@
 <body>
   <div id="root"></div>
   <script src="/react-context/dist/index.28b0608.js"></script>
-  <!-- <script>
+  <script>
     var _startPoint = null
     document.body.addEventListener('touchstart', function (e) {
         _startPoint = e.touches ? e.touches[0].pageY : e.pageY
@@ -26,10 +26,10 @@
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
       var y2 = _startPoint
-      alert('y,' + 'y2');
+      alert(y +',' + y2);
       if(y - y2 > 0)
       e.preventDefault()
     }, { passive: false })
-  </script> -->
+  </script>
 </body>
 </html>
