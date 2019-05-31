@@ -33,7 +33,7 @@
     document.body.addEventListener('touchmove', function(e) {
       var y = e.touches ?e.touches[0].pageY: e.pageY
       var y2 = _startPoint
-      document.getElementById('alert').innerHTML =  y + ',' + 'y2'
+      document.getElementById('alert').innerHTML =  y + ',' + y2
       if(y - y2 > 0)
       e.preventDefault()
     }, { passive: false })
