@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>App</title>
+    <meta name="viewport" content="width=device-width">
+    <base href="/" />
+    <style>
+    </style>
+</head>
+
+<body>
+    <div id="start">
+        开始
+    </div>
+    <div id="result"></div>
+    
+</body>
+<script>
+var SpeechRecognition = window.SpeechRecognition
+|| window.webkitSpeechRecognition
+if (!SpeechRecognition) { 
+    alert('好可惜，你的设备不支持语音识别哦')
+}
+
+var start = document.getElementById('start')
+start.addEventListener('click', function() {
+    if (recognition) {
+        recognition.stop()
+        recognition = null
+        start.innerHTML= '开始'
+        return 
+    }
+    start.innerHTML= '结束'
+    var recognition = new SpeechRecognition()
+
+    recognition.lang = 'zh-CN'
+    recognition.onresult = event => {
+        recognition = null
+        var count = event.results.length - 1
+        var length = event.results[count].length - 1
+        var content = event.results[count][length].transcript
+        document.getElementById('result').innerHTML = content
+    }
+
+})
+
+
+</script>
+</html>
