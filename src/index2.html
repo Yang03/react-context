@@ -22,26 +22,37 @@ var SpeechRecognition = window.SpeechRecognition
 || window.webkitSpeechRecognition
 if (!SpeechRecognition) { 
     alert('好可惜，你的设备不支持语音识别哦')
+} else {
+    var utterThis = new window.SpeechSynthesisUtterance('你的设备支持语音识别哦！');
+    window.speechSynthesis.speak(utterThis);
 }
 
 var start = document.getElementById('start')
+ var recognition = null
 start.addEventListener('click', function() {
+    console.log(recognition)
     if (recognition) {
         recognition.stop()
+        console.log('ffffff')
         recognition = null
         start.innerHTML= '开始'
         return 
     }
     start.innerHTML= '结束'
-    var recognition = new SpeechRecognition()
-
+    recognition= new SpeechRecognition()
+    recognition.continuous = true;
     recognition.lang = 'zh-CN'
-    recognition.onresult = event => {
-        recognition = null
+    recognition.onresult = function(event) {
+        // recognition = null
+        console.log('xddddddddd')
         var count = event.results.length - 1
         var length = event.results[count].length - 1
         var content = event.results[count][length].transcript
         document.getElementById('result').innerHTML = content
+    }
+
+    recognition.onspeechend = function() {
+        recognition.stop();
     }
 
 })
