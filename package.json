@@ -21,6 +21,7 @@
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.55",
     "autoprefixer": "^9.5.1",
+    "babel-plugin-import": "^1.12.0",
     "better-scroll": "^1.15.2",
     "css-loader": "^2.1.1",
     "postcss-loader": "^3.0.0",

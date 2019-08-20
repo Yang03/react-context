@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Popup } from '../node_modules/zarm/lib'
+import { Popup } from 'zarm/lib/popup'
 import BScroll from 'better-scroll'
 import Picker from './picker'
 
