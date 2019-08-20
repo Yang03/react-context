@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "7e66ed3f89267cc38640";
+/******/ 	var hotCurrentHash = "235a96e0e3283590d56e";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -48355,6 +48355,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var vConsole = new VConsole();
 
 var App =
 /*#__PURE__*/
@@ -48381,7 +48382,6 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      var dataSource = this.state.dataSource;
       return react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
         onClick: function onClick() {
           return _this2.setState({
@@ -48472,7 +48472,7 @@ function (_React$Component) {
         probeType: 3
       });
       this.wheels.on('scrollEnd', function () {
-        alert(_this2.wheels.getSelectedIndex()); //alert(this.wheels[i].getSelectedIndex())
+        console.log(_this2.wheels.getSelectedIndex()); //alert(this.wheels[i].getSelectedIndex())
       });
     }
   }, {
@@ -48514,4 +48514,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.7e66ed3.js.map
+//# sourceMappingURL=index.235a96e.js.map
