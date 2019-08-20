@@ -31,7 +31,7 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 // we do not want anything from node_modules to be compiled
-                exclude: /node_modules/,
+                // exclude: /node_modules/,
                 use: ['babel-loader']
             },
             {
