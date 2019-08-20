@@ -13,19 +13,6 @@ module.exports = {
     },
     devtool: 'source-map',
     mode: process.env.NODE_ENV || 'development',
-    // devServer: {
-    //     contentBase: './',
-    //     historyApiFallback: true,
-    //     inline: true,
-    //     port: 8090,
-    //     hot: true,
-    //     // proxy: {
-    //     //     '/api': {
-    //     //         target: 'http://localhost:3000',
-    //     //         secure: false
-    //     //     }
-    //     // }
-    // },
     module: {
         rules: [
             {
@@ -37,8 +24,15 @@ module.exports = {
             {
                 test: /\.(css|scss)$/,
                 use: [
-                    {loader: "style-loader"},
+                    
                     {loader: "css-loader"},
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true,
+                            implementation: require('sass'),
+                        }
+                    },
                     {
                         loader: "postcss-loader",
                         options: {
