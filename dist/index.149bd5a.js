@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "87f4b1d020fda671886f";
+/******/ 	var hotCurrentHash = "149bd5a20112fd0a1e98";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -41636,9 +41636,19 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var visible = this.props.visible;
+      if (!visible) return null;
       return react_dom__WEBPACK_IMPORTED_MODULE_6___default.a.createPortal(react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "popup"
-      }, this.props.children), document.body);
+        className: "popup-container"
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
+        className: "za-popup za-popup--bottom za-popup--mask"
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
+        className: "za-popup__wrapper"
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
+        className: "picker-content"
+      }, this.props.children)), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
+        className: "za-mask za-mask--normal"
+      }))), document.body);
     }
   }]);
 
@@ -41650,4 +41660,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.87f4b1d.js.map
+//# sourceMappingURL=index.149bd5a.js.map
