@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Popup } from 'zarm'
+import { Popup } from '../node_modules/zarm/lib'
 import BScroll from 'better-scroll'
 import Picker from './picker'
 
 import 'zarm/dist/zarm.min.css'
 import './main3.css'
 
-var vConsole = new VConsole();
+
 class App extends React.Component {
 
     constructor(props) {
