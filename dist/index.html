@@ -7,14 +7,16 @@
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    window.onerror = function (e) {
+      alert(e)
+    }
+  </script>
   <script src="//cdn.bootcss.com/eruda/1.5.2/eruda.min.js"></script>
   <script>
     eruda.init();
   </script>
-  <script>
-  window.onerror = function(e) {
-    alert(e.message)
-  }
-  </script>
+  
 <script type="text/javascript" src="index.7e66ed3.js"></script></body>
+
 </html>
