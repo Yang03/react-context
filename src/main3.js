@@ -24,9 +24,10 @@ class App extends React.Component {
         return (
             <div>
                 <div onClick={() => this.setState({visible: true})}>open</div>
-                <Popup visible={this.state.visible}>
                 <Picker  dataSource={this.state.dataSource}/>
-            </Popup>
+                {/* <Popup visible={this.state.visible}>
+                    <Picker  dataSource={this.state.dataSource}/>
+                </Popup> */}
         </div>
         )
     }
