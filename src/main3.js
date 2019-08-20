@@ -11,7 +11,7 @@ import {
 } from 'zarm/lib'
 import Popup from './popup'
 import 'zarm/dist/zarm.min.css'
-// import './main3.css'
+ import './main3.css'
 
 
 class App extends React.Component {
@@ -19,7 +19,7 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            //dataSource: ['选项一', '选项二', '选项三', '选项四'],
+            dataSource2: ['选项一', '选项二', '选项三', '选项四'],
             dataSource: [{
                     value: '1',
                     label: '选项一'
@@ -41,7 +41,7 @@ class App extends React.Component {
         return (
             <div>
                 <div onClick={() => this.setState({visible: true})}>open</div>
-                <Picker2
+                {/* <Picker2
                 visible={visible}
                 value={value}
                 dataSource={dataSource}
@@ -52,12 +52,12 @@ class App extends React.Component {
                     })
                 }}
                 onCancel={() => this.setState({visible: false})}
-                />
+                /> */}
                 {/* <Picker  dataSource={this.state.dataSource}/> */}
 
-                {/* <Popup visible={this.state.visible}>
-                    <Picker  dataSource={this.state.dataSource}/>
-                </Popup> */}
+                <Popup2 visible={this.state.visible} mask={false}>
+                    <Picker dataSource={this.state.dataSource2}/>
+                </Popup2>
 
                 {/* <Popup2 mask={false} visible={this.state.visible}>
                     <Picker  dataSource={this.state.dataSource}/>
