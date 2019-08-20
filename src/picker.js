@@ -43,7 +43,7 @@ export default class Picker extends React.Component {
                                 
                                 <ul className="wheel-scroll">
                                     {
-                                        dataSource.map((item) => <li className="wheel-item">{item}</li>)
+                                        dataSource.map((item, index) => <li className="wheel-item" key={+index}>{item}</li>)
                                     }
                                 </ul>
                             </div>
