@@ -7,6 +7,7 @@ import Picker from './picker'
 import 'zarm/dist/zarm.min.css'
 import './main3.css'
 
+var vConsole = new VConsole();
 class App extends React.Component {
 
     constructor(props) {
@@ -20,7 +21,6 @@ class App extends React.Component {
     }
     
     render() {
-        const { dataSource } = this.state
         return (
             <div>
                 <div onClick={() => this.setState({visible: true})}>open</div>

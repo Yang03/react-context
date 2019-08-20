@@ -26,7 +26,7 @@ export default class Picker extends React.Component {
             probeType: 3
         })
         this.wheels.on('scrollEnd', () => {
-            alert(this.wheels.getSelectedIndex())
+            console.log(this.wheels.getSelectedIndex())
             //alert(this.wheels[i].getSelectedIndex())
         })
 
