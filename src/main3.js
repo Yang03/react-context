@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Popup } from 'zarm'
+import { Popup } from 'zarm/lib'
 import BScroll from 'better-scroll'
 import Picker from './picker'
 
@@ -25,7 +25,7 @@ class App extends React.Component {
             <div>
                 <div onClick={() => this.setState({visible: true})}>open</div>
                 <Picker  dataSource={this.state.dataSource}/>
-                
+
                 <Popup visible={this.state.visible}>
                     <Picker  dataSource={this.state.dataSource}/>
                 </Popup>
