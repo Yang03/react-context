@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "72a4a2c21c19b9eee662";
+/******/ 	var hotCurrentHash = "46ae6baae2c72b9a30d1";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -30680,15 +30680,15 @@ function (_Component) {
         WebkitAnimationDuration: "".concat(animationDuration, "ms"),
         animationDuration: "".concat(animationDuration, "ms")
       };
-      return mask && _react.default.createElement(_mask.default, {
-        className: maskCls,
-        style: maskStyle,
-        visible: isMaskShow,
-        type: maskType,
-        onClick: function onClick(e) {
-          _this.handleMaskClick(e);
-        }
-      });
+      return null; // return mask && _react.default.createElement(_mask.default, {
+      //   className: maskCls,
+      //   style: maskStyle,
+      //   visible: isMaskShow,
+      //   type: maskType,
+      //   onClick: function onClick(e) {
+      //     _this.handleMaskClick(e);
+      //   }
+      // });
     });
 
     _defineProperty(_assertThisInitialized(_this), "createContainer", function () {
@@ -41427,6 +41427,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var App =
 /*#__PURE__*/
 function (_React$Component) {
@@ -41439,7 +41440,15 @@ function (_React$Component) {
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(App).call(this, props));
     _this.state = {
-      dataSource: ['选项一', '选项二', '选项三', '选项四'],
+      //dataSource: ['选项一', '选项二', '选项三', '选项四'],
+      dataSource: [{
+        value: '1',
+        label: '选项一'
+      }, {
+        value: '2',
+        label: '选项二'
+      }],
+      value: '',
       visible: false
     };
     _this.wheelWrapper = null;
@@ -41452,20 +41461,33 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
+      var _this$state = this.state,
+          visible = _this$state.visible,
+          value = _this$state.value,
+          dataSource = _this$state.dataSource;
       return react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
         onClick: function onClick() {
           return _this2.setState({
             visible: true
           });
         }
-      }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
-        dataSource: this.state.dataSource
-      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_9__["Popup"], {
-        mask: false,
-        visible: this.state.visible
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
-        dataSource: this.state.dataSource
-      })));
+      }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_9__["Picker"], {
+        visible: visible,
+        value: value,
+        dataSource: dataSource,
+        onOk: function onOk(selected) {
+          console.log('Picker onOk: ', selected);
+
+          _this2.setState({
+            visible: false
+          });
+        },
+        onCancel: function onCancel() {
+          return _this2.setState({
+            visible: false
+          });
+        }
+      }));
     }
   }]);
 
@@ -41659,4 +41681,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.72a4a2c.js.map
+//# sourceMappingURL=index.46ae6ba.js.map
