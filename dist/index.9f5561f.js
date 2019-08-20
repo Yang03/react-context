@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "b90913e1f9b7e6106b51";
+/******/ 	var hotCurrentHash = "9f5561f88f2dc5eff669";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -48497,9 +48497,10 @@ function (_React$Component) {
         }
       }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("ul", {
         className: "wheel-scroll"
-      }, dataSource.map(function (item) {
+      }, dataSource.map(function (item, index) {
         return react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("li", {
-          className: "wheel-item"
+          className: "wheel-item",
+          key: +index
         }, item);
       }))))));
     }
@@ -48513,4 +48514,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.b90913e.js.map
+//# sourceMappingURL=index.9f5561f.js.map
