@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "3656e978a1a6aa51f88b";
+/******/ 	var hotCurrentHash = "802116f5bf9d24bcb463";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -6784,6 +6784,272 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 /***/ }),
 
+/***/ "./node_modules/create-react-context/lib/implementation.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/create-react-context/lib/implementation.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _gud = __webpack_require__(/*! gud */ "./node_modules/gud/index.js");
+
+var _gud2 = _interopRequireDefault(_gud);
+
+var _warning = __webpack_require__(/*! fbjs/lib/warning */ "./node_modules/fbjs/lib/warning.js");
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var MAX_SIGNED_31_BIT_INT = 1073741823; // Inlined Object.is polyfill.
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+
+function objectIs(x, y) {
+  if (x === y) {
+    return x !== 0 || 1 / x === 1 / y;
+  } else {
+    return x !== x && y !== y;
+  }
+}
+
+function createEventEmitter(value) {
+  var handlers = [];
+  return {
+    on: function on(handler) {
+      handlers.push(handler);
+    },
+    off: function off(handler) {
+      handlers = handlers.filter(function (h) {
+        return h !== handler;
+      });
+    },
+    get: function get() {
+      return value;
+    },
+    set: function set(newValue, changedBits) {
+      value = newValue;
+      handlers.forEach(function (handler) {
+        return handler(value, changedBits);
+      });
+    }
+  };
+}
+
+function onlyChild(children) {
+  return Array.isArray(children) ? children[0] : children;
+}
+
+function createReactContext(defaultValue, calculateChangedBits) {
+  var _Provider$childContex, _Consumer$contextType;
+
+  var contextProp = '__create-react-context-' + (0, _gud2.default)() + '__';
+
+  var Provider = function (_Component) {
+    _inherits(Provider, _Component);
+
+    function Provider() {
+      var _temp, _this, _ret;
+
+      _classCallCheck(this, Provider);
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.emitter = createEventEmitter(_this.props.value), _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    Provider.prototype.getChildContext = function getChildContext() {
+      var _ref;
+
+      return _ref = {}, _ref[contextProp] = this.emitter, _ref;
+    };
+
+    Provider.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+      if (this.props.value !== nextProps.value) {
+        var oldValue = this.props.value;
+        var newValue = nextProps.value;
+        var changedBits = void 0;
+
+        if (objectIs(oldValue, newValue)) {
+          changedBits = 0; // No change
+        } else {
+          changedBits = typeof calculateChangedBits === 'function' ? calculateChangedBits(oldValue, newValue) : MAX_SIGNED_31_BIT_INT;
+
+          if (true) {
+            (0, _warning2.default)((changedBits & MAX_SIGNED_31_BIT_INT) === changedBits, 'calculateChangedBits: Expected the return value to be a ' + '31-bit integer. Instead received: %s', changedBits);
+          }
+
+          changedBits |= 0;
+
+          if (changedBits !== 0) {
+            this.emitter.set(nextProps.value, changedBits);
+          }
+        }
+      }
+    };
+
+    Provider.prototype.render = function render() {
+      return this.props.children;
+    };
+
+    return Provider;
+  }(_react.Component);
+
+  Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[contextProp] = _propTypes2.default.object.isRequired, _Provider$childContex);
+
+  var Consumer = function (_Component2) {
+    _inherits(Consumer, _Component2);
+
+    function Consumer() {
+      var _temp2, _this2, _ret2;
+
+      _classCallCheck(this, Consumer);
+
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return _ret2 = (_temp2 = (_this2 = _possibleConstructorReturn(this, _Component2.call.apply(_Component2, [this].concat(args))), _this2), _this2.state = {
+        value: _this2.getValue()
+      }, _this2.onUpdate = function (newValue, changedBits) {
+        var observedBits = _this2.observedBits | 0;
+
+        if ((observedBits & changedBits) !== 0) {
+          _this2.setState({
+            value: _this2.getValue()
+          });
+        }
+      }, _temp2), _possibleConstructorReturn(_this2, _ret2);
+    }
+
+    Consumer.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+      var observedBits = nextProps.observedBits;
+      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
+      : observedBits;
+    };
+
+    Consumer.prototype.componentDidMount = function componentDidMount() {
+      if (this.context[contextProp]) {
+        this.context[contextProp].on(this.onUpdate);
+      }
+
+      var observedBits = this.props.observedBits;
+      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
+      : observedBits;
+    };
+
+    Consumer.prototype.componentWillUnmount = function componentWillUnmount() {
+      if (this.context[contextProp]) {
+        this.context[contextProp].off(this.onUpdate);
+      }
+    };
+
+    Consumer.prototype.getValue = function getValue() {
+      if (this.context[contextProp]) {
+        return this.context[contextProp].get();
+      } else {
+        return defaultValue;
+      }
+    };
+
+    Consumer.prototype.render = function render() {
+      return onlyChild(this.props.children)(this.state.value);
+    };
+
+    return Consumer;
+  }(_react.Component);
+
+  Consumer.contextTypes = (_Consumer$contextType = {}, _Consumer$contextType[contextProp] = _propTypes2.default.object, _Consumer$contextType);
+  return {
+    Provider: Provider,
+    Consumer: Consumer
+  };
+}
+
+exports.default = createReactContext;
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/create-react-context/lib/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/create-react-context/lib/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _implementation = __webpack_require__(/*! ./implementation */ "./node_modules/create-react-context/lib/implementation.js");
+
+var _implementation2 = _interopRequireDefault(_implementation);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
+
+exports.default = _react2.default.createContext || _implementation2.default;
+module.exports = exports['default'];
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/src/index.js?!./node_modules/zarm/dist/zarm.min.css":
 /*!*******************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/zarm/dist/zarm.min.css ***!
@@ -6907,6 +7173,263 @@ function toComment(sourceMap) {
   var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
   return '/*# ' + data + ' */';
 }
+
+/***/ }),
+
+/***/ "./node_modules/fbjs/lib/emptyFunction.js":
+/*!************************************************!*\
+  !*** ./node_modules/fbjs/lib/emptyFunction.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ */
+
+function makeEmptyFunction(arg) {
+  return function () {
+    return arg;
+  };
+}
+/**
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+ */
+
+
+var emptyFunction = function emptyFunction() {};
+
+emptyFunction.thatReturns = makeEmptyFunction;
+emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+
+emptyFunction.thatReturnsThis = function () {
+  return this;
+};
+
+emptyFunction.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+module.exports = emptyFunction;
+
+/***/ }),
+
+/***/ "./node_modules/fbjs/lib/warning.js":
+/*!******************************************!*\
+  !*** ./node_modules/fbjs/lib/warning.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+
+var emptyFunction = __webpack_require__(/*! ./emptyFunction */ "./node_modules/fbjs/lib/emptyFunction.js");
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+
+var warning = emptyFunction;
+
+if (true) {
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
+}
+
+module.exports = warning;
+
+/***/ }),
+
+/***/ "./node_modules/gud/index.js":
+/*!***********************************!*\
+  !*** ./node_modules/gud/index.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {// @flow
+
+
+var key = '__global_unique_id__';
+
+module.exports = function () {
+  return global[key] = (global[key] || 0) + 1;
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js ***!
+  \**********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+
+var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js");
+
+var REACT_STATICS = {
+  childContextTypes: true,
+  contextType: true,
+  contextTypes: true,
+  defaultProps: true,
+  displayName: true,
+  getDefaultProps: true,
+  getDerivedStateFromError: true,
+  getDerivedStateFromProps: true,
+  mixins: true,
+  propTypes: true,
+  type: true
+};
+var KNOWN_STATICS = {
+  name: true,
+  length: true,
+  prototype: true,
+  caller: true,
+  callee: true,
+  arguments: true,
+  arity: true
+};
+var FORWARD_REF_STATICS = {
+  '$$typeof': true,
+  render: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true
+};
+var MEMO_STATICS = {
+  '$$typeof': true,
+  compare: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true,
+  type: true
+};
+var TYPE_STATICS = {};
+TYPE_STATICS[ReactIs.ForwardRef] = FORWARD_REF_STATICS;
+
+function getStatics(component) {
+  if (ReactIs.isMemo(component)) {
+    return MEMO_STATICS;
+  }
+
+  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+}
+
+var defineProperty = Object.defineProperty;
+var getOwnPropertyNames = Object.getOwnPropertyNames;
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var getPrototypeOf = Object.getPrototypeOf;
+var objectPrototype = Object.prototype;
+
+function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
+  if (typeof sourceComponent !== 'string') {
+    // don't hoist over string (html) components
+    if (objectPrototype) {
+      var inheritedComponent = getPrototypeOf(sourceComponent);
+
+      if (inheritedComponent && inheritedComponent !== objectPrototype) {
+        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+      }
+    }
+
+    var keys = getOwnPropertyNames(sourceComponent);
+
+    if (getOwnPropertySymbols) {
+      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
+    }
+
+    var targetStatics = getStatics(targetComponent);
+    var sourceStatics = getStatics(sourceComponent);
+
+    for (var i = 0; i < keys.length; ++i) {
+      var key = keys[i];
+
+      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+
+        try {
+          // Avoid failures from read-only properties
+          defineProperty(targetComponent, key, descriptor);
+        } catch (e) {}
+      }
+    }
+
+    return targetComponent;
+  }
+
+  return targetComponent;
+}
+
+module.exports = hoistNonReactStatics;
 
 /***/ }),
 
@@ -7119,6 +7642,684 @@ checkPropTypes.resetWarningCache = function () {
 };
 
 module.exports = checkPropTypes;
+
+/***/ }),
+
+/***/ "./node_modules/prop-types/factoryWithTypeCheckers.js":
+/*!************************************************************!*\
+  !*** ./node_modules/prop-types/factoryWithTypeCheckers.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js");
+
+var assign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
+
+var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ "./node_modules/prop-types/lib/ReactPropTypesSecret.js");
+
+var checkPropTypes = __webpack_require__(/*! ./checkPropTypes */ "./node_modules/prop-types/checkPropTypes.js");
+
+var has = Function.call.bind(Object.prototype.hasOwnProperty);
+
+var printWarning = function () {};
+
+if (true) {
+  printWarning = function (text) {
+    var message = 'Warning: ' + text;
+
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+function emptyFunctionThatReturnsNull() {
+  return null;
+}
+
+module.exports = function (isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+
+  var ANONYMOUS = '<<anonymous>>'; // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    elementType: createElementTypeTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker
+  };
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+
+  /*eslint-disable no-self-compare*/
+
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+
+
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  } // Make `instanceof Error` still work for returned errors.
+
+
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    if (true) {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+          err.name = 'Invariant Violation';
+          throw err;
+        } else if ( true && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+
+          if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
+          manualPropTypeWarningCount < 3) {
+            printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+
+      var propValue = props[propName];
+
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
+
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      if (!ReactIs.isValidElementType(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      if (true) {
+        if (arguments.length > 1) {
+          printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
+        } else {
+          printWarning('Invalid argument supplied to oneOf, expected an array.');
+        }
+      }
+
+      return emptyFunctionThatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+        var type = getPreciseType(value);
+
+        if (type === 'symbol') {
+          return String(value);
+        }
+
+        return value;
+      });
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+
+      for (var key in propValue) {
+        if (has(propValue, key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+       true ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : undefined;
+      return emptyFunctionThatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+
+      if (typeof checker !== 'function') {
+        printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
+        return emptyFunctionThatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+
+        if (!checker) {
+          continue;
+        }
+
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+        if (error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      } // We need to check all keys in case some are required but missing from
+      // props.
+
+
+      var allKeys = assign({}, props[propName], shapeTypes);
+
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+
+        if (!checker) {
+          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
+        }
+
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+        if (error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+
+      case 'boolean':
+        return !propValue;
+
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    } // falsy value can't be a Symbol
+
+
+    if (!propValue) {
+      return false;
+    } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+
+
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    } // Fallback for non-spec compliant Symbols which are polyfilled.
+
+
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  } // Equivalent of `typeof` but with special handling for array and regexp.
+
+
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+
+    return propType;
+  } // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+
+
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+
+    var propType = getPropType(propValue);
+
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+
+    return propType;
+  } // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+
+
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+
+      default:
+        return type;
+    }
+  } // Returns class name of the object, if any.
+
+
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes;
+  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+  return ReactPropTypes;
+};
+
+/***/ }),
+
+/***/ "./node_modules/prop-types/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/prop-types/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+if (true) {
+  var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js"); // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+
+
+  var throwOnDirectAccess = true;
+  module.exports = __webpack_require__(/*! ./factoryWithTypeCheckers */ "./node_modules/prop-types/factoryWithTypeCheckers.js")(ReactIs.isElement, throwOnDirectAccess);
+} else {}
 
 /***/ }),
 
@@ -11079,6 +12280,273 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/react-is/cjs/react-is.development.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-is/cjs/react-is.development.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/** @license React v16.8.6
+ * react-is.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+if (true) {
+  (function () {
+    'use strict';
+
+    Object.defineProperty(exports, '__esModule', {
+      value: true
+    }); // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+    // nor polyfill, then a plain number is used for performance.
+
+    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
+    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+
+    function isValidElementType(type) {
+      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
+    }
+    /**
+     * Forked from fbjs/warning:
+     * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
+     *
+     * Only change is we use console.warn instead of console.error,
+     * and do nothing when 'console' is not supported.
+     * This really simplifies the code.
+     * ---
+     * Similar to invariant but only logs a warning if the condition is not met.
+     * This can be used to log issues in development environments in critical
+     * paths. Removing the logging code for production environments will keep the
+     * same logic and follow the same code paths.
+     */
+
+
+    var lowPriorityWarning = function () {};
+
+    {
+      var printWarning = function (format) {
+        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        var argIndex = 0;
+        var message = 'Warning: ' + format.replace(/%s/g, function () {
+          return args[argIndex++];
+        });
+
+        if (typeof console !== 'undefined') {
+          console.warn(message);
+        }
+
+        try {
+          // --- Welcome to debugging React ---
+          // This error was thrown as a convenience so that you can use this stack
+          // to find the callsite that caused this warning to fire.
+          throw new Error(message);
+        } catch (x) {}
+      };
+
+      lowPriorityWarning = function (condition, format) {
+        if (format === undefined) {
+          throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
+        }
+
+        if (!condition) {
+          for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+            args[_key2 - 2] = arguments[_key2];
+          }
+
+          printWarning.apply(undefined, [format].concat(args));
+        }
+      };
+    }
+    var lowPriorityWarning$1 = lowPriorityWarning;
+
+    function typeOf(object) {
+      if (typeof object === 'object' && object !== null) {
+        var $$typeof = object.$$typeof;
+
+        switch ($$typeof) {
+          case REACT_ELEMENT_TYPE:
+            var type = object.type;
+
+            switch (type) {
+              case REACT_ASYNC_MODE_TYPE:
+              case REACT_CONCURRENT_MODE_TYPE:
+              case REACT_FRAGMENT_TYPE:
+              case REACT_PROFILER_TYPE:
+              case REACT_STRICT_MODE_TYPE:
+              case REACT_SUSPENSE_TYPE:
+                return type;
+
+              default:
+                var $$typeofType = type && type.$$typeof;
+
+                switch ($$typeofType) {
+                  case REACT_CONTEXT_TYPE:
+                  case REACT_FORWARD_REF_TYPE:
+                  case REACT_PROVIDER_TYPE:
+                    return $$typeofType;
+
+                  default:
+                    return $$typeof;
+                }
+
+            }
+
+          case REACT_LAZY_TYPE:
+          case REACT_MEMO_TYPE:
+          case REACT_PORTAL_TYPE:
+            return $$typeof;
+        }
+      }
+
+      return undefined;
+    } // AsyncMode is deprecated along with isAsyncMode
+
+
+    var AsyncMode = REACT_ASYNC_MODE_TYPE;
+    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+    var ContextConsumer = REACT_CONTEXT_TYPE;
+    var ContextProvider = REACT_PROVIDER_TYPE;
+    var Element = REACT_ELEMENT_TYPE;
+    var ForwardRef = REACT_FORWARD_REF_TYPE;
+    var Fragment = REACT_FRAGMENT_TYPE;
+    var Lazy = REACT_LAZY_TYPE;
+    var Memo = REACT_MEMO_TYPE;
+    var Portal = REACT_PORTAL_TYPE;
+    var Profiler = REACT_PROFILER_TYPE;
+    var StrictMode = REACT_STRICT_MODE_TYPE;
+    var Suspense = REACT_SUSPENSE_TYPE;
+    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
+
+    function isAsyncMode(object) {
+      {
+        if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+          hasWarnedAboutDeprecatedIsAsyncMode = true;
+          lowPriorityWarning$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+        }
+      }
+      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+    }
+
+    function isConcurrentMode(object) {
+      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+    }
+
+    function isContextConsumer(object) {
+      return typeOf(object) === REACT_CONTEXT_TYPE;
+    }
+
+    function isContextProvider(object) {
+      return typeOf(object) === REACT_PROVIDER_TYPE;
+    }
+
+    function isElement(object) {
+      return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+    }
+
+    function isForwardRef(object) {
+      return typeOf(object) === REACT_FORWARD_REF_TYPE;
+    }
+
+    function isFragment(object) {
+      return typeOf(object) === REACT_FRAGMENT_TYPE;
+    }
+
+    function isLazy(object) {
+      return typeOf(object) === REACT_LAZY_TYPE;
+    }
+
+    function isMemo(object) {
+      return typeOf(object) === REACT_MEMO_TYPE;
+    }
+
+    function isPortal(object) {
+      return typeOf(object) === REACT_PORTAL_TYPE;
+    }
+
+    function isProfiler(object) {
+      return typeOf(object) === REACT_PROFILER_TYPE;
+    }
+
+    function isStrictMode(object) {
+      return typeOf(object) === REACT_STRICT_MODE_TYPE;
+    }
+
+    function isSuspense(object) {
+      return typeOf(object) === REACT_SUSPENSE_TYPE;
+    }
+
+    exports.typeOf = typeOf;
+    exports.AsyncMode = AsyncMode;
+    exports.ConcurrentMode = ConcurrentMode;
+    exports.ContextConsumer = ContextConsumer;
+    exports.ContextProvider = ContextProvider;
+    exports.Element = Element;
+    exports.ForwardRef = ForwardRef;
+    exports.Fragment = Fragment;
+    exports.Lazy = Lazy;
+    exports.Memo = Memo;
+    exports.Portal = Portal;
+    exports.Profiler = Profiler;
+    exports.StrictMode = StrictMode;
+    exports.Suspense = Suspense;
+    exports.isValidElementType = isValidElementType;
+    exports.isAsyncMode = isAsyncMode;
+    exports.isConcurrentMode = isConcurrentMode;
+    exports.isContextConsumer = isContextConsumer;
+    exports.isContextProvider = isContextProvider;
+    exports.isElement = isElement;
+    exports.isForwardRef = isForwardRef;
+    exports.isFragment = isFragment;
+    exports.isLazy = isLazy;
+    exports.isMemo = isMemo;
+    exports.isPortal = isPortal;
+    exports.isProfiler = isProfiler;
+    exports.isStrictMode = isStrictMode;
+    exports.isSuspense = isSuspense;
+  })();
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-is/index.js":
+/*!****************************************!*\
+  !*** ./node_modules/react-is/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+if (false) {} else {
+  module.exports = __webpack_require__(/*! ./cjs/react-is.development.js */ "./node_modules/react-is/cjs/react-is.development.js");
+}
+
+/***/ }),
+
 /***/ "./node_modules/react/cjs/react.development.js":
 /*!*****************************************************!*\
   !*** ./node_modules/react/cjs/react.development.js ***!
@@ -14766,70 +16234,236 @@ if(true) {
 
 /***/ }),
 
-/***/ "./node_modules/zarm/lib/mask/index.js":
-/*!*********************************************!*\
-  !*** ./node_modules/zarm/lib/mask/index.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/zarm/es/action-sheet/ActionSheet.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/zarm/es/action-sheet/ActionSheet.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ActionSheet; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../popup */ "./node_modules/zarm/es/popup/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
+
+
+class ActionSheet extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "renderActions", (action, index) => {
+      const {
+        prefixCls
+      } = this.props;
+      const actionCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__item`, {
+        [`${prefixCls}__item--${action.theme}`]: !!action.theme
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        key: +index,
+        className: actionCls,
+        onClick: action.onClick
+      }, action.text);
+    });
+
+    _defineProperty(this, "renderCancel", () => {
+      const {
+        prefixCls,
+        onCancel,
+        cancelText,
+        locale
+      } = this.props;
+      return typeof onCancel === 'function' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: `${prefixCls}__cancel`
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: `${prefixCls}__item`,
+        onClick: onCancel
+      }, cancelText || locale.cancelText));
+    });
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      spacing,
+      visible,
+      onMaskClick,
+      actions
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--spacing`]: spacing
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      visible: visible,
+      onMaskClick: onMaskClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__actions`
+    }, actions.map(this.renderActions)), this.renderCancel()));
+  }
+
+}
+
+_defineProperty(ActionSheet, "defaultProps", {
+  prefixCls: 'za-action-sheet',
+  visible: false,
+  spacing: false,
+  actions: []
 });
-exports.default = void 0;
 
-var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+/***/ }),
 
-var _classnames2 = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+/***/ "./node_modules/zarm/es/action-sheet/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/zarm/es/action-sheet/index.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ActionSheet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ActionSheet */ "./node_modules/zarm/es/action-sheet/ActionSheet.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_ActionSheet__WEBPACK_IMPORTED_MODULE_0__["default"], 'ActionSheet'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/action-sheet/locale/en_US.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/zarm/es/action-sheet/locale/en_US.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  cancelText: 'Cancel'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/activity-indicator/index.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/zarm/es/activity-indicator/index.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ActivityIndicator; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
 }
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
 
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
 
-          if (desc.get || desc.set) {
-            Object.defineProperty(newObj, key, desc);
-          } else {
-            newObj[key] = obj[key];
-          }
-        }
+const DIAMETER = 62;
+class ActivityIndicator extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const {
+      prefixCls,
+      className,
+      size,
+      percent,
+      strokeWidth
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${size}`]: !!size
+    });
+    const half = DIAMETER / 2;
+    const r = half - strokeWidth / 2;
+    const round = 2 * Math.PI * r;
+    const style = {
+      strokeDasharray: `${round * percent / 100} ${round}`,
+      strokeWidth
+    };
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("svg", {
+      className: cls,
+      viewBox: `0 0 ${DIAMETER} ${DIAMETER}`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("circle", {
+      className: `${prefixCls}__path`,
+      cx: half,
+      cy: half,
+      r: r,
+      fill: "none",
+      style: {
+        strokeWidth
       }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("circle", {
+      className: `${prefixCls}__line`,
+      cx: half,
+      cy: half,
+      r: r,
+      fill: "none",
+      style: style
+    }));
   }
 
-  return _typeof(obj);
 }
 
+_defineProperty(ActivityIndicator, "defaultProps", {
+  prefixCls: 'za-activity-indicator',
+  strokeWidth: 5,
+  percent: 20
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/alert/Alert.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/alert/Alert.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Alert; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modal */ "./node_modules/zarm/es/modal/index.js");
 function _extends() {
   _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -14884,75 +16518,6 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   return target;
 }
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -14968,518 +16533,103 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-var Mask =
-/*#__PURE__*/
-function (_PureComponent) {
-  _inherits(Mask, _PureComponent);
+ // import ReactDOM from 'react-dom';
 
-  function Mask() {
-    _classCallCheck(this, Mask);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Mask).apply(this, arguments));
+
+class Alert extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  // static show = (props) => {
+  //   ReactDOM.render(<Alert {...props} visible />, window.zarmAlert);
+  // }
+  // static hide = () => {
+  //   ReactDOM.render(<Alert visible={false} />, window.zarmAlert);
+  // }
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      title,
+      message,
+      cancelText,
+      onCancel,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "title", "message", "cancelText", "onCancel", "locale"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
+      className: cls
+    }, others), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Header, {
+      title: title
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Body, null, message), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__button`,
+      onClick: onCancel
+    }, cancelText || locale.cancelText)));
   }
 
-  _createClass(Mask, [{
-    key: "render",
-    value: function render() {
-      var _this$props = this.props,
-          prefixCls = _this$props.prefixCls,
-          className = _this$props.className,
-          visible = _this$props.visible,
-          type = _this$props.type,
-          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "visible", "type"]);
+} // if (typeof window !== 'undefined') {
+//   if (!window.zarmAlert) {
+//     window.zarmAlert = document.createElement('div');
+//     document.body.appendChild(window.zarmAlert);
+//   }
+//   ReactDOM.render(<Alert visible={false} />, window.zarmAlert);
+// }
 
-      var markCls = (0, _classnames2.default)(prefixCls, className, _defineProperty({}, "".concat(prefixCls, "--").concat(type), !!type));
-      return visible && _react.default.createElement("div", _extends({
-        className: markCls
-      }, others));
-    }
-  }]);
-
-  return Mask;
-}(_react.PureComponent);
-
-exports.default = Mask;
-
-_defineProperty(Mask, "defaultProps", {
-  prefixCls: 'za-mask',
-  visible: false,
-  type: 'normal'
+_defineProperty(Alert, "defaultProps", {
+  prefixCls: 'za-alert',
+  animationType: 'zoom',
+  message: ''
 });
 
 /***/ }),
 
-/***/ "./node_modules/zarm/lib/popup/Portal.js":
-/*!***********************************************!*\
-  !*** ./node_modules/zarm/lib/popup/Portal.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/zarm/es/alert/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/alert/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Alert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Alert */ "./node_modules/zarm/es/alert/Alert.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Alert__WEBPACK_IMPORTED_MODULE_0__["default"], 'Alert'));
 
-var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+/***/ }),
 
-var _reactDom = _interopRequireDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+/***/ "./node_modules/zarm/es/alert/locale/en_US.js":
+/*!****************************************************!*\
+  !*** ./node_modules/zarm/es/alert/locale/en_US.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var _classnames3 = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
-
-var _events = _interopRequireDefault(__webpack_require__(/*! ../utils/events */ "./node_modules/zarm/lib/utils/events.js"));
-
-var _mask = _interopRequireDefault(__webpack_require__(/*! ../mask */ "./node_modules/zarm/lib/mask/index.js"));
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
-
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
-
-          if (desc.get || desc.set) {
-            Object.defineProperty(newObj, key, desc);
-          } else {
-            newObj[key] = obj[key];
-          }
-        }
-      }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var IS_REACT_16 = !!_reactDom.default.createPortal;
-
-var Portal =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Portal, _Component);
-
-  function Portal(props) {
-    var _this;
-
-    _classCallCheck(this, Portal);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Portal).call(this, props));
-
-    _defineProperty(_assertThisInitialized(_this), "timer", void 0);
-
-    _defineProperty(_assertThisInitialized(_this), "popup", void 0);
-
-    _defineProperty(_assertThisInitialized(_this), "_container", void 0);
-
-    _defineProperty(_assertThisInitialized(_this), "showPortal", function () {
-      _this.createContainer();
-
-      _this.setState({
-        mounted: true
-      }, function () {
-        _events.default.on(_this.popup, 'webkitTransitionEnd', _this.animationEnd);
-
-        _events.default.on(_this.popup, 'transitionend', _this.animationEnd);
-
-        setTimeout(function () {
-          _this.enter();
-        }, 0);
-      });
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "enter", function () {
-      var _this$props = _this.props,
-          stayTime = _this$props.stayTime,
-          autoClose = _this$props.autoClose,
-          onMaskClick = _this$props.onMaskClick;
-
-      _this.setState({
-        isShow: true,
-        isMaskShow: true,
-        isPending: true,
-        animationState: 'enter'
-      });
-
-      if (stayTime > 0 && autoClose) {
-        _this.timer = setTimeout(function () {
-          if (typeof onMaskClick === 'function') {
-            onMaskClick();
-          }
-
-          clearTimeout(_this.timer);
-        }, stayTime);
-      }
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "leave", function () {
-      _this.setState({
-        isShow: false,
-        isPending: true,
-        animationState: 'leave'
-      });
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "animationEnd", function (e) {
-      // 防止其他的样式转换触发该事件，如border、background-image
-      if (!/transform/i.test(e.propertyName)) {
-        return;
-      }
-
-      var _this$props2 = _this.props,
-          onClose = _this$props2.onClose,
-          onOpen = _this$props2.onOpen,
-          handlePortalUnmount = _this$props2.handlePortalUnmount;
-      var animationState = _this.state.animationState;
-
-      if (animationState === 'leave') {
-        _this.setState({
-          isMaskShow: false
-        });
-
-        if (typeof onClose === 'function') {
-          onClose();
-        }
-
-        if (typeof handlePortalUnmount === 'function') {
-          handlePortalUnmount();
-          document.body.removeChild(_this._container);
-        }
-      } else if (typeof onOpen === 'function') {
-        onOpen();
-      }
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "renderMask", function () {
-      var _this$props3 = _this.props,
-          mask = _this$props3.mask,
-          maskType = _this$props3.maskType,
-          animationDuration = _this$props3.animationDuration;
-      var _this$state = _this.state,
-          isPending = _this$state.isPending,
-          animationState = _this$state.animationState,
-          isMaskShow = _this$state.isMaskShow;
-      var maskCls = (0, _classnames3.default)(_defineProperty({}, "fade-".concat(animationState), isPending));
-      var maskStyle = {
-        WebkitAnimationDuration: "".concat(animationDuration, "ms"),
-        animationDuration: "".concat(animationDuration, "ms")
-      };
-      return mask && _react.default.createElement(_mask.default, {
-        className: maskCls,
-        style: maskStyle,
-        visible: isMaskShow,
-        type: maskType,
-        onClick: function onClick(e) {
-          _this.handleMaskClick(e);
-        }
-      });
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "createContainer", function () {
-      if (!_this._container) {
-        _this._container = document.createElement('div');
-        _this._container.className += ' popup-container';
-        document.body.appendChild(_this._container);
-      }
-
-      return _this._container;
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "getComponent", function () {
-      var _classnames2;
-
-      var _this$props4 = _this.props,
-          prefixCls = _this$props4.prefixCls,
-          className = _this$props4.className,
-          animationDuration = _this$props4.animationDuration,
-          direction = _this$props4.direction,
-          mask = _this$props4.mask,
-          children = _this$props4.children;
-      var isShow = _this.state.isShow;
-      var popupCls = (0, _classnames3.default)(prefixCls, className, (_classnames2 = {}, _defineProperty(_classnames2, "".concat(prefixCls, "--").concat(direction), !!direction), _defineProperty(_classnames2, "".concat(prefixCls, "--mask"), mask), _defineProperty(_classnames2, "".concat(prefixCls, "--hidden"), !isShow), _classnames2));
-      var wrapStyle = {
-        WebkitTransitionDuration: "".concat(animationDuration, "ms"),
-        transitionDuration: "".concat(animationDuration, "ms")
-      };
-      return _react.default.createElement("div", {
-        role: "dialog",
-        className: popupCls,
-        ref: function ref(popup) {
-          _this.popup = popup;
-        }
-      }, _react.default.createElement("div", {
-        className: "".concat(prefixCls, "__wrapper"),
-        style: wrapStyle,
-        role: "document"
-      }, children), _this.renderMask());
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "handleMaskClick", function (e) {
-      e.stopPropagation();
-      var onMaskClick = _this.props.onMaskClick;
-
-      if (typeof onMaskClick === 'function') {
-        onMaskClick();
-      }
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "renderPortal", function () {
-      if (!IS_REACT_16) {
-        _reactDom.default.unstable_renderSubtreeIntoContainer(_assertThisInitialized(_this), _this.getComponent(), _this._container);
-
-        return null;
-      }
-
-      return _reactDom.default.createPortal(_this.getComponent(), _this._container);
-    });
-
-    _this.state = {
-      isShow: false,
-      isMaskShow: false,
-      isPending: false,
-      animationState: 'enter',
-      mounted: false
-    };
-    return _this;
-  }
-
-  _createClass(Portal, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var visible = this.props.visible;
-
-      if (visible) {
-        this.showPortal();
-      }
-    }
-  }, {
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      var visible = this.props.visible;
-
-      if (nextProps.visible === true && nextProps.visible !== visible) {
-        this.showPortal();
-      }
-
-      if (nextProps.visible === false && nextProps.visible !== visible) {
-        this.leave();
-      }
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      if (this.popup) {
-        _events.default.off(this.popup, 'webkitTransitionEnd', this.animationEnd);
-
-        _events.default.off(this.popup, 'transitionend', this.animationEnd);
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var mounted = this.state.mounted;
-
-      if (!mounted) {
-        return null;
-      }
-
-      return this.renderPortal();
-    }
-  }]);
-
-  return Portal;
-}(_react.Component);
-
-exports.default = Portal;
-
-_defineProperty(Portal, "defaultProps", {
-  prefixCls: 'za-popup',
-  visible: false,
-  mask: true,
-  direction: 'bottom',
-  autoClose: false,
-  stayTime: 3000,
-  animationDuration: 200,
-  maskType: _mask.default.defaultProps.type
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  cancelText: 'Close'
 });
 
 /***/ }),
 
-/***/ "./node_modules/zarm/lib/popup/index.js":
-/*!**********************************************!*\
-  !*** ./node_modules/zarm/lib/popup/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/zarm/es/badge/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/badge/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-var _Portal = _interopRequireDefault(__webpack_require__(/*! ./Portal */ "./node_modules/zarm/lib/popup/Portal.js"));
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
-
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
-
-          if (desc.get || desc.set) {
-            Object.defineProperty(newObj, key, desc);
-          } else {
-            newObj[key] = obj[key];
-          }
-        }
-      }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Badge; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
 function _extends() {
   _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -15498,179 +16648,16670 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
 
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
+  var target = _objectWithoutPropertiesLoose(source, excluded);
 
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
+  var key, i;
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
 
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
     }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-var Popup =
-/*#__PURE__*/
-function (_PureComponent) {
-  _inherits(Popup, _PureComponent);
-
-  function Popup(props) {
-    var _this;
-
-    _classCallCheck(this, Popup);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Popup).call(this, props));
-    _this.state = {
-      renderPortal: true
-    };
-    _this.handlePortalUnmount = _this.handlePortalUnmount.bind(_assertThisInitialized(_this));
-    return _this;
   }
 
-  _createClass(Popup, [{
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      var visible = this.props.visible;
+  return target;
+}
 
-      if (nextProps.visible !== visible && nextProps.visible === true) {
-        this.setState({
-          renderPortal: true
-        });
-      }
-    }
-  }, {
-    key: "handlePortalUnmount",
-    value: function handlePortalUnmount() {
-      this.setState({
-        renderPortal: false
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var renderPortal = this.state.renderPortal;
-      return renderPortal && _react.default.createElement(_Portal.default, _extends({}, this.props, {
-        handlePortalUnmount: this.handlePortalUnmount
-      }));
-    }
-  }]);
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
 
-  return Popup;
-}(_react.PureComponent);
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
 
-exports.default = Popup;
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Badge extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      theme,
+      shape,
+      sup,
+      text,
+      children
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "theme", "shape", "sup", "text", "children"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${theme}`]: !!theme,
+      [`${prefixCls}--${shape}`]: shape,
+      [`${prefixCls}--sup`]: sup
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: cls
+    }, children, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("sup", _extends({
+      className: `${prefixCls}__content`
+    }, others), shape !== 'dot' && text));
+  }
+
+}
+
+_defineProperty(Badge, "defaultProps", {
+  prefixCls: 'za-badge',
+  shape: 'dot',
+  theme: 'danger',
+  sup: false
+});
 
 /***/ }),
 
-/***/ "./node_modules/zarm/lib/utils/events.js":
-/*!***********************************************!*\
-  !*** ./node_modules/zarm/lib/utils/events.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/zarm/es/button/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/button/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Button; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _activity_indicator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../activity-indicator */ "./node_modules/zarm/es/activity-indicator/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
+
+
+class Button extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "onClick", e => {
+      const {
+        disabled,
+        onClick
+      } = this.props;
+
+      if (disabled) {
+        return;
+      }
+
+      if (typeof onClick === 'function') {
+        onClick(e);
+      }
+    });
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      theme,
+      size,
+      shape,
+      icon,
+      block,
+      ghost,
+      disabled,
+      loading,
+      onClick,
+      children
+    } = _this$props,
+          rest = _objectWithoutProperties(_this$props, ["prefixCls", "className", "theme", "size", "shape", "icon", "block", "ghost", "disabled", "loading", "onClick", "children"]);
+
+    let classes = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${theme}`]: !!theme,
+      [`${prefixCls}--${size}`]: !!size,
+      [`${prefixCls}--${shape}`]: !!shape,
+      [`${prefixCls}--block`]: !!block,
+      [`${prefixCls}--ghost`]: !!ghost,
+      [`${prefixCls}--disabled`]: !!disabled
+    });
+    const iconRender = loading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      className: "rotate360"
+    }) : icon;
+    const childrenRender = children && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, children);
+    const contentRender = !!icon || loading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, iconRender, childrenRender) : childrenRender;
+
+    const _ref = rest,
+          {
+      tabIndex
+    } = _ref,
+          anchorRest = _objectWithoutProperties(_ref, ["tabIndex"]);
+
+    const _ref2 = rest,
+          {
+      htmlType = 'button'
+    } = _ref2,
+          nativeRest = _objectWithoutProperties(_ref2, ["htmlType"]);
+
+    if (anchorRest.href !== undefined) {
+      classes = classnames__WEBPACK_IMPORTED_MODULE_1___default()(classes, `${prefixCls}--link`);
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", _extends({
+        role: "button",
+        tabIndex: tabIndex,
+        "aria-disabled": disabled,
+        className: classes,
+        onClick: this.onClick,
+        onTouchStart: () => {}
+      }, anchorRest), contentRender);
+    }
+
+    return (// eslint-disable-next-line
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", _extends({
+        role: "button",
+        "aria-disabled": disabled,
+        type: htmlType,
+        className: classes,
+        onClick: this.onClick,
+        onTouchStart: () => {}
+      }, nativeRest), contentRender)
+    );
+  }
+
+}
+
+_defineProperty(Button, "defaultProps", {
+  prefixCls: 'za-button',
+  theme: 'default',
+  size: 'md',
+  shape: 'radius',
+  block: false,
+  ghost: false,
+  disabled: false,
+  loading: false
 });
-exports.default = void 0;
-var _default = {
-  on: function on(el, type, callback) {
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/calendar/Month.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/calendar/Month.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CalendarMonthView; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index */ "./node_modules/zarm/es/calendar/index.js");
+/* harmony import */ var _utils_date__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/date */ "./node_modules/zarm/es/utils/date.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class CalendarMonthView extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  // 月份最小值
+  // 月份最大值
+  // 当前月份dom数据缓存
+  // 上次是否落点在当前月份内
+  // 当前组件是否需要更新
+  // 当前月份的dom
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "min", void 0);
+
+    _defineProperty(this, "max", void 0);
+
+    _defineProperty(this, "cache", void 0);
+
+    _defineProperty(this, "lastIn", false);
+
+    _defineProperty(this, "isRefresh", true);
+
+    _defineProperty(this, "node", void 0);
+
+    _defineProperty(this, "anchor", () => {
+      if (this.node && this.node.scrollIntoViewIfNeeded) {
+        this.node.scrollIntoViewIfNeeded();
+      }
+    });
+
+    _defineProperty(this, "checkRefresh", props => {
+      const {
+        dateMonth,
+        value,
+        min,
+        max,
+        dateRender,
+        disabledDate
+      } = props;
+      const {
+        dateRender: dateRenderProp,
+        disabledDate: disabledDateProp
+      } = this.props;
+      const {
+        dateMonth: dateMonthState
+      } = this.state;
+
+      if (dateRender !== dateRenderProp || disabledDate !== disabledDateProp) {
+        return true;
+      }
+
+      if (!this.cache) {
+        return true;
+      }
+
+      if (dateMonth - dateMonthState !== 0) {
+        return true;
+      }
+
+      if (min - this.min !== 0 || max - this.max !== 0) {
+        return true;
+      }
+
+      let isIn;
+
+      if (value.length > 0) {
+        const currMonth = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(dateMonth, 'dd', 1);
+        const min1 = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(value[0], 'dd', 1);
+        const max1 = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(value[value.length - 1], 'dd', 1);
+        isIn = currMonth >= min1 && currMonth <= max1;
+      }
+
+      const result = !(!isIn && !this.lastIn);
+      this.lastIn = isIn;
+      return result;
+    });
+
+    _defineProperty(this, "checkStatus", date => {
+      const {
+        min,
+        max,
+        disabledDate
+      } = this.props;
+      const {
+        value = []
+      } = this.state;
+      const disabled = date < _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(min, 'd', 0) || date > _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(max, 'd', 0);
+      const res = {
+        disabled: disabled || disabledDate && disabledDate(date),
+        isSelected: value.some(item => _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].isOneDay(date, item)),
+        isRange: value.length > 1 && date > value[0] && date < value[value.length - 1],
+        rangeStart: value.length > 1 && _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].isOneDay(date, value[0]),
+        rangeEnd: value.length > 1 && _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].isOneDay(date, value[value.length - 1])
+      };
+      this.lastIn = this.lastIn || res.isSelected || res.isRange;
+      return res;
+    });
+
+    _defineProperty(this, "renderDay", (day, year, month, firstDay) => {
+      const {
+        prefixCls,
+        dateRender,
+        onDateClick
+      } = this.props;
+      const date = new Date(year, month, day);
+      const isToday = _index__WEBPACK_IMPORTED_MODULE_2__["default"].cache.now === `${year}-${month}-${day}`;
+      const status = this.checkStatus(date);
+      let txt = date && dateRender && dateRender(date) || '';
+
+      if (typeof txt === 'object') {
+        if (!Object(react__WEBPACK_IMPORTED_MODULE_0__["isValidElement"])(txt)) {
+          console.warn('dateRender函数返回数据类型错误，请返回基本数据类型或者reactNode');
+          txt = '';
+        }
+      }
+
+      const className = {
+        d6: (day + firstDay) % 7 === 0,
+        d7: (day + firstDay) % 7 === 1,
+        [`${prefixCls}__day--disabled`]: status.disabled,
+        [`${prefixCls}__day--today`]: isToday,
+        [`${prefixCls}__day--selected`]: status.isSelected,
+        [`${prefixCls}__day--range`]: status.isRange,
+        'range-start': status.rangeStart,
+        'range-end': status.rangeEnd,
+        [`firstday-${firstDay}`]: day === 1 && firstDay
+      };
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        key: `${year}-${month}-${day}`,
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__day`, className),
+        onClick: () => !status.disabled && date && onDateClick && onDateClick(date)
+      }, txt && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: `${prefixCls}__day__content`
+      }, txt) || '');
+    });
+
+    _defineProperty(this, "renderContent", (year, month) => {
+      let data = _index__WEBPACK_IMPORTED_MODULE_2__["default"].cache[`${year}-${month}`];
+
+      if (!data) {
+        data = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].getCurrMonthInfo(year, month);
+        _index__WEBPACK_IMPORTED_MODULE_2__["default"].cache[`${year}-${month}`] = data;
+      }
+
+      const {
+        firstDay,
+        dayCount
+      } = data;
+      return Array.from({
+        length: dayCount
+      }).map((_item, i) => this.renderDay(i + 1, year, month, firstDay));
+    });
+
+    this.min = _props.min;
+    this.max = _props.max;
+    this.state = {
+      value: _props.value,
+      dateMonth: _props.dateMonth
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.isRefresh = this.checkRefresh(nextProps);
+
+    if (this.isRefresh) {
+      this.min = nextProps.min;
+      this.max = nextProps.max;
+      this.setState({
+        value: nextProps.value,
+        dateMonth: nextProps.dateMonth
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls
+    } = this.props;
+    const {
+      dateMonth
+    } = this.state;
+    const year = dateMonth.getFullYear();
+    const month = dateMonth.getMonth();
+
+    if (!this.isRefresh) {
+      return this.cache;
+    }
+
+    const monthkey = `${year}-${month}`;
+    this.cache = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", {
+      key: monthkey,
+      className: `${prefixCls}__month`,
+      title: `${year}年${month + 1}月`,
+      ref: n => {
+        this.node = n;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, this.renderContent(year, month)));
+    return this.cache;
+  }
+
+}
+
+_defineProperty(CalendarMonthView, "defaultProps", {
+  prefixCls: 'za-calendar',
+  value: [],
+  dateMonth: new Date(),
+  min: new Date(),
+  max: new Date(),
+  dateRender: date => date.getDate(),
+  disabledDate: () => false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/calendar/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/calendar/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CalendarView; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Month__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Month */ "./node_modules/zarm/es/calendar/Month.js");
+/* harmony import */ var _utils_date__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/date */ "./node_modules/zarm/es/utils/date.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+const CN_DAY_NAME = ['日', '一', '二', '三', '四', '五', '六'];
+class CalendarView extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  // 月份缓存数据
+  // 当前月份dom数据缓存
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "nodes", void 0);
+
+    _defineProperty(this, "getState", props => {
+      const state = this.state || {};
+      const {
+        defaultValue,
+        multiple
+      } = props;
+      let {
+        value
+      } = props;
+      let tmpValue;
+      let min;
+      let max;
+      let startMonth;
+      let endMonth;
+      value = value || defaultValue;
+      value = Object.prototype.toString.call(value) === '[object Array]' ? value : value && [value] || [];
+
+      if (JSON.stringify(value) !== JSON.stringify(state.value) || multiple !== state.multiple) {
+        // 注掉该逻辑，强制根据 multiple 控制节点个数，后面改进
+        // tmpValue = value.map(item => DateTool.parseDay(item));
+        tmpValue = value.slice(0, multiple ? 2 : 1).map(item => _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].parseDay(item)); // 排序过滤
+
+        tmpValue = tmpValue.sort((item1, item2) => item1 - item2);
+      }
+
+      if (!_utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].isOneDay(props.min, state.min)) {
+        if (!(!props.min && state.min)) {
+          min = props.min ? _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].parseDay(props.min) : new Date();
+        }
+      }
+
+      if (min || !state.startMonth) {
+        startMonth = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(min, 'dd', 1);
+      }
+
+      if (!_utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].isOneDay(props.max, state.max)) {
+        max = props.max ? _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].parseDay(props.max) : _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(min || state.min, 'y', 1);
+
+        if (max === state.max) {
+          max = null;
+        }
+      }
+
+      if (max || !state.endMonth) {
+        endMonth = _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(max, 'dd', _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].getDaysByDate(max));
+      } // min、max 排序
+
+
+      const duration = [min || state.min, max || state.max].sort((item1, item2) => item1 - item2);
+      const tmp = {
+        value: tmpValue || state.value,
+        min: duration[0],
+        max: duration[1],
+        startMonth: startMonth || state.startMonth,
+        endMonth: endMonth || state.endMonth,
+        // 是否是入参更新(主要是月份跨度更新，需要重新定位)
+        refresh: state.refresh,
+        // 注掉该逻辑，强制根据 multiple 控制节点个数，后面改进
+        // steps:Math.max(tmp.value.length, tmp.defaultValue.length);
+        steps: multiple ? 2 : 1,
+        // 初始化点击步数
+        step: !this.state ? 1 : state.step
+      };
+
+      if (JSON.stringify(tmp) === JSON.stringify(this.state)) {
+        return;
+      }
+
+      tmp.refresh = !state.refresh;
+
+      if (!this.state) {
+        this.state = tmp;
+      } else {
+        this.setState(tmp);
+      }
+    });
+
+    _defineProperty(this, "onDateClick", date => {
+      const {
+        step,
+        steps,
+        value
+      } = this.state;
+      const {
+        onChange
+      } = this.props;
+
+      if (step === 1) {
+        value.splice(0, value.length);
+      }
+
+      value[step - 1] = date;
+      value.sort((item1, item2) => item1 - item2);
+      this.setState({
+        value,
+        step: step >= steps ? 1 : step + 1
+      }, () => step >= steps && typeof onChange === 'function' && onChange(value));
+    });
+
+    _defineProperty(this, "anchor", () => {
+      const {
+        value
+      } = this.state;
+      const target = value[0] || CalendarView.now;
+      const key = `${target.getFullYear()}-${target.getMonth()}`;
+      const node = this.nodes[key];
+
+      if (node && Object.prototype.toString.call(node.anchor) === '[object Function]') {
+        node.anchor();
+      }
+    });
+
+    _defineProperty(this, "renderWeekBar", () => {
+      const {
+        prefixCls
+      } = this.props;
+      const content = CN_DAY_NAME.map(week => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        key: week,
+        className: `${prefixCls}__bar__item`
+      }, week));
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: `${prefixCls}__bar`
+      }, content);
+    });
+
+    _defineProperty(this, "renderMonth", dateMonth => {
+      const {
+        value,
+        min,
+        max
+      } = this.state;
+      const {
+        prefixCls,
+        dateRender,
+        disabledDate
+      } = this.props;
+      const key = `${dateMonth.getFullYear()}-${dateMonth.getMonth()}`;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Month__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        prefixCls: prefixCls,
+        key: key,
+        min: min,
+        max: max,
+        value: value,
+        dateMonth: dateMonth,
+        dateRender: dateRender,
+        disabledDate: disabledDate,
+        onDateClick: this.onDateClick,
+        ref: n => {
+          this.nodes[key] = n;
+        }
+      });
+    });
+
+    this.nodes = {};
+    this.getState(_props);
+  }
+
+  componentDidMount() {
+    this.anchor();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.getState(nextProps);
+  }
+
+  componentDidUpdate(_prevProps, prevState) {
+    const {
+      refresh
+    } = this.state;
+
+    if (refresh !== prevState.refresh) {
+      this.anchor();
+    }
+  } // 生成日历内容
+
+
+  renderMonths() {
+    const {
+      prefixCls
+    } = this.props;
+    const {
+      min,
+      max
+    } = this.state;
+    const arr = Array.from({
+      length: _utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].getMonthCount(min, max)
+    });
+    const content = arr.map((_item, i) => this.renderMonth(_utils_date__WEBPACK_IMPORTED_MODULE_3__["default"].cloneDate(min, 'm', i)));
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", {
+      className: `${prefixCls}__body`
+    }, content);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className
+    } = this.props;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className)
+    }, this.renderWeekBar(), this.renderMonths());
+  }
+
+}
+
+_defineProperty(CalendarView, "defaultProps", {
+  prefixCls: 'za-calendar',
+  multiple: false,
+  min: new Date(),
+  dateRender: date => date.getDate(),
+  disabledDate: () => false
+});
+
+_defineProperty(CalendarView, "now", new Date());
+
+_defineProperty(CalendarView, "cache", {
+  now: `${CalendarView.now.getFullYear()}-${CalendarView.now.getMonth()}-${CalendarView.now.getDate()}`
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/carousel/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/carousel/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Carousel; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drag */ "./node_modules/zarm/es/drag/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class Carousel extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "carouselItems", void 0);
+
+    _defineProperty(this, "moveInterval", void 0);
+
+    _defineProperty(this, "translateX", 0);
+
+    _defineProperty(this, "translateY", 0);
+
+    _defineProperty(this, "onSlideTo", index => {
+      this.onMoveTo(index, this.props.animationDuration);
+    });
+
+    _defineProperty(this, "onJumpTo", index => {
+      this.onMoveTo(index, 0);
+    });
+
+    _defineProperty(this, "onMoveTo", (index, animationDuration) => {
+      const dom = this.carouselItems;
+      const {
+        loop,
+        children,
+        onChange
+      } = this.props;
+      const maxLength = children.length;
+      const previousIndex = this.state.activeIndex;
+      this.translateX = -dom.offsetWidth * (index + loop);
+      this.translateY = -dom.offsetHeight * (index + loop);
+      this.doTransition({
+        x: this.translateX,
+        y: this.translateY
+      }, animationDuration);
+
+      if (index > maxLength - 1) {
+        index = 0;
+      } else if (index < 0) {
+        index = maxLength - 1;
+      }
+
+      const activeIndexChanged = previousIndex !== index;
+      this.setState({
+        activeIndex: index,
+        activeIndexChanged
+      });
+
+      if (typeof onChange === 'function' && activeIndexChanged) {
+        onChange(index);
+      }
+    });
+
+    _defineProperty(this, "onDragStart", () => {
+      // 跳转到头尾
+      const {
+        activeIndex
+      } = this.state;
+      const maxLength = this.props.children.length;
+
+      if (activeIndex <= 0) {
+        this.onJumpTo(0);
+      } else if (activeIndex >= maxLength - 1) {
+        this.onJumpTo(maxLength - 1);
+      } // 暂停自动轮播
+
+
+      this.pauseAutoPlay();
+    });
+
+    _defineProperty(this, "onDragMove", (event, {
+      offsetX,
+      offsetY
+    }) => {
+      const distanceX = Math.abs(offsetX);
+      const distanceY = Math.abs(offsetY);
+
+      if (this.isDirectionX() && (distanceX < 5 || distanceX >= 5 && distanceY >= 1.73 * distanceX)) {
+        return false;
+      }
+
+      if (!this.isDirectionX() && (distanceY < 5 || distanceY >= 5 && distanceX >= 1.73 * distanceY)) {
+        return false;
+      } // 设置不循环的时候
+
+
+      if (!this.props.loop) {
+        // 在尾页时禁止拖动
+        if (this.isLastIndex()) {
+          if (this.isDirectionX() && offsetX < 0 || !this.isDirectionX() && offsetY < 0) {
+            return false;
+          }
+        } // 在首页时禁止拖动
+
+
+        if (this.isFirstIndex()) {
+          if (this.isDirectionX() && offsetX > 0 || !this.isDirectionX() && offsetY > 0) {
+            return false;
+          }
+        }
+      }
+
+      event.preventDefault();
+      this.doTransition({
+        x: this.translateX + offsetX,
+        y: this.translateY + offsetY
+      }, 0);
+      return true;
+    });
+
+    _defineProperty(this, "onDragEnd", (_event, {
+      offsetX,
+      offsetY,
+      startTime
+    }) => {
+      if (!offsetX && !offsetY) {
+        return;
+      }
+
+      const {
+        moveDistanceRatio,
+        moveTimeSpan
+      } = this.props;
+      let {
+        activeIndex
+      } = this.state;
+      const dom = this.carouselItems;
+      const timeSpan = new Date().getTime() - startTime.getTime();
+      const ratio = this.isDirectionX() ? Math.abs(offsetX / dom.offsetWidth) : Math.abs(offsetY / dom.offsetHeight); // 判断滑动临界点
+      // 1.滑动距离超过0，且滑动距离和父容器长度之比超过moveDistanceRatio
+      // 2.滑动释放时间差低于moveTimeSpan
+
+      if (ratio >= moveDistanceRatio || timeSpan <= moveTimeSpan) {
+        const action = this.isDirectionX() && offsetX > 0 || !this.isDirectionX() && offsetY > 0 ? 'prev' : 'next';
+        activeIndex = action === 'next' ? activeIndex + 1 : activeIndex - 1;
+      }
+
+      this.onSlideTo(activeIndex); // 恢复自动轮播
+
+      this.startAutoPlay();
+    });
+
+    _defineProperty(this, "startAutoPlay", () => {
+      const {
+        direction,
+        loop,
+        autoPlay,
+        autoPlayIntervalTime
+      } = this.props;
+      this.moveInterval = autoPlay && setInterval(() => {
+        let {
+          activeIndex
+        } = this.state;
+        const isLeftOrUpDirection = ['left', 'up'].indexOf(direction) > -1;
+        activeIndex = isLeftOrUpDirection ? activeIndex + 1 : activeIndex - 1; // 不循环暂停轮播
+
+        if (!loop && (isLeftOrUpDirection ? this.isLastIndex() : this.isFirstIndex())) {
+          this.pauseAutoPlay();
+          return;
+        }
+
+        this.onSlideTo(activeIndex);
+      }, autoPlayIntervalTime);
+    });
+
+    _defineProperty(this, "pauseAutoPlay", () => {
+      if (this.moveInterval) {
+        clearInterval(this.moveInterval);
+      }
+    });
+
+    _defineProperty(this, "parseItems", props => {
+      if (props.children.length === 0) {
+        return;
+      } // 增加头尾拼接节点
+
+
+      const items = [].concat(props.children);
+      const firstItem = items[0];
+      const lastItem = items[items.length - 1];
+
+      if (props.loop) {
+        items.push(firstItem);
+        items.unshift(lastItem);
+      } // 节点追加后重排key
+
+
+      const newItems = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(items, (element, index) => {
+        return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(element, {
+          key: index,
+          className: classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${props.prefixCls}__item`, {
+            [element.props.className]: !!element.props.className
+          })
+        });
+      });
+      this.setState({
+        items: newItems
+      });
+    });
+
+    _defineProperty(this, "resize", () => {
+      this.onJumpTo(this.state.activeIndex);
+    });
+
+    _defineProperty(this, "doTransition", (offset, animationDuration) => {
+      const dom = this.carouselItems;
+      let x = 0;
+      let y = 0;
+
+      if (this.isDirectionX()) {
+        ({
+          x
+        } = offset);
+      } else {
+        ({
+          y
+        } = offset);
+      }
+
+      dom.style.WebkitTransformDuration = `${animationDuration}ms`;
+      dom.style.transitionDuration = `${animationDuration}ms`;
+      dom.style.WebkitTransform = `translate3d(${x}px, ${y}px, 0)`;
+      dom.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+
+    _defineProperty(this, "transitionEnd", () => {
+      const {
+        onChangeEnd
+      } = this.props;
+      const {
+        activeIndex,
+        activeIndexChanged
+      } = this.state;
+      const dom = this.carouselItems;
+      this.translateX = -dom.offsetWidth * (activeIndex + this.props.loop);
+      this.translateY = -dom.offsetHeight * (activeIndex + this.props.loop);
+      this.doTransition({
+        x: this.translateX,
+        y: this.translateY
+      }, 0);
+
+      if (typeof onChangeEnd === 'function' && activeIndexChanged) {
+        onChangeEnd(activeIndex);
+      }
+    });
+
+    _defineProperty(this, "isLastIndex", () => {
+      return this.state.activeIndex >= this.props.children.length - 1;
+    });
+
+    _defineProperty(this, "isFirstIndex", () => {
+      return this.state.activeIndex <= 0;
+    });
+
+    _defineProperty(this, "isDirectionX", () => {
+      return ['left', 'right'].indexOf(this.props.direction) > -1;
+    });
+
+    _defineProperty(this, "renderPaginationItem", (_result, index) => {
+      const {
+        prefixCls
+      } = this.props;
+      const paginationItemCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__pagination__item`, {
+        [`${prefixCls}__pagination__item--active`]: index === this.state.activeIndex
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        key: `pagination-${index}`,
+        className: paginationItemCls,
+        onClick: () => this.onSlideTo(index)
+      });
+    });
+
+    _defineProperty(this, "renderPagination", () => {
+      const {
+        prefixCls,
+        showPagination,
+        children
+      } = this.props;
+      return showPagination && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: `${prefixCls}__pagination`
+      }, react__WEBPACK_IMPORTED_MODULE_0__["Children"].map(children, this.renderPaginationItem));
+    });
+
+    this.state = {
+      items: [],
+      activeIndex: _props.activeIndex,
+      activeIndexChanged: false
+    };
+  }
+
+  componentWillMount() {
+    this.parseItems(this.props);
+    this.startAutoPlay();
+  }
+
+  componentDidMount() {
+    const {
+      activeIndex
+    } = this.props; // 监听窗口变化
+
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(window, 'resize', this.resize); // 设置起始位置编号
+
+    this.onJumpTo(activeIndex);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('children' in nextProps) {
+      this.parseItems(nextProps);
+    }
+
+    if ('activeIndex' in nextProps) {
+      this.onJumpTo(nextProps.activeIndex);
+    }
+  }
+
+  componentWillUnmount() {
+    // 自动轮播结束
+    this.pauseAutoPlay(); // 移除监听窗口变化
+
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(window, 'resize', this.resize);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(this.carouselItems, 'webkitTransitionEnd', this.transitionEnd);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(this.carouselItems, 'transitionend', this.transitionEnd);
+  } // 滑动到指定编号
+
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      height,
+      style
+    } = this.props;
+    const {
+      items
+    } = this.state;
+    const itemsStyle = {};
+    const direction = this.isDirectionX() ? 'horizontal' : 'vertical';
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, `${prefixCls}--${direction}`);
+
+    if (!this.isDirectionX()) {
+      itemsStyle.height = height;
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      style: style
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_drag__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      onDragStart: this.onDragStart,
+      onDragMove: this.onDragMove,
+      onDragEnd: this.onDragEnd
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      ref: ele => {
+        this.carouselItems = ele;
+      },
+      className: `${prefixCls}__items`,
+      onTransitionEnd: this.transitionEnd,
+      style: itemsStyle
+    }, items)), this.renderPagination());
+  }
+
+}
+
+_defineProperty(Carousel, "defaultProps", {
+  prefixCls: 'za-carousel',
+  direction: 'left',
+  height: 160,
+  loop: false,
+  activeIndex: 0,
+  animationDuration: 300,
+  autoPlay: false,
+  autoPlayIntervalTime: 3000,
+  moveDistanceRatio: 0.5,
+  moveTimeSpan: 300,
+  showPagination: true
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/cell/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/cell/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Cell; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Cell extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      hasArrow,
+      icon,
+      title,
+      description,
+      help,
+      disabled,
+      onClick,
+      children
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "hasArrow", "icon", "title", "description", "help", "disabled", "onClick", "children"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--disabled`]: disabled,
+      [`${prefixCls}--link`]: !disabled && !!onClick,
+      [`${prefixCls}--arrow`]: hasArrow
+    });
+    const titleCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__title`, {
+      [`${prefixCls}__title--label`]: !!children
+    });
+    const iconRender = icon && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__icon`
+    }, icon);
+    const titleRender = title && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: titleCls
+    }, title);
+    const contentRender = children && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, children);
+    const arrowRender = hasArrow && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__arrow`
+    });
+    const helpRender = help && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__help`
+    }, help);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+      className: cls,
+      onClick: onClick,
+      onTouchStart: () => {}
+    }, others), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__inner`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, iconRender), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`
+    }, titleRender, contentRender), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__footer`
+    }, description), arrowRender), helpRender);
+  }
+
+}
+
+_defineProperty(Cell, "defaultProps", {
+  prefixCls: 'za-cell',
+  hasArrow: false,
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/checkbox/Checkbox.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/checkbox/Checkbox.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Checkbox; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _cell__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../cell */ "./node_modules/zarm/es/cell/index.js");
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../button */ "./node_modules/zarm/es/button/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const getChecked = (props, defaultChecked) => {
+  if ('checked' in props && props.checked) {
+    return props.checked;
+  }
+
+  if ('defaultChecked' in props && props.defaultChecked) {
+    return props.defaultChecked;
+  }
+
+  return defaultChecked;
+};
+
+class Checkbox extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onValueChange", () => {
+      const {
+        disabled,
+        onChange
+      } = this.props;
+      const {
+        checked
+      } = this.state;
+
+      if (disabled) {
+        return;
+      }
+
+      const newChecked = !checked;
+      this.setState({
+        checked: newChecked
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(newChecked);
+      }
+    });
+
+    this.state = {
+      checked: getChecked(props, false)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('checked' in nextProps) {
+      this.setState({
+        checked: !!nextProps.checked
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      type,
+      value,
+      block,
+      disabled,
+      id,
+      children
+    } = this.props;
+    const {
+      checked
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--checked`]: !!checked,
+      [`${prefixCls}--disabled`]: !!disabled
+    });
+    const inputRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      id: id,
+      type: "checkbox",
+      className: `${prefixCls}__input`,
+      value: value,
+      disabled: disabled,
+      checked: checked,
+      onChange: this.onValueChange
+    });
+    const renderCheckbox = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__wrapper`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__inner`
+    }), children && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__text`
+    }, children), inputRender));
+
+    if (type === 'cell') {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_cell__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        disabled: disabled,
+        onClick: this.onValueChange
+      }, renderCheckbox);
+    }
+
+    if (type === 'button') {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_button__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        className: cls,
+        theme: "primary",
+        shape: shape,
+        size: "xs",
+        block: block,
+        ghost: !checked,
+        disabled: disabled
+      }, inputRender, children);
+    }
+
+    return renderCheckbox;
+  }
+
+}
+
+_defineProperty(Checkbox, "Group", void 0);
+
+_defineProperty(Checkbox, "defaultProps", {
+  prefixCls: 'za-checkbox',
+  disabled: false,
+  block: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/checkbox/CheckboxGroup.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/checkbox/CheckboxGroup.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CheckboxGroup; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+const getChildChecked = children => {
+  const checkedValue = [];
+  react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, element => {
+    if (element.props && element.props.checked) {
+      checkedValue.push(element.props.value);
+    }
+  });
+  return checkedValue;
+};
+
+const getValue = (props, defaultValue) => {
+  if ('value' in props) {
+    return props.value;
+  }
+
+  if ('defaultValue' in props) {
+    return props.defaultValue;
+  }
+
+  if (getChildChecked(props.children).length > 0) {
+    return getChildChecked(props.children);
+  }
+
+  return defaultValue;
+};
+
+class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onChildChange", value => {
+      const {
+        value: valueState
+      } = this.state;
+      const values = valueState.slice();
+      const index = values.indexOf(value);
+
+      if (index < 0) {
+        values.push(value);
+      } else {
+        values.splice(index, 1);
+      }
+
+      this.setState({
+        value: values
+      });
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(values);
+      }
+    });
+
+    this.state = {
+      value: getValue(props, [])
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps || getChildChecked(nextProps.children).length > 0) {
+      this.setState({
+        value: nextProps.value || getChildChecked(nextProps.children)
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      type,
+      block,
+      disabled,
+      children
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    const items = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, (element, index) => {
+      return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(element, {
+        key: index,
+        type,
+        shape,
+        block: block || element.props.block,
+        disabled: disabled || element.props.disabled,
+        onChange: () => this.onChildChange(element.props.value),
+        checked: value.indexOf(element.props.value) > -1
+      });
+    });
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${type}`]: !!type,
+      [`${prefixCls}--${shape}`]: !!shape,
+      [`${prefixCls}--block`]: block,
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, items);
+  }
+
+}
+
+_defineProperty(CheckboxGroup, "defaultProps", {
+  prefixCls: 'za-checkbox-group',
+  shape: 'radius',
+  block: false,
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/checkbox/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/checkbox/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Checkbox */ "./node_modules/zarm/es/checkbox/Checkbox.js");
+/* harmony import */ var _CheckboxGroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CheckboxGroup */ "./node_modules/zarm/es/checkbox/CheckboxGroup.js");
+
+
+_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"].Group = _CheckboxGroup__WEBPACK_IMPORTED_MODULE_1__["default"];
+/* harmony default export */ __webpack_exports__["default"] = (_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/collapse/Collapse.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/collapse/Collapse.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Collapse; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_validate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/validate */ "./node_modules/zarm/es/utils/validate.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+class Collapse extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "onItemChange", key => {
+      if (!key) {
+        return;
+      }
+
+      const {
+        onChange,
+        multiple
+      } = this.props;
+      const {
+        activeKey
+      } = this.state;
+      const hasKey = activeKey.indexOf(key) > -1;
+      let newActiveKey = [];
+
+      if (multiple) {
+        if (hasKey) {
+          newActiveKey = activeKey.filter(i => i !== key);
+        } else {
+          newActiveKey = activeKey.slice(0);
+          newActiveKey.push(key);
+        }
+      } else {
+        newActiveKey = hasKey ? [] : [key];
+      }
+
+      this.setState({
+        activeKey: newActiveKey
+      });
+      onChange(key);
+    });
+
+    _defineProperty(this, "getActiveKey", props => {
+      const {
+        activeKey,
+        defaultActiveKey,
+        multiple
+      } = props;
+      const defaultKey = activeKey || activeKey === 0 ? activeKey : defaultActiveKey;
+
+      if (defaultKey || defaultKey === 0) {
+        if (Object(_utils_validate__WEBPACK_IMPORTED_MODULE_2__["isArray"])(defaultKey)) {
+          return !multiple ? [String(defaultKey[0])] : defaultKey.map(key => String(key));
+        }
+
+        return [String(defaultKey)];
+      }
+
+      return [];
+    });
+
+    _defineProperty(this, "isPropEqual", (cur, next) => {
+      if (Object(_utils_validate__WEBPACK_IMPORTED_MODULE_2__["isArray"])(next) && Object(_utils_validate__WEBPACK_IMPORTED_MODULE_2__["isArray"])(cur)) {
+        return next.length === cur.length && next.every((key, i) => key === cur[i]);
+      }
+
+      return cur === next;
+    });
+
+    _defineProperty(this, "renderItems", () => {
+      const {
+        animated
+      } = this.props;
+      const {
+        activeKey
+      } = this.state;
+      return react__WEBPACK_IMPORTED_MODULE_0__["Children"].map(this.props.children, ele => {
+        const {
+          disabled,
+          itemKey
+        } = ele.props;
+        const key = itemKey && String(itemKey);
+        const isActive = activeKey.indexOf(key) > -1;
+        return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(ele, {
+          animated,
+          isActive,
+          onItemChange: disabled ? () => {} : () => this.onItemChange(key)
+        });
+      });
+    });
+
+    this.state = {
+      activeKey: this.getActiveKey(_props)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      activeKey
+    } = this.props;
+
+    if (!this.isPropEqual(activeKey, nextProps.activeKey)) {
+      this.setState({
+        activeKey: this.getActiveKey(nextProps)
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      animated,
+      style
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--animated`]: animated
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      style: style
+    }, this.renderItems());
+  }
+
+}
+
+_defineProperty(Collapse, "defaultProps", {
+  prefixCls: 'za-collapse',
+  multiple: false,
+  animated: false,
+  onChange: () => {}
+});
+
+_defineProperty(Collapse, "Item", void 0);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/collapse/CollapseItem.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/zarm/es/collapse/CollapseItem.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CollapseItem; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class CollapseItem extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "content", void 0);
+
+    _defineProperty(this, "onClickItem", () => {
+      const {
+        itemKey,
+        onItemChange,
+        animated,
+        disabled
+      } = this.props;
+      const {
+        active
+      } = this.state;
+
+      if (disabled) {
+        return;
+      }
+
+      this.setState({
+        active: !active
+      });
+
+      if (animated) {
+        this.setStyle(active);
+      }
+
+      if (typeof onItemChange === 'function') {
+        onItemChange(itemKey);
+      }
+    });
+
+    _defineProperty(this, "setStyle", active => {
+      if (active) {
+        this.content.style.height = `${this.content.offsetHeight}px`;
+        setTimeout(() => {
+          this.content.style.height = '0px';
+        }, 0);
+      } else {
+        this.content.style.height = '0px';
+        setTimeout(() => {
+          this.content.style.height = `${this.getContentHeight(this.content)}px`;
+        }, 0);
+      }
+    });
+
+    _defineProperty(this, "getContentHeight", content => {
+      const children = [...content.children];
+      return children.reduce((res, next) => {
+        res += next.offsetHeight;
+        return res;
+      }, 0);
+    });
+
+    _defineProperty(this, "isActive", props => {
+      return props.isActive;
+    });
+
+    this.state = {
+      active: this.isActive(_props)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      active
+    } = this.state;
+    const {
+      animated
+    } = nextProps;
+
+    if (active !== this.isActive(nextProps)) {
+      this.setState({
+        active: !active
+      });
+
+      if (animated) {
+        this.setStyle(active);
+      }
+    }
+  }
+
+  render() {
+    const {
+      title,
+      children,
+      style
+    } = this.props;
+    const {
+      prefixCls,
+      className,
+      disabled
+    } = this.props;
+    const {
+      active
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--active`]: active,
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      style: style
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__title`,
+      onClick: this.onClickItem
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__arrow`
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`,
+      ref: content => {
+        this.content = content;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content__inner`
+    }, children)));
+  }
+
+}
+
+_defineProperty(CollapseItem, "defaultProps", {
+  prefixCls: 'za-collapse-item',
+  animated: false,
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/collapse/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/collapse/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Collapse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Collapse */ "./node_modules/zarm/es/collapse/Collapse.js");
+/* harmony import */ var _CollapseItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CollapseItem */ "./node_modules/zarm/es/collapse/CollapseItem.js");
+
+
+_Collapse__WEBPACK_IMPORTED_MODULE_0__["default"].Item = _CollapseItem__WEBPACK_IMPORTED_MODULE_1__["default"];
+/* harmony default export */ __webpack_exports__["default"] = (_Collapse__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/confirm/Confirm.js":
+/*!*************************************************!*\
+  !*** ./node_modules/zarm/es/confirm/Confirm.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Confirm; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modal */ "./node_modules/zarm/es/modal/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+ // import ReactDOM from 'react-dom';
+
+
+
+class Confirm extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  // static show = (props) => {
+  //   ReactDOM.render(<Confirm {...props} visible />, window.zarmConfirm);
+  // }
+  // static hide = () => {
+  //   ReactDOM.render(<Confirm visible={false} />, window.zarmConfirm);
+  // }
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      title,
+      message,
+      okText,
+      cancelText,
+      onOk,
+      onCancel,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "title", "message", "okText", "cancelText", "onOk", "onCancel", "locale"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
+      className: cls
+    }, others), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Header, {
+      title: title
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Body, null, message), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modal__WEBPACK_IMPORTED_MODULE_2__["default"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__button`,
+      onClick: onCancel
+    }, cancelText || locale.cancelText), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__button ${prefixCls}__button--ok`,
+      onClick: onOk
+    }, okText || locale.okText)));
+  }
+
+} // if (typeof window !== 'undefined') {
+//   if (!window.zarmConfirm) {
+//     window.zarmConfirm = document.createElement('div');
+//     document.body.appendChild(window.zarmConfirm);
+//   }
+//   ReactDOM.render(<Confirm visible={false} />, window.zarmConfirm);
+// }
+
+_defineProperty(Confirm, "defaultProps", {
+  prefixCls: 'za-confirm',
+  animationType: 'zoom',
+  message: ''
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/confirm/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/confirm/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Confirm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Confirm */ "./node_modules/zarm/es/confirm/Confirm.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Confirm__WEBPACK_IMPORTED_MODULE_0__["default"], 'Confirm'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/confirm/locale/en_US.js":
+/*!******************************************************!*\
+  !*** ./node_modules/zarm/es/confirm/locale/en_US.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  cancelText: 'Cancel',
+  okText: 'OK'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker-view/DatePickerView.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker-view/DatePickerView.js ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DatePickerView; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _picker_view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../picker-view */ "./node_modules/zarm/es/picker-view/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+const DATETIME = 'datetime';
+const DATE = 'date';
+const TIME = 'time';
+const MONTH = 'month';
+const YEAR = 'year';
+const ONE_DAY = 24 * 60 * 60 * 1000; // 获取当月天数
+
+const getDaysInMonth = date => {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}; // 补齐格式
+
+
+const pad = n => {
+  return n < 10 ? `0${n}` : n;
+};
+
+const cloneDate = date => {
+  return new Date(+date);
+};
+
+const setMonth = (date, month) => {
+  date.setDate(Math.min(date.getDate(), getDaysInMonth(new Date(date.getFullYear(), month))));
+  date.setMonth(month);
+};
+
+const getGregorianCalendar = (year, month, day, hour, minutes, seconds) => {
+  return new Date(year, month, day, hour, minutes, seconds);
+}; // 转成Date格式
+
+
+const isExtendDate = date => {
+  if (date instanceof Date) {
+    return date;
+  }
+
+  if (!date) {
+    return '';
+  }
+
+  return new Date(date.toString().replace(/-/g, '/'));
+};
+
+const getInitDate = props => {
+  const date = props.value && isExtendDate(props.value);
+  const defaultDate = props.defaultValue && isExtendDate(props.defaultValue);
+  const wheelDefault = props.wheelDefaultValue && isExtendDate(props.wheelDefaultValue);
+  return {
+    date: date || defaultDate,
+    wheelDefault
+  };
+};
+
+class DatePickerView extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onValueChange", (selected, index) => {
+      const {
+        onChange
+      } = this.props;
+      const newValue = this.getNewDate(selected, index);
+      this.setState({
+        date: newValue
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(newValue);
+      }
+    });
+
+    _defineProperty(this, "getNewDate", (values, index) => {
+      const {
+        mode,
+        valueMember
+      } = this.props;
+      const value = parseInt(values[index][valueMember], 10);
+      const newValue = cloneDate(this.getDate());
+
+      if (mode === YEAR || mode === MONTH || mode === DATE || mode === DATETIME) {
+        switch (index) {
+          case 0:
+            newValue.setFullYear(value);
+            break;
+
+          case 1:
+            setMonth(newValue, value);
+            break;
+
+          case 2:
+            newValue.setDate(value);
+            break;
+
+          case 3:
+            newValue.setHours(value);
+            break;
+
+          case 4:
+            newValue.setMinutes(value);
+            break;
+
+          default:
+            break;
+        }
+      } else {
+        switch (index) {
+          case 0:
+            newValue.setHours(value);
+            break;
+
+          case 1:
+            newValue.setMinutes(value);
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return this.clipDate(newValue);
+    });
+
+    _defineProperty(this, "getColsValue", () => {
+      const {
+        mode
+      } = this.props;
+      const date = this.getDate();
+      let dataSource = [];
+      let value = [];
+
+      if (mode === YEAR) {
+        dataSource = this.getDateData();
+        value = [date.getFullYear()];
+      }
+
+      if (mode === MONTH) {
+        dataSource = this.getDateData();
+        value = [date.getFullYear(), date.getMonth()];
+      }
+
+      if (mode === DATE || mode === DATETIME) {
+        dataSource = this.getDateData();
+        value = [date.getFullYear(), date.getMonth(), date.getDate()];
+      }
+
+      if (mode === DATETIME) {
+        dataSource = dataSource.concat(this.getTimeData());
+        value = value.concat([date.getHours(), date.getMinutes()]);
+      }
+
+      if (mode === TIME) {
+        dataSource = this.getTimeData();
+        value = [date.getHours(), date.getMinutes()];
+      }
+
+      return {
+        dataSource,
+        value
+      };
+    });
+
+    _defineProperty(this, "getDateData", () => {
+      const {
+        locale,
+        mode
+      } = this.props;
+      const date = this.getDate();
+      const yearCol = [];
+      const monthCol = [];
+      const dayCol = [];
+      const selectYear = date.getFullYear();
+      const selectMonth = date.getMonth();
+      const minYear = this.getMinYear();
+      const maxYear = this.getMaxYear();
+
+      for (let i = minYear; i <= maxYear; i += 1) {
+        yearCol.push({
+          label: i + locale.year,
+          value: i
+        });
+      }
+
+      if (mode === YEAR) {
+        return [yearCol];
+      }
+
+      let minMonth = 0;
+      let maxMonth = 11;
+
+      if (selectYear === minYear) {
+        minMonth = this.getMinMonth();
+      }
+
+      if (selectYear === maxYear) {
+        maxMonth = this.getMaxMonth();
+      }
+
+      for (let i = minMonth; i <= maxMonth; i += 1) {
+        monthCol.push({
+          label: i + 1 + locale.month,
+          value: i
+        });
+      }
+
+      if (mode === MONTH) {
+        return [yearCol, monthCol];
+      }
+
+      let minDay = 1;
+      let maxDay = getDaysInMonth(date);
+
+      if (selectYear === minYear && selectMonth === minMonth) {
+        minDay = this.getMinDay();
+      }
+
+      if (selectYear === maxYear && selectMonth === maxMonth) {
+        maxDay = this.getMaxDay();
+      }
+
+      for (let i = minDay; i <= maxDay; i += 1) {
+        dayCol.push({
+          label: i + locale.day,
+          value: i
+        });
+      }
+
+      if (mode === DATE) {
+        return [yearCol, monthCol, dayCol];
+      }
+
+      return [yearCol, monthCol, dayCol];
+    });
+
+    _defineProperty(this, "getTimeData", () => {
+      const {
+        locale,
+        mode,
+        minuteStep
+      } = this.props;
+      const date = this.getDate();
+      const hourCol = [];
+      const minuteCol = [];
+      let minHour = 0;
+      let maxHour = 23;
+      let minMinute = 0;
+      let maxMinute = 59;
+      const minDateHour = this.getMinHour();
+      const maxDateHour = this.getMaxHour();
+      const minDateMinute = this.getMinMinute();
+      const maxDateMinute = this.getMaxMinute();
+      const selectHour = date.getHours();
+
+      if (mode === DATETIME) {
+        const selectYear = date.getFullYear();
+        const selectMonth = date.getMonth();
+        const selectDay = date.getDate();
+        const minYear = this.getMinYear();
+        const maxYear = this.getMaxYear();
+        const minMonth = this.getMinMonth();
+        const maxMonth = this.getMaxMonth();
+        const minDay = this.getMinDay();
+        const maxDay = this.getMaxDay();
+
+        if (selectYear === minYear && selectMonth === minMonth && selectDay === minDay) {
+          minHour = minDateHour;
+
+          if (selectHour === minHour) {
+            minMinute = minDateMinute;
+          }
+        }
+
+        if (selectYear === maxYear && selectMonth === maxMonth && selectDay === maxDay) {
+          maxHour = maxDateHour;
+
+          if (selectHour === maxHour) {
+            maxMinute = maxDateMinute;
+          }
+        }
+      } else {
+        minHour = minDateHour;
+
+        if (selectHour === minHour) {
+          minMinute = minDateMinute;
+        }
+
+        maxHour = maxDateHour;
+
+        if (selectHour === maxHour) {
+          maxMinute = maxDateMinute;
+        }
+      }
+
+      for (let i = minHour; i <= maxHour; i += 1) {
+        hourCol.push({
+          label: locale.hour ? i + locale.hour : pad(i),
+          value: i
+        });
+      }
+
+      for (let i = minMinute; i <= maxMinute; i += minuteStep) {
+        minuteCol.push({
+          label: locale.minute ? i + locale.minute : pad(i),
+          value: i
+        });
+      }
+
+      return [hourCol, minuteCol];
+    });
+
+    _defineProperty(this, "getDefaultDate", () => {
+      const {
+        min,
+        mode,
+        minuteStep
+      } = this.props; // 存在最小值且毫秒数大于现在
+
+      if (min && this.getMinDate().getTime() >= Date.now()) {
+        return this.getMinDate();
+      }
+
+      if (minuteStep && minuteStep > 1 && (mode === DATETIME || mode === TIME)) {
+        return new Date(new Date().setMinutes(0));
+      }
+
+      return new Date();
+    });
+
+    _defineProperty(this, "getMinYear", () => {
+      return this.getMinDate().getFullYear();
+    });
+
+    _defineProperty(this, "getMaxYear", () => {
+      return this.getMaxDate().getFullYear();
+    });
+
+    _defineProperty(this, "getMinMonth", () => {
+      return this.getMinDate().getMonth();
+    });
+
+    _defineProperty(this, "getMaxMonth", () => {
+      return this.getMaxDate().getMonth();
+    });
+
+    _defineProperty(this, "getMinDay", () => {
+      return this.getMinDate().getDate();
+    });
+
+    _defineProperty(this, "getMaxDay", () => {
+      return this.getMaxDate().getDate();
+    });
+
+    _defineProperty(this, "getMinHour", () => {
+      return this.getMinDate().getHours();
+    });
+
+    _defineProperty(this, "getMaxHour", () => {
+      return this.getMaxDate().getHours();
+    });
+
+    _defineProperty(this, "getMinMinute", () => {
+      return this.getMinDate().getMinutes();
+    });
+
+    _defineProperty(this, "getMaxMinute", () => {
+      return this.getMaxDate().getMinutes();
+    });
+
+    _defineProperty(this, "getMinDate", () => {
+      const minDate = isExtendDate(this.props.min);
+      return minDate || this.getDefaultMinDate();
+    });
+
+    _defineProperty(this, "getMaxDate", () => {
+      const maxDate = isExtendDate(this.props.max);
+      return maxDate || this.getDefaultMaxDate();
+    });
+
+    _defineProperty(this, "getDefaultMinDate", () => {
+      return getGregorianCalendar(2000, 0, 1, 0, 0, 0);
+    });
+
+    _defineProperty(this, "getDefaultMaxDate", () => {
+      return getGregorianCalendar(2030, 11, 30, 23, 59, 59);
+    });
+
+    _defineProperty(this, "clipDate", date => {
+      const {
+        mode
+      } = this.props;
+      const minDate = this.getMinDate();
+      const maxDate = this.getMaxDate();
+
+      if (mode === DATETIME) {
+        if (date < minDate) {
+          return cloneDate(minDate);
+        }
+
+        if (date > maxDate) {
+          return cloneDate(maxDate);
+        }
+      } else if (mode === DATE || mode === MONTH || mode === YEAR) {
+        if (+date + ONE_DAY <= +minDate) {
+          return cloneDate(minDate);
+        }
+
+        if (date >= +maxDate + ONE_DAY) {
+          return cloneDate(maxDate);
+        }
+      } else {
+        const maxHour = maxDate.getHours();
+        const maxMinutes = maxDate.getMinutes();
+        const minHour = minDate.getHours();
+        const minMinutes = minDate.getMinutes();
+        const hour = date.getHours();
+        const minutes = date.getMinutes();
+
+        if (hour < minHour || hour === minHour && minutes < minMinutes) {
+          return cloneDate(minDate);
+        }
+
+        if (hour > maxHour || hour === maxHour && minutes > maxMinutes) {
+          return cloneDate(maxDate);
+        }
+      }
+
+      return date;
+    });
+
+    _defineProperty(this, "onTransition", isScrolling => {
+      if (typeof this.props.onTransition === 'function') {
+        this.props.onTransition(isScrolling);
+      }
+    });
+
+    const state = getInitDate(props);
+    this.state = state;
+
+    if (typeof props.onInit === 'function') {
+      props.onInit(this.getDate());
+    }
+  }
+
+  componentDidMount() {
+    const state = getInitDate(this.props);
+    this.setState(state);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const state = getInitDate(nextProps);
+    this.setState(state);
+    const {
+      onInit
+    } = this.props;
+
+    if (typeof onInit === 'function') {
+      onInit(this.getDate());
+    }
+  }
+
+  getDate() {
+    const {
+      date,
+      wheelDefault
+    } = this.state;
+    return this.clipDate(date || wheelDefault || this.getDefaultDate());
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      onInit
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "onInit"]);
+
+    const {
+      dataSource,
+      value
+    } = this.getColsValue();
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_picker_view__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({}, others, {
+      prefixCls: prefixCls,
+      dataSource: dataSource,
+      value: value,
+      onChange: this.onValueChange,
+      onTransition: isScrolling => {
+        this.onTransition(isScrolling);
+      }
+    }));
+  }
+
+}
+
+_defineProperty(DatePickerView, "defaultProps", {
+  visible: true,
+  mode: DATE,
+  disabled: false,
+  value: '',
+  defaultValue: '',
+  minuteStep: 1,
+  prefixCls: 'za-date-picker-view',
+  valueMember: 'value',
+  onClick: () => {},
+  onCancel: () => {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker-view/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker-view/index.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DatePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DatePickerView */ "./node_modules/zarm/es/date-picker-view/DatePickerView.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_DatePickerView__WEBPACK_IMPORTED_MODULE_0__["default"], 'DatePickerView'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker-view/locale/en_US.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker-view/locale/en_US.js ***!
+  \***************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  year: '',
+  month: '',
+  day: '',
+  hour: '',
+  minute: ''
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker-view/utils.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker-view/utils.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return formatFn; });
+function getFormatter(type) {
+  let formatter;
+
+  if (type === 'year') {
+    formatter = 'yyyy年';
+  } else if (type === 'month') {
+    formatter = 'yyyy-MM';
+  } else if (type === 'time') {
+    formatter = 'HH:mm';
+  } else if (type === 'datetime') {
+    formatter = 'yyyy-MM-dd HH:mm';
+  } else {
+    formatter = 'yyyy-MM-dd';
+  }
+
+  return formatter;
+}
+
+function formatDate(date, fmt) {
+  if (!date || !fmt) {
+    return date;
+  } // date = new Date(date.toString().replace(/-/g, '/'));
+
+
+  const o = {
+    'M+': date.getMonth() + 1,
+    // 月份
+    'd+': date.getDate(),
+    // 日
+    'H+': date.getHours(),
+    // 小时
+    'm+': date.getMinutes(),
+    // 分
+    's+': date.getSeconds(),
+    // 秒
+    'q+': Math.floor((date.getMonth() + 3) / 3),
+    // 季度
+    S: date.getMilliseconds() // 毫秒
+
+  };
+
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length));
+  }
+
+  Object.keys(o).forEach(k => {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : `00${o[k]}`.substr(`${o[k]}`.length));
+    }
+  });
+  return fmt;
+}
+
+function formatFn(instance, value) {
+  const {
+    format
+  } = instance.props;
+  const type = typeof format;
+
+  if (format && type === 'string') {
+    return formatDate(value, format) || '';
+  }
+
+  if (type === 'function') {
+    return format(value) || '';
+  }
+
+  return formatDate(value, getFormatter(instance.props.mode)) || ''; // return value.format(getFormatter(instance.props.mode));
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker/DatePicker.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker/DatePicker.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DatePicker; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../popup */ "./node_modules/zarm/es/popup/index.js");
+/* harmony import */ var _date_picker_view__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../date-picker-view */ "./node_modules/zarm/es/date-picker-view/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const isExtendDate = date => {
+  if (date instanceof Date) {
+    return date;
+  }
+
+  if (!date) {
+    return '';
+  }
+
+  return new Date(date.toString().replace(/-/g, '/'));
+};
+
+class DatePicker extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "initDate", void 0);
+
+    _defineProperty(this, "isScrolling", false);
+
+    _defineProperty(this, "onMaskClick", () => {
+      const {
+        onMaskClick
+      } = this.props;
+
+      if (typeof onMaskClick === 'function') {
+        onMaskClick();
+      }
+    });
+
+    _defineProperty(this, "onCancel", () => {
+      const {
+        onCancel
+      } = this.props;
+      this.setState({
+        value: this.initDate,
+        visible: false
+      });
+
+      if (typeof onCancel === 'function') {
+        onCancel();
+      }
+    });
+
+    _defineProperty(this, "onOk", () => {
+      if (this.isScrolling) {
+        return false;
+      }
+
+      const {
+        onOk
+      } = this.props;
+      const value = this.initDate;
+      this.setState({
+        value,
+        visible: false
+      });
+
+      if (typeof onOk === 'function') {
+        onOk(value);
+      }
+    });
+
+    _defineProperty(this, "onTransition", isScrolling => {
+      const {
+        onTransition
+      } = this.props;
+      this.isScrolling = isScrolling;
+
+      if (typeof onTransition === 'function') {
+        onTransition(isScrolling);
+      }
+    });
+
+    _defineProperty(this, "onInit", selected => {
+      const {
+        onInit
+      } = this.props;
+      this.initDate = selected;
+
+      if (typeof onInit === 'function') {
+        onInit(selected);
+      }
+    });
+
+    _defineProperty(this, "onValueChange", newValue => {
+      const {
+        onChange
+      } = this.props;
+      this.setState({
+        value: newValue
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(newValue);
+      }
+    });
+
+    _defineProperty(this, "close", key => {
+      this.setState({
+        [`${key}`]: false
+      });
+    });
+
+    const date = props.value && isExtendDate(props.value);
+    const defaultDate = props.defaultValue && isExtendDate(props.defaultValue);
+    this.state = {
+      visible: props.visible || false,
+      value: defaultDate || date
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.state;
+    const date = nextProps.value && isExtendDate(nextProps.value);
+    const defaultDate = nextProps.defaultValue && isExtendDate(nextProps.defaultValue);
+    this.setState({
+      value: date || defaultDate
+    });
+
+    if ('visible' in nextProps && nextProps.visible !== visible) {
+      this.setState({
+        visible: nextProps.visible
+      });
+    }
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      title,
+      okText,
+      cancelText,
+      children,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "title", "okText", "cancelText", "children", "locale"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    const {
+      visible,
+      value
+    } = this.state;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      visible: visible,
+      onMaskClick: () => this.onMaskClick()
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      onClick: e => {
+        e.stopPropagation();
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__cancel`,
+      onClick: this.onCancel
+    }, cancelText || locale.cancelText), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__title`
+    }, title || locale.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__submit`,
+      onClick: this.onOk
+    }, okText || locale.okText)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_date_picker_view__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, others, {
+      className: className,
+      value: value,
+      onInit: this.onInit,
+      onChange: this.onValueChange,
+      onTransition: isScrolling => {
+        this.onTransition(isScrolling);
+      }
+    }))));
+  }
+
+}
+
+_defineProperty(DatePicker, "defaultProps", {
+  mode: 'date',
+  value: '',
+  defaultValue: '',
+  minuteStep: 1,
+  prefixCls: 'za-date-picker',
+  valueMember: 'value',
+  onCancel: () => {},
+  onInit: () => {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker/index.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DatePicker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DatePicker */ "./node_modules/zarm/es/date-picker/DatePicker.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_DatePicker__WEBPACK_IMPORTED_MODULE_0__["default"], 'DatePicker'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-picker/locale/en_US.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/zarm/es/date-picker/locale/en_US.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  cancelText: 'Cancel',
+  okText: 'OK',
+  title: 'please select'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-select/DateSelect.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/date-select/DateSelect.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DateSelect; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _date_picker_view_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../date-picker-view/utils */ "./node_modules/zarm/es/date-picker-view/utils.js");
+/* harmony import */ var _date_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../date-picker */ "./node_modules/zarm/es/date-picker/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const isExtendDate = date => {
+  if (date instanceof Date) {
+    return date;
+  }
+
+  if (!date) {
+    return '';
+  }
+
+  return new Date(date.toString().replace(/-/g, '/'));
+};
+
+class DateSelect extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "handleClick", () => {
+      const {
+        disabled
+      } = this.props;
+
+      if (disabled) {
+        return false;
+      }
+
+      this.setState({
+        visible: true
+      });
+    });
+
+    _defineProperty(this, "onChange", selected => {
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(selected);
+      }
+    });
+
+    _defineProperty(this, "onOk", selected => {
+      const {
+        onOk
+      } = this.props;
+      this.setState({
+        visible: false
+      });
+
+      if (typeof onOk === 'function') {
+        onOk(selected);
+      }
+    });
+
+    _defineProperty(this, "onCancel", () => {
+      const {
+        onCancel
+      } = this.props;
+      this.setState({
+        visible: false
+      });
+
+      if (typeof onCancel === 'function') {
+        onCancel();
+      }
+    });
+
+    const date = props.value && isExtendDate(props.value);
+    const defaultDate = props.defaultValue && isExtendDate(props.defaultValue);
+    this.state = {
+      value: defaultDate || date,
+      visible: props.visible || false
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.state;
+    const date = nextProps.value && isExtendDate(nextProps.value);
+    const defaultDate = nextProps.defaultValue && isExtendDate(nextProps.defaultValue);
+    this.setState({
+      value: date || defaultDate
+    });
+
+    if ('visible' in nextProps && nextProps.visible !== visible) {
+      this.setState({
+        visible: nextProps.visible
+      });
+    }
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      placeholder,
+      disabled,
+      onChange,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "placeholder", "disabled", "onChange", "locale"]);
+
+    const {
+      value,
+      visible
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--placeholder`]: !value,
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      onClick: this.handleClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "hidden",
+      value: Object(_date_picker_view_utils__WEBPACK_IMPORTED_MODULE_2__["default"])(this, value)
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__input`
+    }, value ? Object(_date_picker_view_utils__WEBPACK_IMPORTED_MODULE_2__["default"])(this, value) : placeholder || locale.placeholder), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_date_picker__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, others, {
+      visible: visible,
+      value: value,
+      onOk: this.onOk,
+      onCancel: this.onCancel
+    })));
+  }
+
+}
+
+_defineProperty(DateSelect, "defaultProps", {
+  mode: 'date',
+  disabled: false,
+  minuteStep: 1,
+  prefixCls: 'za-date-select',
+  valueMember: 'value',
+  onCancel: () => {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-select/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/date-select/index.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DateSelect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DateSelect */ "./node_modules/zarm/es/date-select/DateSelect.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_DateSelect__WEBPACK_IMPORTED_MODULE_0__["default"], 'DateSelect'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/date-select/locale/en_US.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/zarm/es/date-select/locale/en_US.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  placeholder: 'please select'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/drag/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/drag/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Drag; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
+    }
+
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+class Drag extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "dragState", Object.create(null));
+
+    _defineProperty(this, "onTouchStart", event => {
+      this.dragState.startTime = new Date();
+
+      if (!event.touches) {
+        this.dragState.startX = event.clientX;
+        this.dragState.startY = event.clientY;
+      } else {
+        const touch = event.touches[0];
+        this.dragState.startX = touch.pageX;
+        this.dragState.startY = touch.pageY;
+      }
+
+      const {
+        onDragStart
+      } = this.props;
+
+      if (typeof onDragStart === 'function') {
+        onDragStart(event, this.dragState);
+      }
+    });
+
+    _defineProperty(this, "onTouchMove", event => {
+      let currentX;
+      let currentY;
+
+      if (!event.touches) {
+        currentX = event.clientX;
+        currentY = event.clientY;
+      } else {
+        const touch = event.touches[0];
+        currentX = touch.pageX;
+        currentY = touch.pageY;
+      }
+
+      const offsetX = currentX - this.dragState.startX;
+      const offsetY = currentY - this.dragState.startY;
+
+      const state = _objectSpread({}, this.dragState, {
+        offsetX,
+        offsetY,
+        currentX,
+        currentY
+      });
+
+      const {
+        onDragMove
+      } = this.props;
+
+      if (typeof onDragMove === 'function' && !onDragMove(event, state)) {
+        return;
+      }
+
+      this.dragState = state;
+    });
+
+    _defineProperty(this, "onTouchEnd", event => {
+      const {
+        onDragEnd
+      } = this.props;
+
+      if (typeof onDragEnd === 'function') {
+        onDragEnd(event, this.dragState);
+      }
+
+      this.dragState = Object.create(null);
+    });
+  }
+
+  render() {
+    const {
+      children
+    } = this.props;
+    return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(children, {
+      onTouchStart: this.onTouchStart,
+      onTouchMove: this.onTouchMove,
+      onTouchEnd: this.onTouchEnd,
+      onMouseDown: this.onTouchStart,
+      onMouseMove: this.onTouchMove,
+      onMouseUp: this.onTouchEnd
+    });
+  }
+
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/index.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FilePicker; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_handleFileInfo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/handleFileInfo */ "./node_modules/zarm/es/file-picker/utils/handleFileInfo.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+/**
+ * 设置选择前的方法，获取选择文件的相关信息，需要时可以对图片进行压缩、改变图片尺寸。
+ *
+ * multiple: 默认为 false，设置为 true 之后一次可以选择多张，onChange 事件调用之后返回一个数组，
+ *           不设置或者设置为 false，onChange 事件调用之后返回一个对象。
+ * disabled: 传递之后不可以点击上传，整个选择组件会设置为半透明状态，透明度为 0.5。
+ * quality: 没有默认值，不设置不会进行压缩。
+ * accept: 设置选择的文件类型，默认为所有类型，只有文件类型为图片（image/*）的时候会有本地预览图。
+ * onChange: () => { file, fileType, fileSize, fileName, thumbnail }。
+ * onBeforeSelect: () => boolean，返回 false 的时候阻止后续的选择事件。
+ */
+
+
+
+
+
+class FilePicker extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "file", void 0);
+
+    _defineProperty(this, "handleDefaultInput", e => {
+      // 防止选择同一张图片两次造成 onChange 事件不触发
+      e.target.value = null;
+      const {
+        onBeforeSelect,
+        disabled
+      } = this.props;
+
+      if (typeof onBeforeSelect !== 'function') {
+        return;
+      } // 阻止 input onChange 默认事件
+
+
+      if (onBeforeSelect() === false || disabled) {
+        e.preventDefault();
+      }
+    });
+
+    _defineProperty(this, "handleClick", e => {
+      this.file.click(e);
+    });
+
+    _defineProperty(this, "handleChange", e => {
+      const {
+        onChange,
+        quality,
+        multiple
+      } = this.props;
+      const files = [].slice.call(e.target.files);
+      const fileList = [];
+
+      const getFileInfo = data => {
+        if (multiple) {
+          fileList.push(data);
+
+          if (files.length === fileList.length && typeof onChange === 'function') {
+            onChange(fileList);
+          }
+        } else {
+          typeof onChange === 'function' && onChange(data);
+        }
+      };
+
+      if (files) {
+        files.map(file => Object(_utils_handleFileInfo__WEBPACK_IMPORTED_MODULE_2__["default"])({
+          file,
+          quality
+        }, getFileInfo));
+      }
+    });
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      multiple,
+      accept,
+      capture,
+      disabled,
+      children
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--disabled`]: disabled
+    });
+    const content = Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(children, {
+      onClick: this.handleClick,
+      className: 'needsclick' // 修复加载fastClick库后引起的合成事件问题
+
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      className: `${prefixCls}__input`,
+      type: "file",
+      ref: ele => {
+        this.file = ele;
+      },
+      accept: accept,
+      multiple: multiple,
+      capture: capture,
+      onClick: this.handleDefaultInput,
+      onChange: this.handleChange
+    }), content);
+  }
+
+}
+
+_defineProperty(FilePicker, "defaultProps", {
+  prefixCls: 'za-file-picker',
+  disabled: false,
+  multiple: false,
+  onBeforeSelect: () => true
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/utils/changeImageSize.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/utils/changeImageSize.js ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return changeImageSize; });
+/**
+ * change img size or quality todo change size
+ *
+ * @param img
+ * @param quality
+ * @param fileType
+ * @returns {string}
+ */
+function changeImageSize(img, quality, fileType) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    return img;
+  } // const MAX_WIDTH = 800;
+  // const MAX_HEIGHT = 600;
+
+
+  const {
+    width,
+    height
+  } = img; // if (width > height) {
+  //   if (width > MAX_WIDTH) {
+  //     height *= MAX_WIDTH / width;
+  //     width = MAX_WIDTH;
+  //   }
+  // } else if (height > MAX_HEIGHT) {
+  //   width *= MAX_HEIGHT / height;
+  //   height = MAX_HEIGHT;
+  // }
+
+  canvas.width = width;
+  canvas.height = height; // 在canvas绘制前填充白色背景
+
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, width, height); // 是否有效的压缩比例（0 - 1）
+
+  if (!(quality > 0 && quality <= 1)) {
+    console.error('请输入有效的压缩比例, 没有将默认使用 0.92');
+  }
+
+  return canvas.toDataURL(fileType, quality);
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/utils/createThumbnail.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/utils/createThumbnail.js ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return createThumbnail; });
+/* harmony import */ var _changeImageSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./changeImageSize */ "./node_modules/zarm/es/file-picker/utils/changeImageSize.js");
+
+/**
+ * generate preview image
+ * modify image quality
+ *
+ * @param file
+ * @param quality
+ * @param fileType
+ * @param maxWidth
+ * @param maxHeight
+ * @param callback
+ */
+
+function createThumbnail({
+  file,
+  quality,
+  fileType,
+  maxWidth,
+  maxHeight
+}, callback) {
+  const img = document.createElement('img');
+  window.URL = window.URL || window.webkitURL;
+  img.src = window.URL.createObjectURL(file);
+
+  img.onload = () => {
+    let imgUrl;
+
+    if (quality || maxWidth || maxHeight) {
+      imgUrl = Object(_changeImageSize__WEBPACK_IMPORTED_MODULE_0__["default"])(img, quality, fileType);
+    } else {
+      imgUrl = img.src;
+    }
+
+    callback(imgUrl);
+  };
+} // FileReader
+// export default function createThumbnail({ file, quality, fileType, maxWidth, maxHeight }, callback) {
+//   const img = document.createElement('img');
+//   const reader = new FileReader();
+//   reader.onload = (e) => {
+//     img.src = e.target.result;
+//     callback(img.src);
+//   };
+//   reader.readAsDataURL(file);
+// }
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/utils/getFileDetail.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/utils/getFileDetail.js ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getFileDetail; });
+/* harmony import */ var _isImage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isImage */ "./node_modules/zarm/es/file-picker/utils/isImage.js");
+
+/**
+ * get file detail
+ *
+ * @param file
+ * @returns {{fileName, fileSize, fileType: string, isPic: boolean}}
+ */
+
+function getFileDetail(file) {
+  const fileSize = file.size;
+  const fileName = file.name;
+  const fileType = file.type || fileName.substr(fileName.lastIndexOf('.') + 1);
+  const isPic = Object(_isImage__WEBPACK_IMPORTED_MODULE_0__["default"])(fileType);
+  return {
+    fileName,
+    fileSize,
+    fileType,
+    isPic
+  };
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/utils/handleFileInfo.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/utils/handleFileInfo.js ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return handleFileInfo; });
+/* harmony import */ var _getFileDetail__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getFileDetail */ "./node_modules/zarm/es/file-picker/utils/getFileDetail.js");
+/* harmony import */ var _createThumbnail__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createThumbnail */ "./node_modules/zarm/es/file-picker/utils/createThumbnail.js");
+
+
+/**
+ * handle single file and get file info
+ *
+ * @param file
+ * @param quality
+ * @param callback
+ */
+
+function handleFileInfo({
+  file,
+  quality
+}, callback) {
+  const {
+    fileSize,
+    fileType,
+    isPic,
+    fileName
+  } = Object(_getFileDetail__WEBPACK_IMPORTED_MODULE_0__["default"])(file);
+  const fileDetail = {
+    file,
+    fileType,
+    fileSize,
+    fileName,
+    thumbnail: ''
+  };
+
+  const callbackFunc = url => {
+    fileDetail.thumbnail = url;
+    callback(fileDetail);
+  };
+
+  if (isPic) {
+    Object(_createThumbnail__WEBPACK_IMPORTED_MODULE_1__["default"])({
+      file,
+      quality,
+      fileType
+    }, callbackFunc);
+  } else {
+    callback(fileDetail);
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/file-picker/utils/isImage.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/zarm/es/file-picker/utils/isImage.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return isImage; });
+/**
+ * detect the file is image
+ *
+ * @param fileType
+ * @returns {boolean}
+ */
+function isImage(fileType) {
+  const imageType = /image.*/;
+  return !!fileType.match(imageType);
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/icon/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/icon/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Icon; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Icon extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      type,
+      theme,
+      className
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "type", "theme", "className"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${type}`]: !!type,
+      [`${prefixCls}--${theme}`]: !!theme
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", _extends({}, others, {
+      className: cls
+    }));
+  }
+
+}
+
+_defineProperty(Icon, "defaultProps", {
+  prefixCls: 'za-icon'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/zarm/es/index.js ***!
+  \***************************************/
+/*! exports provided: Collapse, ActionSheet, Alert, Badge, Button, Calendar, Cell, Checkbox, Confirm, DatePicker, DatePickerView, DateSelect, Drag, FilePicker, Icon, Input, Keyboard, KeyboardPicker, Loading, Mask, Message, Modal, NoticeBar, Panel, Picker, PickerView, Popup, Progress, Pull, Radio, SearchBar, Select, Slider, ActivityIndicator, Stepper, Carousel, SwipeAction, Switch, Tabs, Toast, Tooltip, Wheel, NavBar, Marquee, LocaleProvider */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _collapse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./collapse */ "./node_modules/zarm/es/collapse/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Collapse", function() { return _collapse__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+/* harmony import */ var _action_sheet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action-sheet */ "./node_modules/zarm/es/action-sheet/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActionSheet", function() { return _action_sheet__WEBPACK_IMPORTED_MODULE_1__["default"]; });
+
+/* harmony import */ var _alert__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./alert */ "./node_modules/zarm/es/alert/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Alert", function() { return _alert__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+/* harmony import */ var _badge__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./badge */ "./node_modules/zarm/es/badge/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Badge", function() { return _badge__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./button */ "./node_modules/zarm/es/button/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return _button__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+
+/* harmony import */ var _calendar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./calendar */ "./node_modules/zarm/es/calendar/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Calendar", function() { return _calendar__WEBPACK_IMPORTED_MODULE_5__["default"]; });
+
+/* harmony import */ var _cell__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./cell */ "./node_modules/zarm/es/cell/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Cell", function() { return _cell__WEBPACK_IMPORTED_MODULE_6__["default"]; });
+
+/* harmony import */ var _checkbox__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./checkbox */ "./node_modules/zarm/es/checkbox/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _checkbox__WEBPACK_IMPORTED_MODULE_7__["default"]; });
+
+/* harmony import */ var _confirm__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./confirm */ "./node_modules/zarm/es/confirm/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Confirm", function() { return _confirm__WEBPACK_IMPORTED_MODULE_8__["default"]; });
+
+/* harmony import */ var _date_picker__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./date-picker */ "./node_modules/zarm/es/date-picker/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DatePicker", function() { return _date_picker__WEBPACK_IMPORTED_MODULE_9__["default"]; });
+
+/* harmony import */ var _date_picker_view__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./date-picker-view */ "./node_modules/zarm/es/date-picker-view/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DatePickerView", function() { return _date_picker_view__WEBPACK_IMPORTED_MODULE_10__["default"]; });
+
+/* harmony import */ var _date_select__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./date-select */ "./node_modules/zarm/es/date-select/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DateSelect", function() { return _date_select__WEBPACK_IMPORTED_MODULE_11__["default"]; });
+
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./drag */ "./node_modules/zarm/es/drag/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Drag", function() { return _drag__WEBPACK_IMPORTED_MODULE_12__["default"]; });
+
+/* harmony import */ var _file_picker__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./file-picker */ "./node_modules/zarm/es/file-picker/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FilePicker", function() { return _file_picker__WEBPACK_IMPORTED_MODULE_13__["default"]; });
+
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./icon */ "./node_modules/zarm/es/icon/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Icon", function() { return _icon__WEBPACK_IMPORTED_MODULE_14__["default"]; });
+
+/* harmony import */ var _input__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./input */ "./node_modules/zarm/es/input/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Input", function() { return _input__WEBPACK_IMPORTED_MODULE_15__["default"]; });
+
+/* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./keyboard */ "./node_modules/zarm/es/keyboard/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Keyboard", function() { return _keyboard__WEBPACK_IMPORTED_MODULE_16__["default"]; });
+
+/* harmony import */ var _keyboard_picker__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./keyboard-picker */ "./node_modules/zarm/es/keyboard-picker/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyboardPicker", function() { return _keyboard_picker__WEBPACK_IMPORTED_MODULE_17__["default"]; });
+
+/* harmony import */ var _loading__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./loading */ "./node_modules/zarm/es/loading/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Loading", function() { return _loading__WEBPACK_IMPORTED_MODULE_18__["default"]; });
+
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./mask */ "./node_modules/zarm/es/mask/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Mask", function() { return _mask__WEBPACK_IMPORTED_MODULE_19__["default"]; });
+
+/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./message */ "./node_modules/zarm/es/message/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Message", function() { return _message__WEBPACK_IMPORTED_MODULE_20__["default"]; });
+
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./modal */ "./node_modules/zarm/es/modal/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return _modal__WEBPACK_IMPORTED_MODULE_21__["default"]; });
+
+/* harmony import */ var _notice_bar__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./notice-bar */ "./node_modules/zarm/es/notice-bar/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NoticeBar", function() { return _notice_bar__WEBPACK_IMPORTED_MODULE_22__["default"]; });
+
+/* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./panel */ "./node_modules/zarm/es/panel/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Panel", function() { return _panel__WEBPACK_IMPORTED_MODULE_23__["default"]; });
+
+/* harmony import */ var _picker__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./picker */ "./node_modules/zarm/es/picker/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Picker", function() { return _picker__WEBPACK_IMPORTED_MODULE_24__["default"]; });
+
+/* harmony import */ var _picker_view__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./picker-view */ "./node_modules/zarm/es/picker-view/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PickerView", function() { return _picker_view__WEBPACK_IMPORTED_MODULE_25__["default"]; });
+
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./popup */ "./node_modules/zarm/es/popup/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return _popup__WEBPACK_IMPORTED_MODULE_26__["default"]; });
+
+/* harmony import */ var _progress__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./progress */ "./node_modules/zarm/es/progress/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Progress", function() { return _progress__WEBPACK_IMPORTED_MODULE_27__["default"]; });
+
+/* harmony import */ var _pull__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./pull */ "./node_modules/zarm/es/pull/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Pull", function() { return _pull__WEBPACK_IMPORTED_MODULE_28__["default"]; });
+
+/* harmony import */ var _radio__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./radio */ "./node_modules/zarm/es/radio/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Radio", function() { return _radio__WEBPACK_IMPORTED_MODULE_29__["default"]; });
+
+/* harmony import */ var _search_bar__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./search-bar */ "./node_modules/zarm/es/search-bar/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SearchBar", function() { return _search_bar__WEBPACK_IMPORTED_MODULE_30__["default"]; });
+
+/* harmony import */ var _select__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./select */ "./node_modules/zarm/es/select/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Select", function() { return _select__WEBPACK_IMPORTED_MODULE_31__["default"]; });
+
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./slider */ "./node_modules/zarm/es/slider/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _slider__WEBPACK_IMPORTED_MODULE_32__["default"]; });
+
+/* harmony import */ var _activity_indicator__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./activity-indicator */ "./node_modules/zarm/es/activity-indicator/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActivityIndicator", function() { return _activity_indicator__WEBPACK_IMPORTED_MODULE_33__["default"]; });
+
+/* harmony import */ var _stepper__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./stepper */ "./node_modules/zarm/es/stepper/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Stepper", function() { return _stepper__WEBPACK_IMPORTED_MODULE_34__["default"]; });
+
+/* harmony import */ var _carousel__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./carousel */ "./node_modules/zarm/es/carousel/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Carousel", function() { return _carousel__WEBPACK_IMPORTED_MODULE_35__["default"]; });
+
+/* harmony import */ var _swipe_action__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./swipe-action */ "./node_modules/zarm/es/swipe-action/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SwipeAction", function() { return _swipe_action__WEBPACK_IMPORTED_MODULE_36__["default"]; });
+
+/* harmony import */ var _switch__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./switch */ "./node_modules/zarm/es/switch/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Switch", function() { return _switch__WEBPACK_IMPORTED_MODULE_37__["default"]; });
+
+/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./tabs */ "./node_modules/zarm/es/tabs/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Tabs", function() { return _tabs__WEBPACK_IMPORTED_MODULE_38__["default"]; });
+
+/* harmony import */ var _toast__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./toast */ "./node_modules/zarm/es/toast/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Toast", function() { return _toast__WEBPACK_IMPORTED_MODULE_39__["default"]; });
+
+/* harmony import */ var _tooltip__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./tooltip */ "./node_modules/zarm/es/tooltip/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Tooltip", function() { return _tooltip__WEBPACK_IMPORTED_MODULE_40__["default"]; });
+
+/* harmony import */ var _wheel__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./wheel */ "./node_modules/zarm/es/wheel/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Wheel", function() { return _wheel__WEBPACK_IMPORTED_MODULE_41__["default"]; });
+
+/* harmony import */ var _nav_bar__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./nav-bar */ "./node_modules/zarm/es/nav-bar/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return _nav_bar__WEBPACK_IMPORTED_MODULE_42__["default"]; });
+
+/* harmony import */ var _marquee__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./marquee */ "./node_modules/zarm/es/marquee/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Marquee", function() { return _marquee__WEBPACK_IMPORTED_MODULE_43__["default"]; });
+
+/* harmony import */ var _locale_provider__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./locale-provider */ "./node_modules/zarm/es/locale-provider/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LocaleProvider", function() { return _locale_provider__WEBPACK_IMPORTED_MODULE_44__["default"]; });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/input/Input.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/input/Input.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Input; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _InputNumber__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InputNumber */ "./node_modules/zarm/es/input/InputNumber.js");
+/* harmony import */ var _InputBase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./InputBase */ "./node_modules/zarm/es/input/InputBase.js");
+/* harmony import */ var _InputTextarea__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./InputTextarea */ "./node_modules/zarm/es/input/InputTextarea.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class Input extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "input", void 0);
+  }
+
+  focus() {
+    if (this.input) {
+      this.input.focus();
+    }
+  }
+
+  blur() {
+    if (this.input) {
+      this.input.blur();
+    }
+  }
+
+  render() {
+    const {
+      type
+    } = this.props;
+
+    if (type === 'text' && 'rows' in this.props) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_InputTextarea__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({
+        type: type,
+        ref: ele => {
+          this.input = ele;
+        }
+      }, this.props));
+    }
+
+    switch (type) {
+      case 'idcard':
+      case 'price':
+      case 'number':
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_InputNumber__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
+          type: type,
+          ref: ele => {
+            this.input = ele;
+          }
+        }, this.props));
+
+      case 'text':
+      case 'search':
+      case 'password':
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_InputBase__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
+          type: type,
+          ref: ele => {
+            this.input = ele;
+          }
+        }, this.props));
+
+      default:
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_InputBase__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
+          type: type,
+          ref: ele => {
+            this.input = ele;
+          }
+        }, this.props));
+    }
+  }
+
+}
+
+_defineProperty(Input, "defaultProps", {
+  type: 'text'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/input/InputBase.js":
+/*!*************************************************!*\
+  !*** ./node_modules/zarm/es/input/InputBase.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return InputBase; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+class InputBase extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "input", void 0);
+
+    _defineProperty(this, "onBlurTimeout", void 0);
+
+    _defineProperty(this, "blurFromClear", void 0);
+
+    _defineProperty(this, "onFocus", e => {
+      this.setState({
+        focused: true
+      });
+      const {
+        onFocus
+      } = this.props;
+
+      if (typeof onFocus === 'function') {
+        onFocus(e.target.value);
+      }
+    });
+
+    _defineProperty(this, "onBlur", e => {
+      const {
+        onBlur
+      } = this.props;
+      const {
+        value
+      } = e.target;
+      this.onBlurTimeout = setTimeout(() => {
+        if (!this.blurFromClear && document.activeElement !== this.input) {
+          this.setState({
+            focused: false
+          });
+
+          if (typeof onBlur === 'function') {
+            onBlur(value);
+          }
+        }
+
+        this.blurFromClear = false;
+      }, 0);
+    });
+
+    _defineProperty(this, "onChange", e => {
+      const {
+        onChange
+      } = this.props;
+
+      if (!this.state.focused) {
+        this.setState({
+          focused: true
+        });
+      }
+
+      this.setState({
+        value: e.target.value
+      });
+
+      if (onChange) {
+        onChange(e.target.value);
+      }
+    });
+
+    _defineProperty(this, "onClear", () => {
+      const {
+        isOnComposition
+      } = this.state;
+      const {
+        onChange,
+        onClear
+      } = this.props;
+      this.blurFromClear = true;
+      this.setState({
+        value: ''
+      });
+      !isOnComposition && this.focus();
+      typeof onChange === 'function' && onChange('');
+      typeof onClear === 'function' && onClear('');
+    });
+
+    _defineProperty(this, "handleComposition", e => {
+      const {
+        onCompositionStart,
+        onCompositionUpdate,
+        onCompositionEnd,
+        onChange
+      } = this.props;
+
+      if (e.type === 'compositionstart') {
+        this.setState({
+          isOnComposition: true
+        });
+
+        if (typeof onCompositionStart === 'function') {
+          onCompositionStart(e);
+        }
+      }
+
+      if (e.type === 'compositionupdate') {
+        if (typeof onCompositionUpdate === 'function') {
+          onCompositionUpdate(e);
+        }
+      }
+
+      if (e.type === 'compositionend') {
+        const {
+          value
+        } = e.target; // composition is end
+
+        this.setState({
+          isOnComposition: false
+        });
+
+        if (typeof onCompositionEnd === 'function') {
+          onCompositionEnd(e);
+        }
+
+        if (typeof onChange === 'function') {
+          onChange(value);
+        }
+      }
+    });
+
+    _defineProperty(this, "focus", () => {
+      this.input.focus();
+    });
+
+    _defineProperty(this, "blur", () => {
+      this.input.blur();
+    });
+
+    this.state = {
+      focused: false,
+      value: props.defaultValue || props.value || ''
+    };
+  }
+
+  componentDidMount() {
+    const {
+      autoFocus
+    } = this.props;
+    const {
+      focused
+    } = this.state;
+
+    if (autoFocus || focused) {
+      this.input.focus();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      value
+    } = this.state;
+
+    if ('value' in nextProps && value !== nextProps.value) {
+      this.setState({
+        value: nextProps.value
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.onBlurTimeout) {
+      clearTimeout(this.onBlurTimeout);
+      this.onBlurTimeout = null;
+    }
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      disabled,
+      clearable,
+      readOnly,
+      type,
+      onClear
+    } = _this$props,
+          rest = _objectWithoutProperties(_this$props, ["prefixCls", "className", "disabled", "clearable", "readOnly", "type", "onClear"]);
+
+    const {
+      value
+    } = this.state;
+    const {
+      focused
+    } = this.state;
+    const showClearIcon = clearable && 'value' in this.props && 'onChange' in this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--disabled`]: disabled,
+      [`${prefixCls}--focus`]: focused,
+      [`${prefixCls}--clearable`]: showClearIcon,
+      [`${prefixCls}--readonly`]: readOnly
+    });
+    const valueProps = {};
+
+    if ('value' in this.props) {
+      valueProps.value = value;
+    }
+
+    const renderInput = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", _extends({}, rest, valueProps, {
+      autoComplete: "off",
+      ref: ele => {
+        this.input = ele;
+      },
+      type: type,
+      disabled: disabled,
+      onChange: this.onChange,
+      onBlur: this.onBlur,
+      onFocus: this.onFocus,
+      onCompositionStart: e => {
+        this.handleComposition(e);
+      },
+      onCompositionUpdate: e => {
+        this.handleComposition(e);
+      },
+      onCompositionEnd: e => {
+        this.handleComposition(e);
+      }
+    }));
+    const renderText = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, value); // clear icon
+
+    const clearCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__clear`, {
+      [`${prefixCls}__clear--show`]: focused && value && value.length > 0
+    });
+    const renderClearIcon = showClearIcon && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "wrong-round-fill",
+      className: clearCls,
+      onClick: () => {
+        this.onClear();
+      }
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, readOnly ? renderText : renderInput, renderClearIcon);
+  }
+
+}
+
+_defineProperty(InputBase, "defaultProps", {
+  prefixCls: 'za-input',
+  disabled: false,
+  type: 'text',
+  clearable: true,
+  readOnly: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/input/InputNumber.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/input/InputNumber.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return InputNumber; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _keyboard_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../keyboard-picker */ "./node_modules/zarm/es/keyboard-picker/index.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+class InputNumber extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "content", void 0);
+
+    _defineProperty(this, "picker", void 0);
+
+    _defineProperty(this, "container", void 0);
+
+    _defineProperty(this, "onMaskClick", e => {
+      const clsRegExp = new RegExp(`(^|\\s)${this.picker.props.prefixCls}(\\s|$)`, 'g');
+
+      if (!this.state.visible || this.state.focused) {
+        return;
+      }
+
+      const cNode = (node => {
+        while (node.parentNode && node.parentNode !== document.body) {
+          if (node === this.picker || node === this.container || clsRegExp.test(node.className)) {
+            return node;
+          }
+
+          node = node.parentNode;
+        }
+      })(e.target);
+
+      if (!cNode) {
+        this.onBlur();
+      }
+    });
+
+    _defineProperty(this, "onKeyClick", key => {
+      if (['close', 'ok'].indexOf(key) > -1) {
+        this.onBlur();
+        return;
+      }
+
+      const {
+        value
+      } = this.state;
+      const newValue = key === 'delete' ? value.slice(0, value.length - 1) : value + key;
+
+      if (newValue !== value) {
+        const {
+          onChange
+        } = this.props;
+        this.setState({
+          value: newValue
+        }, () => this.scrollToEnd());
+
+        if (typeof onChange === 'function') {
+          onChange(newValue);
+        }
+      }
+    });
+
+    _defineProperty(this, "onFocus", () => {
+      const {
+        disabled,
+        readOnly,
+        onFocus
+      } = this.props;
+
+      if (disabled || readOnly || this.state.visible) {
+        return;
+      } // 定位到文本尾部
+
+
+      this.setState({
+        visible: true
+      }, this.scrollToEnd);
+
+      if (typeof onFocus === 'function') {
+        onFocus(this.state.value);
+      }
+    });
+
+    _defineProperty(this, "onBlur", () => {
+      if (!this.state.visible) {
+        return;
+      } // 定位到文本首部
+
+
+      this.setState({
+        visible: false
+      }, this.scrollToStart);
+      const {
+        onBlur
+      } = this.props;
+
+      if (typeof onBlur === 'function') {
+        onBlur(this.state.value);
+      }
+    });
+
+    _defineProperty(this, "onClear", () => {
+      const {
+        onChange,
+        onClear
+      } = this.props;
+      this.setState({
+        value: ''
+      }, this.onFocus);
+
+      if (onClear) {
+        onClear('');
+      }
+
+      if (typeof onChange === 'function') {
+        onChange('');
+      }
+    });
+
+    _defineProperty(this, "scrollToStart", () => {
+      this.content.scrollLeft = 0;
+    });
+
+    _defineProperty(this, "scrollToEnd", () => {
+      this.content.scrollLeft = this.content.scrollWidth;
+    });
+
+    _defineProperty(this, "focus", () => {
+      this.onFocus();
+    });
+
+    _defineProperty(this, "blur", () => {
+      this.onBlur();
+    });
+
+    this.state = {
+      value: props.value || props.defaultValue || '',
+      visible: props.focused || false,
+      focused: false
+    };
+  }
+
+  componentDidMount() {
+    const {
+      autoFocus,
+      focused
+    } = this.props;
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(document.body, 'touchstart', this.onMaskClick);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(document.body, 'click', this.onMaskClick);
+
+    if (autoFocus || focused) {
+      this.onFocus();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      value,
+      visible
+    } = this.state; // if ('focused' in nextProps || 'autoFocus' in nextProps) {
+    //   if (nextProps.focused || nextProps.autoFocus) {
+    //     this.onFocus();
+    //   } else {
+    //     this.onBlur();
+    //   }
+    // }
+
+    if ('value' in nextProps && value !== nextProps.value) {
+      this.setState({
+        value: nextProps.value,
+        visible
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(document.body, 'touchstart', this.onMaskClick);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(document.body, 'click', this.onMaskClick);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      type,
+      clearable,
+      disabled,
+      readOnly,
+      placeholder
+    } = this.props;
+    const {
+      visible,
+      value
+    } = this.state;
+    const showClearIcon = clearable && 'value' in this.props && 'onChange' in this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, `${prefixCls}--number`, className, {
+      [`${prefixCls}--disabled`]: disabled,
+      [`${prefixCls}--focus`]: visible,
+      [`${prefixCls}--clearable`]: showClearIcon,
+      [`${prefixCls}--readonly`]: readOnly
+    });
+    const renderInput = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, !value && !readOnly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__placeholder`
+    }, placeholder), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__virtual-input`,
+      ref: ele => {
+        this.content = ele;
+      }
+    }, value), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "hidden",
+      value: value,
+      disabled: disabled
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_keyboard_picker__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      ref: ele => {
+        this.picker = ele;
+      },
+      visible: visible,
+      type: type,
+      onKeyClick: this.onKeyClick
+    }));
+    const renderText = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, value); // clear icon
+
+    const clearCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__clear`, {
+      [`${prefixCls}__clear--show`]: visible && value && value.length > 0
+    });
+    const renderClearIcon = showClearIcon && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      type: "wrong-round-fill",
+      className: clearCls,
+      onClick: e => {
+        e.stopPropagation();
+        this.onClear();
+      }
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      onClick: this.onFocus,
+      ref: ele => {
+        this.container = ele;
+      }
+    }, readOnly ? renderText : renderInput, renderClearIcon);
+  }
+
+}
+
+_defineProperty(InputNumber, "defaultProps", {
+  prefixCls: 'za-input',
+  disabled: false,
+  clearable: true
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/input/InputTextarea.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/zarm/es/input/InputTextarea.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return InputTextarea; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+const regexAstralSymbols = /[\uD800-\uDBFF][\uDC00-\uDFFF]|\n/g;
+
+const countSymbols = (text = '') => {
+  return text.replace(regexAstralSymbols, '_').length;
+};
+
+class InputTextarea extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "input", void 0);
+
+    _defineProperty(this, "onFocus", e => {
+      if (!('focused' in this.props)) {
+        this.setState({
+          focused: true
+        });
+      }
+
+      const {
+        onFocus
+      } = this.props;
+
+      if (typeof onFocus === 'function') {
+        onFocus(e.target.value);
+      }
+    });
+
+    _defineProperty(this, "onBlur", e => {
+      if (!('focused' in this.props)) {
+        this.setState({
+          focused: false
+        });
+      }
+
+      const {
+        onBlur
+      } = this.props;
+
+      if (typeof onBlur === 'function') {
+        onBlur(e.target.value);
+      }
+    });
+
+    _defineProperty(this, "handleComposition", e => {
+      const {
+        onCompositionStart,
+        onCompositionUpdate,
+        onCompositionEnd,
+        onChange
+      } = this.props;
+
+      if (e.type === 'compositionstart') {
+        // this.setState({
+        //   isOnComposition: true,
+        // });
+        if (typeof onCompositionStart === 'function') {
+          onCompositionStart(e);
+        }
+      }
+
+      if (e.type === 'compositionupdate') {
+        if (typeof onCompositionUpdate === 'function') {
+          onCompositionUpdate(e);
+        }
+      }
+
+      if (e.type === 'compositionend') {
+        // composition is end
+        // this.setState({
+        //   isOnComposition: false,
+        // });
+        const {
+          value
+        } = e.target;
+
+        if (typeof onCompositionEnd === 'function') {
+          onCompositionEnd(e);
+        }
+
+        if (typeof onChange === 'function') {
+          onChange(value);
+        }
+      }
+    });
+
+    _defineProperty(this, "onChange", e => {
+      const {
+        onChange
+      } = this.props;
+      const {
+        value
+      } = e.target;
+      const length = countSymbols(value);
+      this.setState({
+        length
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
+    });
+
+    this.state = {
+      length: (props.value || props.defaultValue || '').length,
+      focused: props.focused || false
+    };
+  }
+
+  componentDidMount() {
+    const {
+      autoFocus
+    } = this.props;
+    const {
+      focused
+    } = this.state;
+
+    if (autoFocus || focused) {
+      this.input.focus();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('focused' in nextProps) {
+      this.setState({
+        focused: nextProps.focused
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    const {
+      autoHeight
+    } = this.props;
+    const {
+      focused
+    } = this.state;
+
+    if (autoHeight) {
+      this.input.style.height = `${this.input.scrollHeight}px`;
+    }
+
+    if (focused) {
+      this.input.focus();
+    }
+  }
+
+  focus() {
+    this.input.focus();
+  }
+
+  blur() {
+    this.input.blur();
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      maxLength,
+      disabled,
+      readOnly,
+      autoHeight,
+      showLength,
+      focused,
+      type
+    } = _this$props,
+          rest = _objectWithoutProperties(_this$props, ["prefixCls", "className", "maxLength", "disabled", "readOnly", "autoHeight", "showLength", "focused", "type"]);
+
+    const {
+      length
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, `${prefixCls}--textarea`, className, {
+      [`${prefixCls}--disabled`]: disabled,
+      [`${prefixCls}--readonly`]: readOnly
+    });
+    const textLengthRender = showLength && maxLength && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__length`
+    }, `${length}/${maxLength}`);
+    const renderInput = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", _extends({}, rest, {
+      ref: ele => {
+        this.input = ele;
+      },
+      maxLength: maxLength,
+      disabled: disabled,
+      onChange: this.onChange,
+      onFocus: this.onFocus,
+      onBlur: this.onBlur,
+      onCompositionStart: e => {
+        this.handleComposition(e);
+      },
+      onCompositionUpdate: e => {
+        this.handleComposition(e);
+      },
+      onCompositionEnd: e => {
+        this.handleComposition(e);
+      }
+    }));
+    const renderText = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, rest.value || rest.defaultValue);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, !readOnly ? renderInput : renderText, textLengthRender);
+  }
+
+}
+
+_defineProperty(InputTextarea, "defaultProps", {
+  prefixCls: 'za-input',
+  disabled: false,
+  autoHeight: false,
+  showLength: false,
+  focused: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/input/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/input/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Input */ "./node_modules/zarm/es/input/Input.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (_Input__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/keyboard-picker/index.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/zarm/es/keyboard-picker/index.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return KeyboardPicker; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../keyboard */ "./node_modules/zarm/es/keyboard/index.js");
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../popup */ "./node_modules/zarm/es/popup/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class KeyboardPicker extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  static getDerivedStateFromProps(nextProps) {
+    if ('visible' in nextProps) {
+      return {
+        visible: nextProps.visible
+      };
+    }
+
+    return null;
+  } // static show = (props) => {
+  //   ReactDOM.render(<KeyboardPicker {...props} visible />, window.zarmKeyboardPicker);
+  // }
+  // static hide = () => {
+  //   ReactDOM.render(<KeyboardPicker visible={false} />, window.zarmKeyboardPicker);
+  // }
+
+
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onKeyClick", key => {
+      if (['ok', 'close'].indexOf(key) > -1) {
+        this.setState({
+          visible: false
+        });
+      }
+
+      const {
+        onKeyClick
+      } = this.props;
+
+      if (typeof onKeyClick === 'function') {
+        onKeyClick(key);
+      }
+    });
+
+    this.state = {
+      visible: props.visible
+    };
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className"]);
+
+    const {
+      visible
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      visible: visible,
+      mask: false
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_keyboard__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({}, others, {
+      onKeyClick: this.onKeyClick
+    }))));
+  }
+
+} // if (typeof window !== 'undefined') {
+//   if (!window.zarmKeyboardPicker) {
+//     window.zarmKeyboardPicker = document.createElement('div');
+//     document.body.appendChild(window.zarmKeyboardPicker);
+//   }
+//   ReactDOM.render(<KeyboardPicker visible={false} />, window.zarmKeyboardPicker);
+// }
+
+_defineProperty(KeyboardPicker, "defaultProps", {
+  prefixCls: 'za-keyboard-picker',
+  visible: false,
+  type: 'number'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/keyboard/Keyboard.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/keyboard/Keyboard.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Keyboard; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+const NUMBER_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'close'];
+const PRICE_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'close'];
+const IDCARD_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'x', '0', 'close'];
+class Keyboard extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "longPressTimer", void 0);
+
+    _defineProperty(this, "onLongPressIn", key => {
+      this.onKeyClick(key);
+      this.longPressTimer = setTimeout(() => {
+        this.longPressTimer = setInterval(() => {
+          this.onKeyClick(key);
+        }, 100);
+      }, 800);
+    });
+
+    _defineProperty(this, "onLongPressOut", e => {
+      e.preventDefault();
+      clearInterval(this.longPressTimer);
+    });
+
+    _defineProperty(this, "onKeyClick", key => {
+      if (key.length === 0) {
+        return;
+      }
+
+      const {
+        onKeyClick
+      } = this.props;
+
+      if (typeof onKeyClick === 'function') {
+        onKeyClick(key);
+      }
+    });
+
+    _defineProperty(this, "getKeys", () => {
+      const {
+        type
+      } = this.props;
+
+      switch (type) {
+        case 'price':
+          return PRICE_KEYS;
+
+        case 'idcard':
+          return IDCARD_KEYS;
+
+        default:
+          return NUMBER_KEYS;
+      }
+    });
+
+    _defineProperty(this, "renderKey", (text, index) => {
+      const {
+        prefixCls
+      } = this.props;
+      const keyCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__item`, {
+        [`${prefixCls}__item--disabled`]: text.length === 0
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: keyCls,
+        key: +index,
+        onClick: () => this.onKeyClick(text)
+      }, text === 'close' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        type: "keyboard"
+      }) : text);
+    });
+  }
+
+  render() {
+    const {
+      prefixCls,
+      locale
+    } = this.props;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: prefixCls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__keys`
+    }, this.getKeys().map(this.renderKey)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__handle`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__item`,
+      onTouchStart: () => this.onLongPressIn('delete'),
+      onTouchEnd: this.onLongPressOut,
+      onTouchCancel: this.onLongPressOut,
+      onMouseDown: () => this.onLongPressIn('delete'),
+      onMouseUp: this.onLongPressOut
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "deletekey"
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__item ${prefixCls}__item--ok`,
+      onClick: () => this.onKeyClick('ok')
+    }, locale.okText)));
+  }
+
+}
+
+_defineProperty(Keyboard, "defaultProps", {
+  prefixCls: 'za-keyboard',
+  type: 'number'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/keyboard/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/keyboard/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Keyboard */ "./node_modules/zarm/es/keyboard/Keyboard.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Keyboard__WEBPACK_IMPORTED_MODULE_0__["default"], 'Keyboard'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/keyboard/locale/en_US.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/zarm/es/keyboard/locale/en_US.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  okText: 'OK'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/loading/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/loading/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Loading; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _toast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../toast */ "./node_modules/zarm/es/toast/index.js");
+/* harmony import */ var _activity_indicator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../activity-indicator */ "./node_modules/zarm/es/activity-indicator/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class Loading extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls"]);
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_toast__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
+      prefixCls: prefixCls
+    }, others, {
+      stayTime: 0
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      size: "lg",
+      className: "rotate360"
+    }));
+  }
+
+}
+
+_defineProperty(Loading, "defaultProps", {
+  prefixCls: 'za-loading'
+});
+
+_defineProperty(Loading, "zarmLoading", void 0);
+
+_defineProperty(Loading, "show", props => {
+  if (!Loading.zarmLoading) {
+    Loading.zarmLoading = document.createElement('div');
+  }
+
+  document.body.appendChild(Loading.zarmLoading);
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Loading, _extends({}, props, {
+    visible: true
+  })), Loading.zarmLoading);
+});
+
+_defineProperty(Loading, "hide", () => {
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Loading, {
+    visible: false,
+    onClose: Loading.unmountNode
+  }), Loading.zarmLoading);
+});
+
+_defineProperty(Loading, "unmountNode", () => {
+  const {
+    zarmLoading
+  } = Loading;
+
+  if (zarmLoading) {
+    react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.unmountComponentAtNode(zarmLoading);
+
+    if (zarmLoading.parentNode) {
+      zarmLoading.parentNode.removeChild(Loading.zarmLoading);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/locale-provider/LocaleProvider.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/zarm/es/locale-provider/LocaleProvider.js ***!
+  \****************************************************************/
+/*! exports provided: LocaleContext, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LocaleContext", function() { return LocaleContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return LocaleProvider; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var create_react_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! create-react-context */ "./node_modules/create-react-context/lib/index.js");
+/* harmony import */ var create_react_context__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(create_react_context__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+const LocaleContext = create_react_context__WEBPACK_IMPORTED_MODULE_1___default()({});
+class LocaleProvider extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const {
+      children,
+      locale
+    } = this.props;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LocaleContext.Provider, {
+      value: locale
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.only(children));
+  }
+
+}
+
+_defineProperty(LocaleProvider, "defaultProps", {
+  locale: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/zarm/es/locale-provider/LocaleReceiver.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! hoist-non-react-statics */ "./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js");
+/* harmony import */ var hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _LocaleProvider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LocaleProvider */ "./node_modules/zarm/es/locale-provider/LocaleProvider.js");
+/* harmony import */ var _locale_en_US__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./locale/en_US */ "./node_modules/zarm/es/locale-provider/locale/en_US.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+
+
+
+ // eslint-disable-next-line
+
+const LocaleReceiverWrapper = (WrappedComponent, name) => {
+  const LocaleReceiver = props => {
+    const component = locale => {
+      const globalLocale = locale.locale ? locale : _locale_en_US__WEBPACK_IMPORTED_MODULE_3__["default"];
+      const componentLocale = globalLocale[name || WrappedComponent.name];
+      const localeCode = globalLocale.locale;
+
+      const {
+        forwardedRef
+      } = props,
+            rest = _objectWithoutProperties(props, ["forwardedRef"]);
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(WrappedComponent, _extends({}, rest, {
+        ref: forwardedRef,
+        locale: componentLocale,
+        localeCode: localeCode
+      }));
+    };
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_LocaleProvider__WEBPACK_IMPORTED_MODULE_2__["LocaleContext"].Consumer, null, component);
+  };
+
+  const forwardRefFactory = (props, ref) => {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LocaleReceiver, _extends({}, props, {
+      forwardedRef: ref
+    }));
+  };
+
+  const LocaleReceiverWithRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(forwardRefFactory);
+  hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_1___default()(LocaleReceiverWithRef, WrappedComponent);
+  return LocaleReceiverWithRef;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (LocaleReceiverWrapper);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/locale-provider/index.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/zarm/es/locale-provider/index.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _LocaleProvider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LocaleProvider */ "./node_modules/zarm/es/locale-provider/LocaleProvider.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (_LocaleProvider__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/locale-provider/locale/en_US.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/zarm/es/locale-provider/locale/en_US.js ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _action_sheet_locale_en_US__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../action-sheet/locale/en_US */ "./node_modules/zarm/es/action-sheet/locale/en_US.js");
+/* harmony import */ var _alert_locale_en_US__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../alert/locale/en_US */ "./node_modules/zarm/es/alert/locale/en_US.js");
+/* harmony import */ var _confirm_locale_en_US__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../confirm/locale/en_US */ "./node_modules/zarm/es/confirm/locale/en_US.js");
+/* harmony import */ var _date_picker_locale_en_US__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../date-picker/locale/en_US */ "./node_modules/zarm/es/date-picker/locale/en_US.js");
+/* harmony import */ var _date_picker_view_locale_en_US__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../date-picker-view/locale/en_US */ "./node_modules/zarm/es/date-picker-view/locale/en_US.js");
+/* harmony import */ var _date_select_locale_en_US__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../date-select/locale/en_US */ "./node_modules/zarm/es/date-select/locale/en_US.js");
+/* harmony import */ var _picker_locale_en_US__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../picker/locale/en_US */ "./node_modules/zarm/es/picker/locale/en_US.js");
+/* harmony import */ var _pull_locale_en_US__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../pull/locale/en_US */ "./node_modules/zarm/es/pull/locale/en_US.js");
+/* harmony import */ var _search_bar_locale_en_US__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../search-bar/locale/en_US */ "./node_modules/zarm/es/search-bar/locale/en_US.js");
+/* harmony import */ var _select_locale_en_US__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../select/locale/en_US */ "./node_modules/zarm/es/select/locale/en_US.js");
+/* harmony import */ var _keyboard_locale_en_US__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../keyboard/locale/en_US */ "./node_modules/zarm/es/keyboard/locale/en_US.js");
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  locale: 'en',
+  ActionSheet: _action_sheet_locale_en_US__WEBPACK_IMPORTED_MODULE_0__["default"],
+  Alert: _alert_locale_en_US__WEBPACK_IMPORTED_MODULE_1__["default"],
+  Confirm: _confirm_locale_en_US__WEBPACK_IMPORTED_MODULE_2__["default"],
+  DatePicker: _date_picker_locale_en_US__WEBPACK_IMPORTED_MODULE_3__["default"],
+  DatePickerView: _date_picker_view_locale_en_US__WEBPACK_IMPORTED_MODULE_4__["default"],
+  DateSelect: _date_select_locale_en_US__WEBPACK_IMPORTED_MODULE_5__["default"],
+  Picker: _picker_locale_en_US__WEBPACK_IMPORTED_MODULE_6__["default"],
+  Pull: _pull_locale_en_US__WEBPACK_IMPORTED_MODULE_7__["default"],
+  SearchBar: _search_bar_locale_en_US__WEBPACK_IMPORTED_MODULE_8__["default"],
+  Select: _select_locale_en_US__WEBPACK_IMPORTED_MODULE_9__["default"],
+  Keyboard: _keyboard_locale_en_US__WEBPACK_IMPORTED_MODULE_10__["default"]
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/marquee/constants.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/marquee/constants.js ***!
+  \***************************************************/
+/*! exports provided: DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_DOWN */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DIRECTION_LEFT", function() { return DIRECTION_LEFT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DIRECTION_RIGHT", function() { return DIRECTION_RIGHT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DIRECTION_UP", function() { return DIRECTION_UP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DIRECTION_DOWN", function() { return DIRECTION_DOWN; });
+const DIRECTION_LEFT = 'left';
+const DIRECTION_RIGHT = 'right';
+const DIRECTION_UP = 'up';
+const DIRECTION_DOWN = 'down';
+
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/marquee/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/marquee/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Marquee; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./node_modules/zarm/es/marquee/constants.js");
+/* harmony import */ var _modifiers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modifiers */ "./node_modules/zarm/es/marquee/modifiers.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class Marquee extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "container", void 0);
+
+    _defineProperty(this, "scrollItem", void 0);
+
+    _defineProperty(this, "conatinerBoundingRect", void 0);
+
+    _defineProperty(this, "boundingRect", void 0);
+
+    _defineProperty(this, "setScrollItemPostion", () => {
+      const {
+        direction
+      } = this.props;
+      const dir = direction.toLowerCase();
+      const container = this.conatinerBoundingRect;
+      const rect = this.boundingRect;
+      let modifier = '';
+
+      switch (dir) {
+        case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_LEFT"]:
+          modifier = `translate3d(${container.width}px, 0, 0)`;
+          break;
+
+        case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_RIGHT"]:
+          modifier = `translate3d(-${rect.width}px, 0, 0)`;
+          break;
+
+        case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_UP"]:
+          modifier = `translate3d(0, ${this.props.height}px, 0)`;
+          break;
+
+        case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_DOWN"]:
+          modifier = `translate3d(0, -${rect.height}px ,0)`;
+          break;
+
+        default:
+          modifier = `translate3d(${rect.width}px, 0, 0)`;
+      }
+
+      this.container.style.transform = modifier;
+      this.container.style.WebkitTransform = modifier;
+    });
+
+    _defineProperty(this, "genKey", () => {
+      const {
+        prefixCls,
+        direction
+      } = this.props;
+      const id = Date.now();
+      return `${prefixCls}-${direction}-${id}`.toUpperCase();
+    });
+
+    _defineProperty(this, "animationLoop", () => {
+      const key = this.genKey();
+      const {
+        direction,
+        loop,
+        animationDuration,
+        animationDelay
+      } = this.props;
+      const modifier = Object(_modifiers__WEBPACK_IMPORTED_MODULE_3__["getKeyFrameModifier"])(direction);
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = modifier(this.getDistance(), key);
+      document.getElementsByTagName('head')[0].appendChild(style);
+      const animation = Object(_modifiers__WEBPACK_IMPORTED_MODULE_3__["animationModifier"])(animationDuration, loop, animationDelay, key);
+      this.container.style.animation = animation;
+      this.container.style.WebkitAnimation = animation;
+    });
+  }
+
+  componentDidMount() {
+    this.conatinerBoundingRect = this.container.getBoundingClientRect();
+    this.boundingRect = this.scrollItem.getBoundingClientRect();
+    this.setScrollItemPostion();
+    this.animationLoop();
+  }
+
+  getDistance() {
+    const {
+      direction
+    } = this.props;
+    const dir = direction.toLowerCase();
+
+    switch (dir) {
+      case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_LEFT"]:
+        return this.boundingRect.width;
+
+      case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_RIGHT"]:
+        return this.conatinerBoundingRect.width;
+
+      case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_UP"]:
+        return this.boundingRect.height;
+
+      case _constants__WEBPACK_IMPORTED_MODULE_2__["DIRECTION_DOWN"]:
+        return this.boundingRect.height;
+
+      default:
+        return this.boundingRect.width;
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      height,
+      width,
+      children
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    let {
+      style
+    } = this.props;
+    style = style || {};
+    style.width = width;
+    style.height = height;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      style: style
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`,
+      ref: el => {
+        this.container = el;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`,
+      ref: el => {
+        this.scrollItem = el;
+      }
+    }, children)));
+  }
+
+}
+
+_defineProperty(Marquee, "defaultProps", {
+  prefixCls: 'za-marquee',
+  direction: 'left',
+  loop: true,
+  animationDuration: 6000,
+  animationDelay: 0
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/marquee/modifiers.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/marquee/modifiers.js ***!
+  \***************************************************/
+/*! exports provided: getKeyFrameModifier, animationModifier */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getKeyFrameModifier", function() { return getKeyFrameModifier; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animationModifier", function() { return animationModifier; });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./node_modules/zarm/es/marquee/constants.js");
+
+
+const getHorizontal = (distance, key) => {
+  return `@-webkit-keyframes ${key} {
+      100% {
+        -webkit-transform: translate3d(${distance}px, 0, 0);
+        transform: translate3d(${distance}px, 0, 0);
+      }
+    }
+    @keyframes ${key} {
+      100% {
+        -webkit-transform: translate3d(${distance}px, 0, 0);
+        transform: translate3d(${distance}px, 0, 0);
+      }
+    }`;
+};
+
+const getVertical = (distance, key) => {
+  return `@-webkit-keyframes ${key} {
+    100% {
+      -webkit-transform: translate3d(0, ${distance}px, 0);
+      transform: translate3d(0, ${distance}px, 0);
+    }
+  }
+  @keyframes ${key} {
+    100% {
+      -webkit-transform: translate3d(0, ${distance}px, 0);
+      transform: translate3d(0, ${distance}px, 0);
+    }
+  }`;
+};
+
+const directionLeft = (distance, key) => {
+  return getHorizontal(-distance, key);
+};
+
+const directionRight = (distance, key) => {
+  return getHorizontal(distance, key);
+};
+
+const directionUp = (distance, key) => {
+  return getVertical(-distance, key);
+};
+
+const directionDown = (distance, key) => {
+  return getVertical(distance, key);
+};
+
+const animationModifier = (duration, loop, delay, key) => {
+  const infinite = loop ? 'infinite' : 1;
+  return `${duration}ms ${key} ${delay}ms linear ${infinite}`;
+};
+
+const getKeyFrameModifier = direction => {
+  const dir = direction.toLowerCase();
+
+  switch (dir) {
+    case _constants__WEBPACK_IMPORTED_MODULE_0__["DIRECTION_LEFT"]:
+      return directionLeft;
+
+    case _constants__WEBPACK_IMPORTED_MODULE_0__["DIRECTION_RIGHT"]:
+      return directionRight;
+
+    case _constants__WEBPACK_IMPORTED_MODULE_0__["DIRECTION_UP"]:
+      return directionUp;
+
+    case _constants__WEBPACK_IMPORTED_MODULE_0__["DIRECTION_DOWN"]:
+      return directionDown;
+
+    default:
+      return directionLeft;
+  }
+};
+
+
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/mask/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/mask/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Mask; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Mask extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      visible,
+      type
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "visible", "type"]);
+
+    const markCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${type}`]: !!type
+    });
+    return visible && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+      className: markCls
+    }, others));
+  }
+
+}
+
+_defineProperty(Mask, "defaultProps", {
+  prefixCls: 'za-mask',
+  visible: false,
+  type: 'normal'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/message/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/message/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Message; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+class Message extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onClick", e => {
+      const {
+        hasArrow,
+        onClick
+      } = this.props;
+
+      if (hasArrow && typeof onClick === 'function') {
+        onClick(e);
+      }
+    });
+
+    _defineProperty(this, "onClose", () => {
+      this.setState({
+        visible: false
+      });
+    });
+
+    this.state = {
+      visible: true
+    };
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      theme,
+      size,
+      icon,
+      hasArrow,
+      closable,
+      children
+    } = this.props;
+    const {
+      visible
+    } = this.state;
+    const classes = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${theme}`]: !!theme,
+      [`${prefixCls}--${size}`]: !!size
+    });
+    const iconRender = icon && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__icon`
+    }, icon);
+    const renderCloseIcon = closable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "wrong",
+      onClick: this.onClose
+    });
+    const renderArrow = hasArrow && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "arrow-right"
+    });
+    const noFooter = !closable && !hasArrow;
+    return visible && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: classes,
+      onClick: this.onClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, iconRender), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`
+    }, children), !noFooter && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__footer`
+    }, renderArrow, renderCloseIcon));
+  }
+
+}
+
+_defineProperty(Message, "defaultProps", {
+  prefixCls: 'za-message',
+  theme: 'primary',
+  hasArrow: false,
+  closable: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/modal/Modal.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/modal/Modal.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Modal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mask */ "./node_modules/zarm/es/mask/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const stopPropagation = e => {
+  e.stopPropagation(); // e.nativeEvent.stopImmediatePropagation();
+};
+
+class Modal extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "modal", void 0);
+
+    _defineProperty(this, "animationEnd", () => {
+      if (this.state.animationState === 'leave') {
+        this.setState({
+          isShow: false,
+          isPending: false
+        });
+      } else {
+        this.setState({
+          isShow: true,
+          isPending: false
+        });
+      }
+    });
+
+    _defineProperty(this, "enter", () => {
+      this.setState({
+        isShow: true,
+        isPending: true,
+        animationState: 'enter'
+      });
+    });
+
+    _defineProperty(this, "leave", () => {
+      this.setState({
+        isShow: true,
+        isPending: true,
+        animationState: 'leave'
+      });
+    });
+
+    this.state = {
+      isShow: props.visible || false,
+      isPending: false,
+      animationState: 'enter'
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.props;
+
+    if (!visible && nextProps.visible) {
+      this.enter();
+    } else if (visible && !nextProps.visible) {
+      this.leave();
+    }
+  }
+
+  componentWillUpdate() {
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(this.modal, 'webkitAnimationEnd', this.animationEnd);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(this.modal, 'animationend', this.animationEnd);
+  }
+
+  componentWillUnmount() {
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(this.modal, 'webkitAnimationEnd', this.animationEnd);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(this.modal, 'animationend', this.animationEnd);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      animationType,
+      animationDuration,
+      width,
+      onMaskClick,
+      children
+    } = this.props;
+    const {
+      isShow,
+      isPending,
+      animationState
+    } = this.state;
+    const cls = {
+      modal: classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+        [`${prefixCls}--${shape}`]: !!shape,
+        [`fade-${animationState}`]: isPending
+      }),
+      dialog: classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__dialog`, {
+        [`${animationType}-${animationState}`]: isPending
+      }) // mask: classnames({
+      //   [`fade-${animationState}`]: isPending,
+      // }),
+
+    };
+    const modalStyle = {
+      WebkitAnimationDuration: `${animationDuration}ms`,
+      animationDuration: `${animationDuration}ms`
+    };
+    const dialogStyle = {
+      width,
+      WebkitAnimationDuration: `${animationDuration}ms`,
+      animationDuration: `${animationDuration}ms`
+    }; // const maskStyle: CSSProperties = {
+    //   WebkitAnimationDuration: `${animationDuration}ms`,
+    //   MozAnimationDuration: `${animationDuration}ms`,
+    //   msAnimationDuration: `${animationDuration}ms`,
+    //   OAnimationDuration: `${animationDuration}ms`,
+    //   animationDuration: `${animationDuration}ms`,
+    // };
+
+    if (!isShow) {
+      modalStyle.display = 'none';
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls.modal,
+      style: modalStyle,
+      ref: ele => {
+        this.modal = ele;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__wrapper`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls.dialog,
+      style: dialogStyle,
+      onClick: stopPropagation
+    }, children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_mask__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      visible: isShow // className={cls.mask}
+      // style={maskStyle}
+      ,
+      onClick: onMaskClick
+    }));
+  }
+
+}
+
+_defineProperty(Modal, "Header", void 0);
+
+_defineProperty(Modal, "Body", void 0);
+
+_defineProperty(Modal, "Footer", void 0);
+
+_defineProperty(Modal, "defaultProps", {
+  prefixCls: 'za-modal',
+  visible: false,
+  animationType: 'fade',
+  animationDuration: 200,
+  width: '70%',
+  shape: 'radius'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/modal/ModalBody.js":
+/*!*************************************************!*\
+  !*** ./node_modules/zarm/es/modal/ModalBody.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ModalBody; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class ModalBody extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      height,
+      children
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "height", "children"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__body`, className);
+    const bodyStyle = {};
+    bodyStyle.height = height;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+      className: cls,
+      style: bodyStyle
+    }, others), children);
+  }
+
+}
+
+_defineProperty(ModalBody, "defaultProps", {
+  prefixCls: 'za-modal'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/modal/ModalFooter.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/modal/ModalFooter.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ModalFooter; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class ModalFooter extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      block,
+      children
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "block", "children"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__footer`, className, {
+      [`${prefixCls}__footer--block`]: block
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+      className: cls
+    }, others), children);
+  }
+
+}
+
+_defineProperty(ModalFooter, "defaultProps", {
+  prefixCls: 'za-modal'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/modal/ModalHeader.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/modal/ModalHeader.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ModalHeader; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+class ModalHeader extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      title,
+      onClose
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "title", "onClose"]);
+
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__header`, className);
+    const btnClose = onClose && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "wrong",
+      className: `${prefixCls}__header__close`,
+      onClick: onClose
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+      className: cls
+    }, others), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header__title`
+    }, title), btnClose);
+  }
+
+}
+
+_defineProperty(ModalHeader, "defaultProps", {
+  prefixCls: 'za-modal',
+  title: ''
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/modal/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/modal/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modal */ "./node_modules/zarm/es/modal/Modal.js");
+/* harmony import */ var _ModalHeader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ModalHeader */ "./node_modules/zarm/es/modal/ModalHeader.js");
+/* harmony import */ var _ModalBody__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ModalBody */ "./node_modules/zarm/es/modal/ModalBody.js");
+/* harmony import */ var _ModalFooter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ModalFooter */ "./node_modules/zarm/es/modal/ModalFooter.js");
+
+
+
+
+_Modal__WEBPACK_IMPORTED_MODULE_0__["default"].Header = _ModalHeader__WEBPACK_IMPORTED_MODULE_1__["default"];
+_Modal__WEBPACK_IMPORTED_MODULE_0__["default"].Body = _ModalBody__WEBPACK_IMPORTED_MODULE_2__["default"];
+_Modal__WEBPACK_IMPORTED_MODULE_0__["default"].Footer = _ModalFooter__WEBPACK_IMPORTED_MODULE_3__["default"];
+/* harmony default export */ __webpack_exports__["default"] = (_Modal__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/nav-bar/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/nav-bar/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return NavBar; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class NavBar extends react__WEBPACK_IMPORTED_MODULE_0___default.a.PureComponent {
+  render() {
+    const {
+      prefixCls,
+      className,
+      style,
+      title,
+      left,
+      right
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    const titleCls = `${prefixCls}__title`;
+    const sideCls = `${prefixCls}__side`;
+    const leftCls = `${sideCls} ${prefixCls}__side--left`;
+    const rightCls = `${sideCls} ${prefixCls}__side--right`;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: style,
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: leftCls
+    }, left), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: titleCls
+    }, title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: rightCls
+    }, right));
+  }
+
+}
+
+_defineProperty(NavBar, "defaultProps", {
+  prefixCls: 'za-nav-bar'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/notice-bar/index.js":
+/*!**************************************************!*\
+  !*** ./node_modules/zarm/es/notice-bar/index.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return NoticeBar; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../message */ "./node_modules/zarm/es/message/index.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+class NoticeBar extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "wrapper", void 0);
+
+    _defineProperty(this, "content", void 0);
+
+    _defineProperty(this, "moveInterval", void 0);
+
+    this.state = {
+      offset: 0
+    };
+  }
+
+  componentDidMount() {
+    const {
+      scrollable
+    } = this.props;
+
+    if (!scrollable) {
+      return;
+    }
+
+    const distance = this.wrapper.offsetWidth - this.content.offsetWidth;
+
+    if (distance > 0) {
+      return;
+    }
+
+    let delay = 1000;
+    this.moveInterval = setInterval(() => {
+      let {
+        offset
+      } = this.state;
+
+      if ((offset < distance || offset >= 0) && delay > 0) {
+        delay -= 50;
+        return;
+      }
+
+      delay = 1000;
+      offset = offset < distance ? 0 : offset - 1;
+      this.setState({
+        offset
+      });
+    }, 50);
+  }
+
+  componentWillUnmount() {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
+    }
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      children,
+      scrollable
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "children", "scrollable"]);
+
+    const {
+      offset
+    } = this.state;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_message__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({}, others, {
+      size: "lg"
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: prefixCls,
+      ref: ele => {
+        this.wrapper = ele;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`,
+      ref: ele => {
+        this.content = ele;
+      },
+      style: {
+        left: offset
+      }
+    }, children)));
+  }
+
+}
+
+_defineProperty(NoticeBar, "defaultProps", {
+  prefixCls: 'za-notice-bar',
+  theme: 'warning',
+  icon: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    type: "broadcast"
+  }),
+  hasArrow: false,
+  closable: false,
+  scrollable: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/panel/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/panel/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Panel; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Panel extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  render() {
+    const {
+      prefixCls,
+      className,
+      title,
+      more,
+      children
+    } = this.props;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}`, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, title && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header__title`
+    }, title), more && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header__more`
+    }, more)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`
+    }, children));
+  }
+
+}
+
+_defineProperty(Panel, "defaultProps", {
+  prefixCls: 'za-panel'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker-view/PickerView.js":
+/*!********************************************************!*\
+  !*** ./node_modules/zarm/es/picker-view/PickerView.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PickerView; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wheel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../wheel */ "./node_modules/zarm/es/wheel/index.js");
+/* harmony import */ var _utils_validate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/validate */ "./node_modules/zarm/es/utils/validate.js");
+/* harmony import */ var _utils_parseProps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/parseProps */ "./node_modules/zarm/es/picker-view/utils/parseProps.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+class PickerView extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onValueChange", (selected, level) => {
+      const value = this.state.value.slice();
+      const {
+        dataSource,
+        onChange,
+        valueMember,
+        cols
+      } = this.props;
+      value[level] = selected;
+
+      if (Object(_utils_validate__WEBPACK_IMPORTED_MODULE_3__["isCascader"])({
+        dataSource
+      })) {
+        value.length = level + 1;
+      }
+
+      const newState = _utils_parseProps__WEBPACK_IMPORTED_MODULE_4__["default"].getSource({
+        dataSource,
+        value,
+        valueMember,
+        cols
+      });
+      this.setState(newState);
+
+      if (typeof onChange === 'function') {
+        onChange(newState.objValue, level);
+      }
+    });
+
+    _defineProperty(this, "onTransition", isScrolling => {
+      const {
+        onTransition
+      } = this.props;
+
+      if (typeof onTransition === 'function') {
+        onTransition(isScrolling);
+      }
+    });
+
+    _defineProperty(this, "renderWheel", (item, index) => {
+      const {
+        valueMember,
+        itemRender,
+        disabled
+      } = this.props;
+      const {
+        value
+      } = this.state;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_wheel__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        key: +index,
+        dataSource: item,
+        value: value[index],
+        valueMember: valueMember,
+        itemRender: itemRender,
+        disabled: disabled,
+        onChange: selected => this.onValueChange(selected, index),
+        onTransition: isScrolling => {
+          this.onTransition(isScrolling);
+        }
+      });
+    });
+
+    this.state = _utils_parseProps__WEBPACK_IMPORTED_MODULE_4__["default"].getSource(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const state = _utils_parseProps__WEBPACK_IMPORTED_MODULE_4__["default"].getSource(nextProps);
+    this.setState(state);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className
+    } = this.props;
+    const {
+      dataSource
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__content`, className)
+    }, dataSource.map(this.renderWheel)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__mask ${prefixCls}__mask--top`
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__mask ${prefixCls}__mask--bottom`
+    }));
+  }
+
+}
+
+_defineProperty(PickerView, "defaultProps", {
+  prefixCls: 'za-picker-view',
+  dataSource: [],
+  cols: Infinity,
+  valueMember: 'value',
+  itemRender: data => data.label,
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker-view/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/picker-view/index.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PickerView */ "./node_modules/zarm/es/picker-view/PickerView.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (_PickerView__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker-view/utils/parseProps.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/zarm/es/picker-view/utils/parseProps.js ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _utils_validate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/validate */ "./node_modules/zarm/es/utils/validate.js");
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+
+
+const getValues = (props, defaultValue) => {
+  if ('value' in props && props.value && props.value.length > 0) {
+    return [].concat(props.value);
+  }
+
+  if ('defaultValue' in props && props.defaultValue && props.defaultValue.length > 0) {
+    return [].concat(props.defaultValue);
+  }
+
+  return defaultValue;
+};
+
+const normalState = props => {
+  const {
+    valueMember,
+    dataSource
+  } = props;
+  const value = getValues(props, dataSource.map(item => item[0] && item[0][valueMember]));
+  return {
+    value,
+    objValue: props.dataSource.map((item, index) => item.filter(d => d[valueMember] === value[index])[0]),
+    dataSource: props.dataSource,
+    visible: props.visible || false
+  };
+};
+
+const cascaderState = props => {
+  const {
+    valueMember,
+    cols
+  } = props;
+  let newValues = getValues(props, []);
+  const newObjValues = [];
+  const newDateSource = [];
+
+  const parseLevel = ({
+    level = 0,
+    dataSource
+  }) => {
+    newDateSource[level] = dataSource.map((item, index) => {
+      const {
+        children
+      } = item,
+            others = _objectWithoutProperties(item, ["children"]);
+
+      if (newValues[level] && item[valueMember] === newValues[level] || !newValues[level] && index === 0) {
+        newValues[level] = item[valueMember];
+        newObjValues[level] = others;
+
+        if (Object(_utils_validate__WEBPACK_IMPORTED_MODULE_0__["isArray"])(children) && children.length > 0 && level + 1 < cols) {
+          parseLevel({
+            dataSource: children,
+            level: level + 1
+          });
+        }
+      }
+
+      return others;
+    });
+    return newValues;
+  };
+
+  newValues = parseLevel({
+    dataSource: props.dataSource
+  });
+  return {
+    value: newValues,
+    objValue: newObjValues,
+    dataSource: newDateSource,
+    visible: props.visible || false
+  };
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  getSource(props) {
+    return Object(_utils_validate__WEBPACK_IMPORTED_MODULE_0__["isCascader"])(props) ? cascaderState(props) : normalState(props);
+  }
+
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker/Picker.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/picker/Picker.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Picker; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../popup */ "./node_modules/zarm/es/popup/index.js");
+/* harmony import */ var _picker_view__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../picker-view */ "./node_modules/zarm/es/picker-view/index.js");
+/* harmony import */ var _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../picker-view/utils/parseProps */ "./node_modules/zarm/es/picker-view/utils/parseProps.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+class Picker extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "tempValue", void 0);
+
+    _defineProperty(this, "tempObjValue", void 0);
+
+    _defineProperty(this, "isScrolling", false);
+
+    _defineProperty(this, "onChange", selected => {
+      const {
+        valueMember,
+        onChange
+      } = this.props;
+      const value = selected.map(item => item[valueMember]);
+      this.setState({
+        value,
+        objValue: selected
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(selected);
+      }
+    });
+
+    _defineProperty(this, "onCancel", () => {
+      const {
+        onCancel
+      } = this.props;
+      this.setState({
+        value: this.tempValue,
+        objValue: this.tempObjValue,
+        visible: false
+      });
+
+      if (typeof onCancel === 'function') {
+        onCancel();
+      }
+    });
+
+    _defineProperty(this, "onOk", () => {
+      if (this.isScrolling) {
+        return false;
+      }
+
+      const {
+        value,
+        objValue
+      } = this.state;
+      this.setState({
+        value,
+        objValue,
+        visible: false
+      });
+      const {
+        onOk
+      } = this.props;
+
+      if (typeof onOk === 'function') {
+        onOk(objValue);
+      }
+    });
+
+    _defineProperty(this, "onMaskClick", () => {
+      const {
+        onMaskClick
+      } = this.props;
+
+      if (typeof onMaskClick === 'function') {
+        onMaskClick();
+      }
+    });
+
+    _defineProperty(this, "onTransition", isScrolling => {
+      const {
+        onTransition
+      } = this.props;
+      this.isScrolling = isScrolling;
+
+      if (typeof onTransition === 'function') {
+        onTransition(isScrolling);
+      }
+    });
+
+    this.state = _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_4__["default"].getSource(props);
+    const {
+      value: _value,
+      objValue: _objValue
+    } = this.state;
+    this.tempValue = _value;
+    this.tempObjValue = _objValue;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const state = _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_4__["default"].getSource(nextProps);
+    this.setState(state);
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      className,
+      cancelText,
+      okText,
+      title,
+      children,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "className", "cancelText", "okText", "title", "children", "locale"]);
+
+    const {
+      visible,
+      value
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      visible: visible,
+      onMaskClick: this.onMaskClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      onClick: e => {
+        e.stopPropagation();
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__cancel`,
+      onClick: this.onCancel
+    }, cancelText || locale.cancelText), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__title`
+    }, title || locale.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__submit`,
+      onClick: this.onOk
+    }, okText || locale.okText)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_picker_view__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, others, {
+      visible: visible,
+      value: value,
+      onChange: this.onChange,
+      onTransition: isScrolling => {
+        this.onTransition(isScrolling);
+      }
+    }))));
+  }
+
+}
+
+_defineProperty(Picker, "defaultProps", {
+  dataSource: [],
+  prefixCls: 'za-picker',
+  valueMember: 'value',
+  cols: Infinity,
+  itemRender: data => data.label
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/picker/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Picker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Picker */ "./node_modules/zarm/es/picker/Picker.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+ // import Stack from './StackPicker';
+// Picker.Stack = Stack;
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Picker__WEBPACK_IMPORTED_MODULE_0__["default"], 'Picker'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/picker/locale/en_US.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/zarm/es/picker/locale/en_US.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  cancelText: 'Cancel',
+  okText: 'OK',
+  title: 'please select'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/popup/Portal.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/popup/Portal.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Portal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../mask */ "./node_modules/zarm/es/mask/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const IS_REACT_16 = !!react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal;
+class Portal extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "timer", void 0);
+
+    _defineProperty(this, "popup", void 0);
+
+    _defineProperty(this, "_container", void 0);
+
+    _defineProperty(this, "showPortal", () => {
+      this.createContainer();
+      this.setState({
+        mounted: true
+      }, () => {
+        _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].on(this.popup, 'webkitTransitionEnd', this.animationEnd);
+        _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].on(this.popup, 'transitionend', this.animationEnd);
+        setTimeout(() => {
+          this.enter();
+        }, 0);
+      });
+    });
+
+    _defineProperty(this, "enter", () => {
+      const {
+        stayTime,
+        autoClose,
+        onMaskClick
+      } = this.props;
+      this.setState({
+        isShow: true,
+        isMaskShow: true,
+        isPending: true,
+        animationState: 'enter'
+      });
+
+      if (stayTime > 0 && autoClose) {
+        this.timer = setTimeout(() => {
+          if (typeof onMaskClick === 'function') {
+            onMaskClick();
+          }
+
+          clearTimeout(this.timer);
+        }, stayTime);
+      }
+    });
+
+    _defineProperty(this, "leave", () => {
+      this.setState({
+        isShow: false,
+        isPending: true,
+        animationState: 'leave'
+      });
+    });
+
+    _defineProperty(this, "animationEnd", e => {
+      // 防止其他的样式转换触发该事件，如border、background-image
+      if (!/transform/i.test(e.propertyName)) {
+        return;
+      }
+
+      const {
+        onClose,
+        onOpen,
+        handlePortalUnmount
+      } = this.props;
+      const {
+        animationState
+      } = this.state;
+
+      if (animationState === 'leave') {
+        this.setState({
+          isMaskShow: false
+        });
+
+        if (typeof onClose === 'function') {
+          onClose();
+        }
+
+        if (typeof handlePortalUnmount === 'function') {
+          handlePortalUnmount();
+          document.body.removeChild(this._container);
+        }
+      } else if (typeof onOpen === 'function') {
+        onOpen();
+      }
+    });
+
+    _defineProperty(this, "renderMask", () => {
+      const {
+        mask,
+        maskType,
+        animationDuration
+      } = this.props;
+      const {
+        isPending,
+        animationState,
+        isMaskShow
+      } = this.state;
+      const maskCls = classnames__WEBPACK_IMPORTED_MODULE_2___default()({
+        [`fade-${animationState}`]: isPending
+      });
+      const maskStyle = {
+        WebkitAnimationDuration: `${animationDuration}ms`,
+        animationDuration: `${animationDuration}ms`
+      };
+      return mask && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_mask__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        className: maskCls,
+        style: maskStyle,
+        visible: isMaskShow,
+        type: maskType,
+        onClick: e => {
+          this.handleMaskClick(e);
+        }
+      });
+    });
+
+    _defineProperty(this, "createContainer", () => {
+      if (!this._container) {
+        this._container = document.createElement('div');
+        this._container.className += ' popup-container';
+        document.body.appendChild(this._container);
+      }
+
+      return this._container;
+    });
+
+    _defineProperty(this, "getComponent", () => {
+      const {
+        prefixCls,
+        className,
+        animationDuration,
+        direction,
+        mask,
+        children
+      } = this.props;
+      const {
+        isShow
+      } = this.state;
+      const popupCls = classnames__WEBPACK_IMPORTED_MODULE_2___default()(prefixCls, className, {
+        [`${prefixCls}--${direction}`]: !!direction,
+        [`${prefixCls}--mask`]: mask,
+        [`${prefixCls}--hidden`]: !isShow
+      });
+      const wrapStyle = {
+        WebkitTransitionDuration: `${animationDuration}ms`,
+        transitionDuration: `${animationDuration}ms`
+      };
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        role: "dialog",
+        className: popupCls,
+        ref: popup => {
+          this.popup = popup;
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: `${prefixCls}__wrapper`,
+        style: wrapStyle,
+        role: "document"
+      }, children), this.renderMask());
+    });
+
+    _defineProperty(this, "handleMaskClick", e => {
+      e.stopPropagation();
+      const {
+        onMaskClick
+      } = this.props;
+
+      if (typeof onMaskClick === 'function') {
+        onMaskClick();
+      }
+    });
+
+    _defineProperty(this, "renderPortal", () => {
+      if (!IS_REACT_16) {
+        react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.unstable_renderSubtreeIntoContainer(this, this.getComponent(), this._container);
+        return null;
+      }
+
+      return react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal(this.getComponent(), this._container);
+    });
+
+    this.state = {
+      isShow: false,
+      isMaskShow: false,
+      isPending: false,
+      animationState: 'enter',
+      mounted: false
+    };
+  }
+
+  componentDidMount() {
+    const {
+      visible
+    } = this.props;
+
+    if (visible) {
+      this.showPortal();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.props;
+
+    if (nextProps.visible === true && nextProps.visible !== visible) {
+      this.showPortal();
+    }
+
+    if (nextProps.visible === false && nextProps.visible !== visible) {
+      this.leave();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.popup) {
+      _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].off(this.popup, 'webkitTransitionEnd', this.animationEnd);
+      _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].off(this.popup, 'transitionend', this.animationEnd);
+    }
+  }
+
+  render() {
+    const {
+      mounted
+    } = this.state;
+
+    if (!mounted) {
+      return null;
+    }
+
+    return this.renderPortal();
+  }
+
+}
+
+_defineProperty(Portal, "defaultProps", {
+  prefixCls: 'za-popup',
+  visible: false,
+  mask: true,
+  direction: 'bottom',
+  autoClose: false,
+  stayTime: 3000,
+  animationDuration: 200,
+  maskType: _mask__WEBPACK_IMPORTED_MODULE_4__["default"].defaultProps.type
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/popup/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/popup/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Popup; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Portal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Portal */ "./node_modules/zarm/es/popup/Portal.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+
+
+class Popup extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+    this.state = {
+      renderPortal: true
+    };
+    this.handlePortalUnmount = this.handlePortalUnmount.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.props;
+
+    if (nextProps.visible !== visible && nextProps.visible === true) {
+      this.setState({
+        renderPortal: true
+      });
+    }
+  }
+
+  handlePortalUnmount() {
+    this.setState({
+      renderPortal: false
+    });
+  }
+
+  render() {
+    const {
+      renderPortal
+    } = this.state;
+    return renderPortal && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Portal__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({}, this.props, {
+      handlePortalUnmount: this.handlePortalUnmount
+    }));
+  }
+
+}
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/progress/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/progress/index.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Progress; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class Progress extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "progressElement", void 0);
+
+    _defineProperty(this, "getBaseStrokeWidth", weight => {
+      return weight === 'normal' ? 8 : 4;
+    });
+
+    const {
+      weight: _weight
+    } = this.props;
+    this.state = {
+      strokeWidth: this.getBaseStrokeWidth(_weight)
+    };
+  }
+
+  componentDidMount() {
+    const {
+      type,
+      weight
+    } = this.props;
+
+    if (type === 'circle' || type === 'semi-circle') {
+      this.resetStrokeWidth(weight);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      weight
+    } = nextProps;
+    this.resetStrokeWidth(weight);
+  }
+
+  resetStrokeWidth(weight) {
+    const baseWidth = 32;
+    const {
+      clientWidth
+    } = this.progressElement;
+    const baseStrokeWidth = this.getBaseStrokeWidth(weight);
+    this.setState({
+      strokeWidth: baseWidth / clientWidth * baseStrokeWidth
+    });
+  }
+
+  render() {
+    const {
+      theme,
+      percent,
+      shape,
+      type,
+      weight,
+      style,
+      prefixCls,
+      className,
+      children
+    } = this.props;
+    const {
+      strokeWidth
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${type}`]: !!type,
+      [`${prefixCls}--${theme}`]: !!theme
+    });
+    const diameter = 32;
+    const radius = diameter / 2;
+    const extendRadius = radius + strokeWidth / 2;
+    const strokeLinecap = shape === 'round' ? 'round' : 'butt';
+    const viewBox = type === 'circle' ? `0 0 ${diameter + strokeWidth} ${diameter + strokeWidth}` : `0 0 ${diameter + strokeWidth} ${(diameter + strokeWidth) / 2}`;
+    const path = type === 'circle' ? `
+        M${extendRadius}, ${extendRadius}
+        m0 ${-radius}
+        a${radius} ${radius} 0 1 1 0 ${diameter}
+        a${radius} ${radius} 0 1 1 0 ${-diameter}` : `
+        M${extendRadius}, ${extendRadius}
+        m${-radius} 0
+        a${radius} ${radius} 0 0 1 ${diameter} 0`;
+    const dasharray = type === 'circle' ? Math.PI * diameter : Math.PI * diameter / 2;
+    const roundInner = (type === 'circle' || type === 'semi-circle') && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("svg", {
+      viewBox: viewBox
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("path", {
+      className: `${prefixCls}__track`,
+      d: path,
+      strokeWidth: strokeWidth,
+      strokeLinecap: strokeLinecap
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("path", {
+      className: `${prefixCls}__thumb`,
+      d: path,
+      strokeWidth: strokeWidth,
+      strokeLinecap: strokeLinecap,
+      strokeDasharray: dasharray,
+      strokeDashoffset: dasharray * (100 - percent) / 100
+    }));
+    const lineStrokeWidth = this.getBaseStrokeWidth(weight);
+    const borderRadius = shape === 'round' ? `${lineStrokeWidth}px` : '0';
+    const lineTrackStyle = {
+      height: `${lineStrokeWidth}px`,
+      borderRadius
+    };
+    const lineThumbStyle = {
+      width: `${percent}%`,
+      borderRadius
+    };
+    const rectInner = type === 'line' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__track`,
+      style: lineTrackStyle
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__thumb`,
+      style: lineThumbStyle
+    }));
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      style: style,
+      ref: ele => {
+        this.progressElement = ele;
+      }
+    }, type === 'line' ? rectInner : roundInner, children && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__text`
+    }, children));
+  }
+
+}
+
+_defineProperty(Progress, "defaultProps", {
+  theme: 'default',
+  percent: 0,
+  type: 'line',
+  shape: 'round',
+  weight: 'normal',
+  prefixCls: 'za-progress'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/pull/PropsType.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/pull/PropsType.js ***!
+  \************************************************/
+/*! exports provided: REFRESH_STATE, LOAD_STATE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REFRESH_STATE", function() { return REFRESH_STATE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOAD_STATE", function() { return LOAD_STATE; });
+let REFRESH_STATE;
+
+(function (REFRESH_STATE) {
+  REFRESH_STATE[REFRESH_STATE["normal"] = 0] = "normal";
+  REFRESH_STATE[REFRESH_STATE["pull"] = 1] = "pull";
+  REFRESH_STATE[REFRESH_STATE["drop"] = 2] = "drop";
+  REFRESH_STATE[REFRESH_STATE["loading"] = 3] = "loading";
+  REFRESH_STATE[REFRESH_STATE["success"] = 4] = "success";
+  REFRESH_STATE[REFRESH_STATE["failure"] = 5] = "failure";
+})(REFRESH_STATE || (REFRESH_STATE = {}));
+
+let LOAD_STATE;
+
+(function (LOAD_STATE) {
+  LOAD_STATE[LOAD_STATE["normal"] = 0] = "normal";
+  LOAD_STATE[LOAD_STATE["abort"] = 1] = "abort";
+  LOAD_STATE[LOAD_STATE["loading"] = 2] = "loading";
+  LOAD_STATE[LOAD_STATE["success"] = 3] = "success";
+  LOAD_STATE[LOAD_STATE["failure"] = 4] = "failure";
+  LOAD_STATE[LOAD_STATE["complete"] = 5] = "complete";
+})(LOAD_STATE || (LOAD_STATE = {}));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/pull/Pull.js":
+/*!*******************************************!*\
+  !*** ./node_modules/zarm/es/pull/Pull.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Pull; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _PropsType__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PropsType */ "./node_modules/zarm/es/pull/PropsType.js");
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/throttle */ "./node_modules/zarm/es/utils/throttle.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../drag */ "./node_modules/zarm/es/drag/index.js");
+/* harmony import */ var _activity_indicator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../activity-indicator */ "./node_modules/zarm/es/activity-indicator/index.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
+    }
+
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+
+
+
+class Pull extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "pull", void 0);
+
+    _defineProperty(this, "wrap", void 0);
+
+    _defineProperty(this, "throttledScroll", void 0);
+
+    _defineProperty(this, "getScrollContainer", () => {
+      return (node => {
+        while (node && node.parentNode && node.parentNode !== document.body) {
+          const style = window.getComputedStyle(node);
+
+          if (['scroll', 'auto'].indexOf(style.overflowY || '') > -1) {
+            return node;
+          }
+
+          node = node.parentNode;
+        }
+      })(this.pull) || document.documentElement;
+    });
+
+    _defineProperty(this, "onScroll", () => {
+      const {
+        refreshState,
+        loadState
+      } = this.state;
+      const {
+        scrollHeight,
+        scrollTop,
+        clientHeight
+      } = this.wrap;
+
+      const load = _objectSpread({}, Pull.defaultProps.load, this.props.load);
+
+      const {
+        handler,
+        distance
+      } = load;
+
+      if (typeof handler !== 'function' || refreshState !== _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].normal || loadState !== _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].normal || scrollHeight <= clientHeight // 内容高度 - 偏移值 - 修正距离 <= 容器可见高度
+      || scrollHeight - (scrollTop + document.body.scrollTop) - distance > clientHeight) {
+        return;
+      }
+
+      handler();
+    });
+
+    _defineProperty(this, "onDragMove", (event, {
+      offsetY
+    }) => {
+      const {
+        handler
+      } = this.props.refresh;
+
+      if ( // 未设置刷新事件
+      !handler // 上拉
+      || offsetY <= 0 // 未滚动到顶部
+      || offsetY > 0 && this.wrap.scrollTop + document.body.scrollTop > 0 // 已经触发过加载状态
+      || this.state.refreshState >= _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].loading) {
+        return false;
+      } // 解决低端安卓系统只触发一次touchmove事件的bug
+
+
+      event.preventDefault();
+
+      const refresh = _objectSpread({}, Pull.defaultProps.refresh, this.props.refresh);
+
+      const {
+        startDistance,
+        distance
+      } = refresh;
+      const offset = offsetY / 2; // 移动距离为拖动距离的一半
+      // 判断是否达到释放立即刷新的条件
+
+      const action = offset - startDistance < distance ? _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].pull : _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].drop;
+      this.doRefreshAction(action, offset);
+      return true;
+    });
+
+    _defineProperty(this, "onDragEnd", (_event, {
+      offsetY
+    }) => {
+      // 没有产生位移
+      if (!offsetY) {
+        return;
+      } // 当前状态为下拉状态时
+
+
+      const {
+        refreshState
+      } = this.state;
+
+      if (refreshState === _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].pull) {
+        this.doRefreshAction(_PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].normal);
+        return;
+      } // 执行外部触发刷新的回调
+
+
+      const {
+        handler
+      } = this.props.refresh;
+
+      if (typeof handler === 'function') {
+        handler();
+      }
+    });
+
+    _defineProperty(this, "doTransition", ({
+      offsetY,
+      animationDuration
+    }) => {
+      this.setState({
+        offsetY,
+        animationDuration
+      });
+    });
+
+    _defineProperty(this, "doRefreshAction", (refreshState, offsetY) => {
+      const {
+        animationDuration,
+        stayTime
+      } = this.props;
+      this.setState({
+        refreshState
+      });
+
+      switch (refreshState) {
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].pull:
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].drop:
+          this.doTransition({
+            offsetY,
+            animationDuration: 0
+          });
+          break;
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].loading:
+          this.doTransition({
+            offsetY: 'auto',
+            animationDuration
+          });
+          break;
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].success:
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].failure:
+          this.doTransition({
+            offsetY: 'auto',
+            animationDuration
+          });
+          setTimeout(() => {
+            this.doRefreshAction(_PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].normal);
+            this.doLoadAction(_PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].normal);
+          }, stayTime);
+          break;
+
+        default:
+          this.doTransition({
+            offsetY: 0,
+            animationDuration
+          });
+      }
+    });
+
+    _defineProperty(this, "doLoadAction", loadState => {
+      const {
+        stayTime
+      } = this.props;
+      this.setState({
+        loadState
+      });
+
+      switch (loadState) {
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].success:
+          this.doLoadAction(_PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].normal);
+          break;
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].failure:
+          setTimeout(() => {
+            this.doLoadAction(_PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].abort);
+          }, stayTime);
+          break;
+
+        default:
+      }
+    });
+
+    _defineProperty(this, "renderRefresh", () => {
+      const refresh = _objectSpread({}, Pull.defaultProps.refresh, this.props.refresh);
+
+      const {
+        startDistance,
+        distance,
+        render
+      } = refresh;
+      const {
+        refreshState,
+        offsetY
+      } = this.state;
+      let percent = 0;
+
+      if (offsetY >= startDistance) {
+        percent = (offsetY - startDistance < distance ? offsetY - startDistance : distance) * 100 / distance;
+      }
+
+      if (typeof render === 'function') {
+        return render(refreshState, percent);
+      }
+
+      const {
+        prefixCls,
+        locale
+      } = this.props;
+      const cls = `${prefixCls}__control`;
+
+      switch (refreshState) {
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].pull:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            percent: percent
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.pullText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].drop:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            percent: 100
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.dropText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].loading:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            className: "rotate360"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.loadingText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].success:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_7__["default"], {
+            type: "right-round",
+            theme: "success"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.successText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].failure:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_7__["default"], {
+            type: "wrong-round",
+            theme: "danger"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.failureText));
+
+        default:
+      }
+    });
+
+    _defineProperty(this, "renderLoad", () => {
+      const load = _objectSpread({}, Pull.defaultProps.load, this.props.load);
+
+      const {
+        render
+      } = load;
+      const {
+        loadState
+      } = this.state;
+
+      if (typeof render === 'function') {
+        return render(loadState);
+      }
+
+      const {
+        prefixCls,
+        locale
+      } = this.props;
+      const cls = `${prefixCls}__control`;
+
+      switch (loadState) {
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].loading:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_activity_indicator__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            className: "rotate360"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.loadingText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].failure:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_7__["default"], {
+            type: "wrong-round",
+            theme: "danger"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.failureText));
+
+        case _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].complete:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: cls
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, locale.completeText));
+
+        default:
+      }
+    });
+
+    this.state = {
+      offsetY: 0,
+      animationDuration: 0,
+      refreshState: props.refresh.state,
+      loadState: props.load.state
+    };
+    this.throttledScroll = Object(_utils_throttle__WEBPACK_IMPORTED_MODULE_4__["default"])(this.onScroll, 250);
+  }
+
+  componentDidMount() {
+    this.wrap = this.getScrollContainer();
+    const scroller = this.wrap === document.documentElement ? window : this.wrap;
+    _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].on(scroller, 'scroll', this.throttledScroll);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      refresh,
+      load
+    } = this.props;
+
+    if ('refresh' in nextProps && nextProps.refresh.state !== refresh.state) {
+      this.doRefreshAction(nextProps.refresh.state);
+    }
+
+    if ('load' in nextProps && nextProps.load.state !== load.state) {
+      this.doLoadAction(nextProps.load.state);
+    }
+  }
+
+  componentWillUnmount() {
+    const scroller = this.wrap === document.documentElement ? window : this.wrap;
+    _utils_events__WEBPACK_IMPORTED_MODULE_3__["default"].off(scroller, 'scroll', this.throttledScroll);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      children
+    } = this.props;
+    const {
+      offsetY,
+      animationDuration,
+      refreshState,
+      loadState
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    const loadCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__load`, {
+      [`${prefixCls}__load--show`]: loadState >= _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].loading
+    });
+    const contentStyle = {
+      WebkitTransition: `all ${animationDuration}ms`,
+      transition: `all ${animationDuration}ms`
+    };
+
+    if (refreshState <= _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].drop) {
+      contentStyle.WebkitTransform = `translate3d(0, ${offsetY}px, 0)`;
+      contentStyle.transform = `translate3d(0, ${offsetY}px, 0)`;
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_drag__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      onDragMove: this.onDragMove,
+      onDragEnd: this.onDragEnd
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`,
+      style: contentStyle,
+      ref: ele => {
+        this.pull = ele;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__refresh`
+    }, this.renderRefresh()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__body`
+    }, children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: loadCls
+    }, this.renderLoad()))));
+  }
+
+}
+
+_defineProperty(Pull, "defaultProps", {
+  prefixCls: 'za-pull',
+  refresh: {
+    state: _PropsType__WEBPACK_IMPORTED_MODULE_2__["REFRESH_STATE"].normal,
+    startDistance: 30,
+    distance: 50
+  },
+  load: {
+    state: _PropsType__WEBPACK_IMPORTED_MODULE_2__["LOAD_STATE"].normal,
+    distance: 0
+  },
+  animationDuration: 400,
+  stayTime: 1000
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/pull/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/pull/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Pull__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Pull */ "./node_modules/zarm/es/pull/Pull.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Pull__WEBPACK_IMPORTED_MODULE_0__["default"], 'Pull'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/pull/locale/en_US.js":
+/*!***************************************************!*\
+  !*** ./node_modules/zarm/es/pull/locale/en_US.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  pullText: 'pull down to refresh',
+  dropText: 'release to refresh',
+  loadingText: 'loading',
+  successText: 'loaded successfully',
+  failureText: 'failed to load',
+  completeText: 'loading completed'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/radio/Radio.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/radio/Radio.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Radio; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _cell__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../cell */ "./node_modules/zarm/es/cell/index.js");
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../button */ "./node_modules/zarm/es/button/index.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+
+const getChecked = (props, defaultChecked) => {
+  if ('checked' in props && props.checked) {
+    return props.checked;
+  }
+
+  if ('defaultChecked' in props && props.defaultChecked) {
+    return props.defaultChecked;
+  }
+
+  return defaultChecked;
+};
+
+class Radio extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onValueChange", () => {
+      const {
+        disabled,
+        onChange
+      } = this.props;
+
+      if (disabled) {
+        return;
+      }
+
+      const checked = true;
+      this.setState({
+        checked
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(checked);
+      }
+    });
+
+    this.state = {
+      checked: getChecked(props, false)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('checked' in nextProps) {
+      this.setState({
+        checked: !!nextProps.checked
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      type,
+      shape,
+      block,
+      value,
+      disabled,
+      children
+    } = this.props;
+    const {
+      checked
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--checked`]: !!checked,
+      [`${prefixCls}--disabled`]: !!disabled
+    });
+    const inputRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "radio",
+      className: `${prefixCls}__input`,
+      value: value,
+      disabled: disabled,
+      checked: checked,
+      onChange: this.onValueChange
+    });
+
+    if (type === 'cell') {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_cell__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        className: cls,
+        disabled: disabled,
+        description: checked && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          type: "right",
+          theme: disabled ? undefined : 'primary'
+        }),
+        onClick: () => {}
+      }, inputRender, children);
+    }
+
+    if (type === 'button') {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_button__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        className: cls,
+        theme: "primary",
+        shape: shape,
+        size: "xs",
+        block: block,
+        ghost: !checked,
+        disabled: disabled
+      }, inputRender, children);
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__wrapper`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__inner`
+    }), children && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__text`
+    }, children), inputRender));
+  }
+
+}
+
+_defineProperty(Radio, "Group", void 0);
+
+_defineProperty(Radio, "defaultProps", {
+  prefixCls: 'za-radio',
+  theme: 'primary',
+  disabled: false,
+  block: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/radio/RadioGroup.js":
+/*!**************************************************!*\
+  !*** ./node_modules/zarm/es/radio/RadioGroup.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return RadioGroup; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+const getChildChecked = children => {
+  let checkedValue = null;
+  react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.forEach(children, element => {
+    if (element.props && element.props.checked) {
+      checkedValue = element.props.value;
+    }
+  });
+  return checkedValue;
+};
+
+const getValue = (props, defaultValue) => {
+  if ('value' in props) {
+    return props.value;
+  }
+
+  if ('defaultValue' in props) {
+    return props.defaultValue;
+  }
+
+  if (getChildChecked(props.children)) {
+    return getChildChecked(props.children);
+  }
+
+  return defaultValue;
+};
+
+class RadioGroup extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onChildChange", value => {
+      this.setState({
+        value
+      });
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
+    });
+
+    this.state = {
+      value: getValue(props, null)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps || getChildChecked(nextProps.children)) {
+      this.setState({
+        value: nextProps.value || getChildChecked(nextProps.children)
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      type,
+      block,
+      disabled,
+      compact,
+      children
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    const items = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, (element, index) => {
+      return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(element, {
+        key: index,
+        type,
+        shape,
+        block: block || element.props.block,
+        disabled: disabled || element.props.disabled,
+        onChange: () => this.onChildChange(element.props.value),
+        checked: value === element.props.value || Number(value) === Number(element.props.value)
+      });
+    });
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${type}`]: !!type,
+      [`${prefixCls}--${shape}`]: !!shape,
+      [`${prefixCls}--compact`]: compact,
+      [`${prefixCls}--block`]: block,
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, items);
+  }
+
+}
+
+_defineProperty(RadioGroup, "defaultProps", {
+  prefixCls: 'za-radio-group',
+  theme: 'primary',
+  shape: 'radius',
+  block: false,
+  disabled: false,
+  compact: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/radio/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/radio/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Radio__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Radio */ "./node_modules/zarm/es/radio/Radio.js");
+/* harmony import */ var _RadioGroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RadioGroup */ "./node_modules/zarm/es/radio/RadioGroup.js");
+
+
+_Radio__WEBPACK_IMPORTED_MODULE_0__["default"].Group = _RadioGroup__WEBPACK_IMPORTED_MODULE_1__["default"];
+/* harmony default export */ __webpack_exports__["default"] = (_Radio__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/search-bar/SearchBar.js":
+/*!******************************************************!*\
+  !*** ./node_modules/zarm/es/search-bar/SearchBar.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SearchBar; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+/* harmony import */ var _input_InputBase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../input/InputBase */ "./node_modules/zarm/es/input/InputBase.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+let shouldUpdatePosition = false;
+class SearchBar extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "searchForm", void 0);
+
+    _defineProperty(this, "searchContainer", void 0);
+
+    _defineProperty(this, "cancelRef", void 0);
+
+    _defineProperty(this, "cancelOuterWidth", void 0);
+
+    _defineProperty(this, "initPos", void 0);
+
+    _defineProperty(this, "inputRef", void 0);
+
+    this.state = {
+      focus: false,
+      value: props.defaultValue || props.value || '',
+      isOnComposition: false
+    };
+  }
+
+  componentDidMount() {
+    this.calculatePositon(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      cancelText,
+      placeholder
+    } = this.props;
+    const {
+      value
+    } = this.state;
+
+    if ('value' in nextProps && value !== nextProps.value) {
+      this.setState({
+        value: nextProps.value
+      });
+    } // 若改变了取消文字的内容或者placeholder的内容需要重新计算位置
+
+
+    if (cancelText !== nextProps.cancelText || placeholder !== nextProps.placeholder) {
+      shouldUpdatePosition = true;
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (shouldUpdatePosition) {
+      this.calculatePositon(prevProps);
+    }
+
+    shouldUpdatePosition = false;
+  }
+
+  onFocus() {
+    const {
+      onFocus
+    } = this.props;
+    this.setState({
+      focus: true
+    });
+    this.focusAnim();
+    onFocus && onFocus();
+  }
+
+  onChange(value) {
+    const {
+      onChange
+    } = this.props;
+    const {
+      isOnComposition
+    } = this.state;
+    this.setState({
+      value
+    });
+
+    if (!isOnComposition && onChange) {
+      onChange(value);
+    }
+  }
+
+  onBlur() {
+    const {
+      onBlur
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    this.setState({
+      focus: false
+    });
+    !value && this.blurAnim();
+    onBlur && onBlur();
+  }
+
+  onClear() {
+    const {
+      onClear,
+      onChange
+    } = this.props;
+    this.setState({
+      value: '',
+      isOnComposition: false
+    }, () => {
+      // this.setState({ focus: true });
+      this.focus();
+    });
+    onClear && onClear('');
+    onChange && onChange('');
+  }
+
+  onCancel() {
+    const {
+      showCancel,
+      onCancel
+    } = this.props;
+
+    if (!showCancel) {
+      this.setState({
+        value: '',
+        isOnComposition: false
+      }, () => {
+        this.onBlur();
+      });
+    }
+
+    onCancel && onCancel();
+  }
+
+  onSubmit(e) {
+    const {
+      onSubmit
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    e.preventDefault();
+    this.inputRef.blur();
+    onSubmit && onSubmit(value);
+  }
+
+  handleComposition(e) {
+    if (e.type === 'compositionstart') {
+      this.setState({
+        isOnComposition: true
+      });
+    }
+
+    if (e.type === 'compositionend') {
+      // composition is end
+      this.setState({
+        isOnComposition: false
+      });
+      const {
+        onChange
+      } = this.props;
+      const {
+        value
+      } = e.target;
+      onChange && onChange(value);
+    }
+  } // 初始化搜索提示文字的位置
+
+
+  calculatePositon(props) {
+    const {
+      showCancel
+    } = props;
+    const {
+      value
+    } = this.state;
+    const formWidth = this.searchForm.getBoundingClientRect().width;
+    const containerWidth = this.searchContainer.getBoundingClientRect().width;
+    const ml = parseInt(window.getComputedStyle(this.cancelRef, '')['margin-left'].split('px')[0], 10);
+    this.cancelOuterWidth = Math.ceil(ml + parseInt(this.cancelRef.getBoundingClientRect().width, 10));
+
+    if (!showCancel) {
+      this.cancelRef.style.cssText = `margin-right: -${this.cancelOuterWidth}px;`;
+      this.initPos = formWidth / 2 - containerWidth / 2;
+    } else {
+      this.initPos = formWidth / 2 - this.cancelOuterWidth / 2 - containerWidth / 2;
+    }
+
+    if (!value) {
+      this.searchContainer.style.transform = `translate3d(${this.initPos}px, 0, 0)`;
+      this.searchContainer.style.webkitTransform = `translate3d(${this.initPos}px, 0, 0)`;
+    } else {
+      this.focusAnim(0);
+    }
+  }
+
+  focusAnim(transition = 300) {
+    this.searchContainer.style.cssText += `transform: translate3d(10px, 0, 0);transition: ${transition}ms;`;
+    this.cancelRef.style.cssText = 'margin-right: 0px;';
+    this.cancelRef.className += ' animation-ease';
+  }
+
+  blurAnim() {
+    const {
+      showCancel
+    } = this.props;
+    this.searchContainer.style.cssText += `transform: translate3d(${this.initPos}px, 0, 0);transition: 300ms;`;
+
+    if (!showCancel) {
+      this.cancelRef.style.cssText = `margin-right: -${this.cancelOuterWidth}px;`;
+    }
+  }
+
+  focus() {
+    this.inputRef.focus();
+  }
+
+  renderCancel() {
+    const {
+      prefixCls,
+      cancelText,
+      showCancel,
+      locale
+    } = this.props;
+    const {
+      value,
+      focus
+    } = this.state;
+    const cancelCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__cancel`, {
+      [`${prefixCls}__cancel--show`]: !!(showCancel || focus || value && value.length > 0)
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cancelCls,
+      ref: cancelRef => {
+        this.cancelRef = cancelRef;
+      },
+      onClick: () => {
+        this.onCancel();
+      }
+    }, cancelText || locale.cancelText);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      placeholder,
+      disabled,
+      clearable,
+      maxLength,
+      locale
+    } = this.props;
+    const {
+      value,
+      focus,
+      isOnComposition
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${shape}`]: !!shape,
+      [`${prefixCls}--focus`]: !!(focus || value && value.length > 0)
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+      action: "#",
+      className: `${prefixCls}__form`,
+      onSubmit: e => {
+        this.onSubmit(e);
+      },
+      ref: searchForm => {
+        this.searchForm = searchForm;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__mock`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__mock__container`,
+      ref: searchContainer => {
+        this.searchContainer = searchContainer;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      type: "search"
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__mock__placeholder`,
+      style: {
+        visibility: value || isOnComposition ? 'hidden' : 'visible'
+      }
+    }, placeholder || locale.placeholder))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_input_InputBase__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      className: `${prefixCls}__input`,
+      type: "search",
+      placeholder: placeholder || locale.placeholder,
+      value: value,
+      maxLength: maxLength,
+      onFocus: () => {
+        this.onFocus();
+      },
+      onCompositionStart: e => {
+        this.handleComposition(e);
+      },
+      onCompositionUpdate: e => {
+        this.handleComposition(e);
+      },
+      onCompositionEnd: e => {
+        this.handleComposition(e);
+      },
+      onChange: val => {
+        this.onChange(val);
+      },
+      onBlur: () => {
+        this.onBlur();
+      },
+      onClear: () => {
+        this.onClear();
+      },
+      disabled: disabled,
+      clearable: clearable,
+      ref: inputRef => {
+        this.inputRef = inputRef;
+      }
+    })), this.renderCancel()));
+  }
+
+}
+
+_defineProperty(SearchBar, "defaultProps", {
+  prefixCls: 'za-search-bar',
+  shape: 'radius',
+  disabled: false,
+  showCancel: false,
+  clearable: true
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/search-bar/index.js":
+/*!**************************************************!*\
+  !*** ./node_modules/zarm/es/search-bar/index.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _SearchBar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SearchBar */ "./node_modules/zarm/es/search-bar/SearchBar.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_SearchBar__WEBPACK_IMPORTED_MODULE_0__["default"], 'SearchBar'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/search-bar/locale/en_US.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/zarm/es/search-bar/locale/en_US.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  placeholder: 'Search',
+  cancelText: 'Cancel'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/select/Select.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/select/Select.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Select; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _picker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../picker */ "./node_modules/zarm/es/picker/index.js");
+/* harmony import */ var _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../picker-view/utils/parseProps */ "./node_modules/zarm/es/picker-view/utils/parseProps.js");
+/* harmony import */ var _utils_validate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/validate */ "./node_modules/zarm/es/utils/validate.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+class Select extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "tempValue", void 0);
+
+    _defineProperty(this, "tempObjValue", void 0);
+
+    _defineProperty(this, "handleClick", () => {
+      const {
+        disabled
+      } = this.props;
+
+      if (disabled) {
+        return false;
+      }
+
+      this.setState({
+        visible: true
+      });
+    });
+
+    _defineProperty(this, "onChange", selected => {
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(selected);
+      }
+    });
+
+    _defineProperty(this, "onOk", selected => {
+      const {
+        onOk,
+        valueMember
+      } = this.props;
+      this.setState({
+        value: selected.map(item => item[valueMember]),
+        objValue: selected,
+        visible: false
+      });
+
+      if (typeof onOk === 'function') {
+        onOk(selected);
+      }
+    });
+
+    _defineProperty(this, "onCancel", () => {
+      const {
+        onCancel
+      } = this.props;
+      this.setState({
+        value: this.tempValue,
+        objValue: this.tempObjValue,
+        visible: false
+      });
+
+      if (typeof onCancel === 'function') {
+        onCancel();
+      }
+    });
+
+    _defineProperty(this, "isValueValid", value => {
+      return Object.prototype.toString.call(value) === '[object String]' && !!value.trim() || Object(_utils_validate__WEBPACK_IMPORTED_MODULE_4__["isArray"])(value) && value.length > 0 && value.some(item => !!item);
+    });
+
+    this.state = _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_3__["default"].getSource(props);
+    const {
+      value: _value,
+      objValue
+    } = this.state;
+    this.tempValue = _value;
+    this.tempObjValue = objValue;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const state = _picker_view_utils_parseProps__WEBPACK_IMPORTED_MODULE_3__["default"].getSource(nextProps);
+    this.tempValue = state.value;
+    this.tempObjValue = state.objValue;
+    this.setState(state);
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      prefixCls,
+      placeholder,
+      className,
+      disabled,
+      displayRender,
+      value,
+      locale
+    } = _this$props,
+          others = _objectWithoutProperties(_this$props, ["prefixCls", "placeholder", "className", "disabled", "displayRender", "value", "locale"]);
+
+    const {
+      visible,
+      objValue
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--placeholder`]: !this.isValueValid(value),
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      onClick: this.handleClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__input`
+    }, this.isValueValid(value) && displayRender(objValue || []) || placeholder || locale.placeholder), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({}, others, {
+      visible: visible,
+      value: value,
+      onOk: this.onOk,
+      onChange: this.onChange,
+      onCancel: this.onCancel
+    })));
+  }
+
+}
+
+_defineProperty(Select, "defaultProps", {
+  prefixCls: 'za-select',
+  dataSource: [],
+  valueMember: 'value',
+  itemRender: data => data.label,
+  cols: Infinity,
+  displayRender: selected => selected.map(item => item.label),
+  onClick: () => {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/select/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/select/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Select */ "./node_modules/zarm/es/select/Select.js");
+/* harmony import */ var _locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../locale-provider/LocaleReceiver */ "./node_modules/zarm/es/locale-provider/LocaleReceiver.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_1__["default"])(_Select__WEBPACK_IMPORTED_MODULE_0__["default"], 'Select'));
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/select/locale/en_US.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/zarm/es/select/locale/en_US.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  placeholder: 'please select'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/slider/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/slider/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Slider; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drag */ "./node_modules/zarm/es/drag/index.js");
+/* harmony import */ var _tooltip__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../tooltip */ "./node_modules/zarm/es/tooltip/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+
+const getValue = (props, defaultValue) => {
+  if ('value' in props) {
+    return props.value;
+  }
+
+  if ('defaultValue' in props) {
+    return props.defaultValue;
+  }
+
+  return defaultValue;
+};
+
+class Slider extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "line", void 0);
+
+    _defineProperty(this, "offsetStart", 0);
+
+    _defineProperty(this, "onDragStart", () => {
+      const {
+        disabled
+      } = this.props;
+
+      if (disabled) {
+        return;
+      }
+
+      this.setState({
+        tooltip: true
+      });
+    });
+
+    _defineProperty(this, "onDragMove", (event, {
+      offsetX
+    }) => {
+      const {
+        disabled
+      } = this.props;
+
+      if (disabled) {
+        return false;
+      }
+
+      event.preventDefault();
+      let offset = this.offsetStart + offsetX;
+
+      if (offset < 0) {
+        offset = 0;
+        const newValue = this.getValueByOffset(offset);
+        this.setState({
+          offset,
+          value: newValue
+        });
+        return false;
+      }
+
+      if (offset > this.maxOffset()) {
+        offset = this.maxOffset();
+        const newValue = this.getValueByOffset(offset);
+        this.setState({
+          offset,
+          value: newValue
+        });
+        return false;
+      }
+
+      const value = this.getValueByOffset(offset);
+      offset = this.getOffsetByValue(value);
+      this.setState({
+        offset,
+        value
+      });
+      return true;
+    });
+
+    _defineProperty(this, "onDragEnd", (_event, {
+      offsetX
+    }) => {
+      this.setState({
+        tooltip: false
+      });
+
+      if (Number.isNaN(offsetX)) {
+        return;
+      }
+
+      this.offsetStart += offsetX;
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(this.state.value);
+      }
+    });
+
+    _defineProperty(this, "getValueByOffset", offset => {
+      const {
+        min,
+        max,
+        step
+      } = this.props;
+      const percent = offset / this.maxOffset();
+      const value = Math.round((min + (max - min) * percent) / step) * step;
+      return Math.max(Math.min(value, max), min);
+    });
+
+    _defineProperty(this, "getOffsetByValue", value => {
+      const {
+        min,
+        max
+      } = this.props;
+      return this.maxOffset() * ((value - min) / (max - min));
+    });
+
+    _defineProperty(this, "maxOffset", () => {
+      return this.line ? this.line.offsetWidth : 0;
+    });
+
+    _defineProperty(this, "init", () => {
+      const {
+        value
+      } = this.state;
+      const offset = this.getOffsetByValue(value);
+      this.offsetStart = offset;
+      this.setState({
+        offset
+      });
+    });
+
+    this.state = {
+      value: getValue(props, 0),
+      offset: 0,
+      tooltip: false
+    };
+  }
+
+  componentDidMount() {
+    this.init();
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(window, 'resize', this.init);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps) {
+      const {
+        value
+      } = nextProps;
+      const offset = this.getOffsetByValue(value);
+      this.setState({
+        value,
+        offset
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      disabled,
+      min,
+      max
+    } = this.props;
+    const {
+      value,
+      offset,
+      tooltip
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--disabled`]: disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__line`,
+      ref: ele => {
+        this.line = ele;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__line__bg`,
+      style: {
+        width: offset
+      }
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_drag__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      onDragStart: this.onDragStart,
+      onDragMove: this.onDragMove,
+      onDragEnd: this.onDragEnd
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__handle`,
+      role: "slider",
+      "aria-valuemin": min,
+      "aria-valuemax": max,
+      "aria-valuenow": value,
+      style: {
+        left: offset
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_tooltip__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      visible: tooltip,
+      title: value
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}-handle-shadow`
+    })))));
+  }
+
+}
+
+_defineProperty(Slider, "defaultProps", {
+  prefixCls: 'za-slider',
+  disabled: false,
+  step: 1,
+  min: 0,
+  max: 100
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/stepper/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/stepper/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Stepper; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../button */ "./node_modules/zarm/es/button/index.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../icon */ "./node_modules/zarm/es/icon/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const getValue = (props, defaultValue) => {
+  if ('value' in props) {
+    return props.value;
+  }
+
+  if ('defaultValue' in props) {
+    return props.defaultValue;
+  }
+
+  return defaultValue;
+};
+
+class Stepper extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onInputChange", value => {
+      value = Number(value);
+      const {
+        onInputChange
+      } = this.props;
+      this.setState({
+        value
+      });
+
+      if (typeof onInputChange === 'function') {
+        onInputChange(value);
+      }
+    });
+
+    _defineProperty(this, "onInputBlur", value => {
+      const {
+        min,
+        max,
+        onChange
+      } = this.props;
+      value = Number(value);
+
+      if (value === '' || Number.isNaN(Number(value))) {
+        value = this.state.lastValue;
+      }
+
+      if (min !== null && value < min) {
+        value = min;
+      }
+
+      if (max !== null && value > max) {
+        value = max;
+      }
+
+      this.setState({
+        value,
+        lastValue: value
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
+    });
+
+    _defineProperty(this, "onSubClick", () => {
+      const {
+        step
+      } = this.props;
+      const {
+        value
+      } = this.state;
+
+      if (this.isSubDisabled()) {
+        return;
+      }
+
+      const newValue = Number(value) - step;
+      this.onInputBlur(newValue);
+    });
+
+    _defineProperty(this, "onPlusClick", () => {
+      const {
+        step
+      } = this.props;
+      const {
+        value
+      } = this.state;
+
+      if (this.isPlusDisabled()) {
+        return;
+      }
+
+      const newValue = Number(value) + step;
+      this.onInputBlur(newValue);
+    });
+
+    _defineProperty(this, "isSubDisabled", () => {
+      const {
+        min,
+        disabled
+      } = this.props;
+      const {
+        value
+      } = this.state;
+
+      if (min === null) {
+        return false;
+      }
+
+      return value <= min || disabled;
+    });
+
+    _defineProperty(this, "isPlusDisabled", () => {
+      const {
+        max,
+        disabled
+      } = this.props;
+      const {
+        value
+      } = this.state;
+
+      if (max === null) {
+        return false;
+      }
+
+      return value >= max || disabled;
+    });
+
+    this.state = {
+      value: getValue(props, 0),
+      lastValue: getValue(props, 0)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps) {
+      this.setState({
+        value: Number(getValue(nextProps, 0)),
+        lastValue: Number(getValue(nextProps, 0))
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      shape,
+      disabled,
+      size
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--${shape}`]: !!shape,
+      [`${prefixCls}--${size}`]: !!size,
+      [`${prefixCls}--disabled`]: disabled
+    });
+    const buttonSize = size === 'lg' ? 'sm' : 'xs';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_button__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      className: `${prefixCls}__sub`,
+      size: buttonSize,
+      disabled: this.isSubDisabled(),
+      shape: shape,
+      onClick: this.onSubClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      type: "minus"
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      className: `${prefixCls}__input`,
+      type: "tel",
+      value: value,
+      disabled: disabled,
+      onChange: e => !disabled && this.onInputChange(e.target.value),
+      onBlur: () => !disabled && this.onInputBlur(value)
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_button__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      className: `${prefixCls}__plus`,
+      size: buttonSize,
+      disabled: this.isPlusDisabled(),
+      shape: shape,
+      onClick: this.onPlusClick
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_icon__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      type: "add"
+    })));
+  }
+
+}
+
+_defineProperty(Stepper, "defaultProps", {
+  prefixCls: 'za-stepper',
+  shape: 'radius',
+  disabled: false,
+  step: 1
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/swipe-action/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/zarm/es/swipe-action/index.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SwipeAction; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drag */ "./node_modules/zarm/es/drag/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class SwipeAction extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "isOpen", false);
+
+    _defineProperty(this, "touchEnd", true);
+
+    _defineProperty(this, "wrap", void 0);
+
+    _defineProperty(this, "left", void 0);
+
+    _defineProperty(this, "right", void 0);
+
+    _defineProperty(this, "onDragStart", () => {
+      if (this.isOpen) {
+        this.touchEnd = false;
+        this.close();
+        return;
+      }
+
+      this.touchEnd = true;
+    });
+
+    _defineProperty(this, "onDragMove", (event, {
+      offsetX,
+      offsetY
+    }) => {
+      const {
+        disabled
+      } = this.props;
+
+      if (!this.touchEnd || disabled) {
+        return false;
+      } // 拖动距离达到上限
+
+
+      const {
+        offset
+      } = this.props;
+      const {
+        offsetLeft
+      } = this.state;
+      const btnsLeftWidth = this.left && this.left.offsetWidth;
+      const btnsRightWidth = this.right && this.right.offsetWidth;
+
+      if (offsetX > 0 && (!btnsLeftWidth || offsetLeft >= btnsLeftWidth + offset)) {
+        return false;
+      }
+
+      if (offsetX < 0 && (!btnsRightWidth || offsetLeft <= -btnsRightWidth - offset)) {
+        return false;
+      } // 判断滚屏情况
+
+
+      const distanceX = Math.abs(offsetX);
+      const distanceY = Math.abs(offsetY);
+
+      if (distanceX < 5 || distanceX >= 5 && distanceY >= 0.3 * distanceX) {
+        return false;
+      }
+
+      event.preventDefault();
+      this.doTransition({
+        offsetLeft: offsetX,
+        animationDuration: 0
+      });
+      return true;
+    });
+
+    _defineProperty(this, "onDragEnd", (_event, {
+      offsetX,
+      startTime
+    }) => {
+      const {
+        animationDuration,
+        moveDistanceRatio,
+        moveTimeSpan
+      } = this.props;
+      const timeSpan = new Date().getTime() - startTime.getTime();
+      const btnsLeftWidth = this.left && this.left.offsetWidth;
+      const btnsRightWidth = this.right && this.right.offsetWidth; // if (this.left.offsetWidth) {
+      //   this.props.onOpen!();
+      // }
+
+      let distanceX = 0;
+      let isOpen = false;
+
+      if (offsetX / btnsLeftWidth > moveDistanceRatio || offsetX > 0 && timeSpan <= moveTimeSpan) {
+        distanceX = btnsLeftWidth;
+        isOpen = true;
+      } else if (offsetX / btnsRightWidth < -moveDistanceRatio || offsetX < 0 && timeSpan <= moveTimeSpan) {
+        distanceX = -btnsRightWidth;
+        isOpen = true;
+      }
+
+      if (isOpen && !this.isOpen) {
+        // 打开
+        this.open(distanceX);
+      } else if (!isOpen && this.isOpen) {
+        // 关闭
+        this.close();
+      } else {
+        // 还原
+        this.doTransition({
+          offsetLeft: distanceX,
+          animationDuration
+        });
+      }
+    });
+
+    _defineProperty(this, "onCloseSwipe", e => {
+      if (!this.wrap) {
+        return;
+      }
+
+      if (this.isOpen) {
+        const pNode = (node => {
+          while (node.parentNode && node.parentNode !== document.body) {
+            if (node === this.wrap) {
+              return node;
+            }
+
+            node = node.parentNode;
+          }
+        })(e.target);
+
+        if (!pNode) {
+          e.preventDefault();
+          this.touchEnd = true;
+          this.close();
+        }
+      }
+    });
+
+    _defineProperty(this, "open", offsetLeft => {
+      const {
+        animationDuration,
+        onOpen
+      } = this.props;
+      this.isOpen = true;
+      this.doTransition({
+        offsetLeft,
+        animationDuration
+      });
+
+      if (typeof onOpen === 'function') {
+        onOpen();
+      }
+    });
+
+    _defineProperty(this, "close", () => {
+      const {
+        animationDuration,
+        onClose
+      } = this.props;
+      this.isOpen = false;
+      this.doTransition({
+        offsetLeft: 0,
+        animationDuration
+      });
+
+      if (typeof onClose === 'function') {
+        onClose();
+      }
+    });
+
+    _defineProperty(this, "doTransition", ({
+      offsetLeft,
+      animationDuration
+    }) => {
+      this.setState({
+        offsetLeft,
+        animationDuration
+      });
+    });
+
+    _defineProperty(this, "renderButton", (button, index) => {
+      return Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(button, {
+        key: +index,
+        onClick: e => {
+          const {
+            onClick
+          } = button.props;
+          onClick && onClick(e);
+
+          if (this.props.autoClose) {
+            this.close();
+          }
+        }
+      });
+    });
+
+    _defineProperty(this, "renderButtons", (buttons, direction) => {
+      if (!buttons || buttons.length === 0) {
+        return;
+      }
+
+      const {
+        prefixCls
+      } = this.props;
+      const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__actions`, `${prefixCls}__actions--${direction}`);
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: cls,
+        ref: el => {
+          this[direction] = el;
+        }
+      }, buttons.map(this.renderButton));
+    });
+
+    this.state = {
+      offsetLeft: 0
+    };
+  }
+
+  componentDidMount() {
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(document.body, 'touchstart', this.onCloseSwipe);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].on(document.body, 'click', this.onCloseSwipe);
+  }
+
+  componentWillUnmount() {
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(document.body, 'touchstart', this.onCloseSwipe);
+    _utils_events__WEBPACK_IMPORTED_MODULE_2__["default"].off(document.body, 'click', this.onCloseSwipe);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      left,
+      right,
+      children
+    } = this.props;
+    const {
+      offsetLeft,
+      animationDuration
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    const style = {
+      WebkitTransitionDuration: `${animationDuration}ms`,
+      transitionDuration: `${animationDuration}ms`,
+      WebkitTransform: `translate3d(${offsetLeft}px, 0, 0)`,
+      transform: `translate3d(${offsetLeft}px, 0, 0)`
+    };
+    return left || right ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      ref: wrap => {
+        this.wrap = wrap;
+      }
+    }, this.renderButtons(left, 'left'), this.renderButtons(right, 'right'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_drag__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      onDragStart: this.onDragStart,
+      onDragMove: this.onDragMove,
+      onDragEnd: this.onDragEnd
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`,
+      style: style
+    }, children))) : children;
+  }
+
+}
+
+_defineProperty(SwipeAction, "defaultProps", {
+  prefixCls: 'za-swipe-action',
+  left: [],
+  right: [],
+  moveDistanceRatio: 0.5,
+  moveTimeSpan: 300,
+  animationDuration: 300,
+  offset: 10
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/switch/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/switch/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Switch; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+const getChecked = (props, defaultChecked) => {
+  if ('checked' in props && props.checked) {
+    return props.checked;
+  }
+
+  if ('defaultChecked' in props && props.defaultChecked) {
+    return props.defaultChecked;
+  }
+
+  return defaultChecked;
+};
+
+class Switch extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "onValueChange", () => {
+      const {
+        disabled,
+        onChange
+      } = this.props;
+      const {
+        checked
+      } = this.state;
+
+      if (disabled) {
+        return;
+      }
+
+      const newChecked = !checked;
+      this.setState({
+        checked: newChecked
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(newChecked);
+      }
+    });
+
+    this.state = {
+      checked: getChecked(props, false)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('checked' in nextProps) {
+      this.setState({
+        checked: !!nextProps.checked
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      disabled,
+      style
+    } = this.props;
+    const {
+      checked
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--disabled`]: !!disabled
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: cls,
+      style: style
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "checkbox",
+      className: `${prefixCls}__input`,
+      disabled: disabled,
+      checked: checked,
+      onChange: this.onValueChange,
+      value: checked ? 'on' : 'off'
+    }));
+  }
+
+}
+
+_defineProperty(Switch, "defaultProps", {
+  prefixCls: 'za-switch',
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/tabs/TabPanel.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/tabs/TabPanel.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return TabPanel; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+class TabPanel extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: props.selected || props.defaultSelected
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('selected' in nextProps) {
+      this.setState({
+        selected: !!nextProps.selected
+      });
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      children
+    } = this.props;
+    const {
+      selected
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__panel__item`, className, {
+      [`${prefixCls}__panel__item--active`]: selected
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      role: "tabpanel"
+    }, children);
+  }
+
+}
+
+_defineProperty(TabPanel, "defaultProps", {
+  prefixCls: 'za-tabs'
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/tabs/Tabs.js":
+/*!*******************************************!*\
+  !*** ./node_modules/zarm/es/tabs/Tabs.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Tabs; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _TabPanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TabPanel */ "./node_modules/zarm/es/tabs/TabPanel.js");
+/* harmony import */ var _carousel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../carousel */ "./node_modules/zarm/es/carousel/index.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const getSelectIndex = children => {
+  let selectIndex;
+  react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.forEach(children, (item, index) => {
+    if (item.props && item.props.selected) {
+      selectIndex = index;
+    }
+  });
+  return selectIndex;
+};
+
+class Tabs extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "carousel", void 0);
+
+    _defineProperty(this, "onSwipeChange", value => {
+      const {
+        onChange
+      } = this.props;
+      this.setState({
+        value
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
+    });
+
+    _defineProperty(this, "onTabClick", (tab, index) => {
+      const {
+        disabled,
+        canSwipe,
+        onChange
+      } = this.props;
+
+      if (disabled || tab.props.disabled) {
+        return;
+      }
+
+      this.setState({
+        value: index
+      });
+
+      if (typeof onChange === 'function') {
+        onChange(index);
+      }
+
+      if (canSwipe) {
+        this.carousel.onSlideTo(index);
+      }
+    });
+
+    _defineProperty(this, "renderTabs", (tab, index) => {
+      const {
+        prefixCls,
+        disabled
+      } = this.props;
+      const itemCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__header__item`, tab.props.className, {
+        [`${prefixCls}__header__item--disabled`]: disabled || tab.props.disabled
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        role: "tab",
+        key: +index,
+        className: itemCls,
+        onClick: () => this.onTabClick(tab, index)
+      }, tab.props.title);
+    });
+
+    this.state = {
+      value: props.value || props.defaultValue || getSelectIndex(props.children) || 0
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps || getSelectIndex(nextProps.children)) {
+      this.setState({
+        value: nextProps.value || nextProps.defaultValue || getSelectIndex(nextProps.children) || 0
+      });
+
+      if (typeof nextProps.onChange === 'function') {
+        nextProps.onChange(nextProps.value);
+      }
+    }
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      lineWidth,
+      hasline,
+      canSwipe,
+      children
+    } = this.props;
+    const {
+      value
+    } = this.state;
+    const classes = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className, {
+      [`${prefixCls}--hasline`]: hasline
+    }); // 渲染选项
+
+    const tabsRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, this.renderTabs); // 渲染内容
+
+    let contentRender;
+
+    if (canSwipe) {
+      contentRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_carousel__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        direction: "left",
+        showPagination: false,
+        activeIndex: value,
+        ref: ele => {
+          this.carousel = ele;
+        },
+        onChange: v => this.onSwipeChange(v)
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, item => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, item.props.children)));
+    } else {
+      contentRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.map(children, (item, index) => {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TabPanel__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({}, item.props, {
+          selected: value === index
+        }));
+      });
+    }
+
+    const lineStyle = {
+      width: `${100 / children.length}%`,
+      left: `${value / children.length * 100}%` // right: `${(children.length - this.state.value - 1) / children.length * 100}%`,
+      // transition: `right 0.3s cubic-bezier(0.35, 0, 0.25, 1), left 0.3s cubic-bezier(0.35, 0, 0.25, 1) 0.09s`,
+
+    };
+    let lineInnerRender;
+
+    if (lineWidth) {
+      lineStyle.backgroundColor = 'transparent';
+      lineInnerRender = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: `${prefixCls}__line__inner`,
+        style: {
+          width: lineWidth
+        }
+      });
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: classes
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__header`
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+      role: "tablist"
+    }, tabsRender), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__line`,
+      style: lineStyle
+    }, lineInnerRender)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__container`
+    }, contentRender));
+  }
+
+}
+
+_defineProperty(Tabs, "Panel", void 0);
+
+_defineProperty(Tabs, "defaultProps", {
+  prefixCls: 'za-tabs',
+  disabled: false,
+  hasline: false,
+  canSwipe: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/tabs/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/tabs/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tabs */ "./node_modules/zarm/es/tabs/Tabs.js");
+/* harmony import */ var _TabPanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TabPanel */ "./node_modules/zarm/es/tabs/TabPanel.js");
+
+
+_Tabs__WEBPACK_IMPORTED_MODULE_0__["default"].Panel = _TabPanel__WEBPACK_IMPORTED_MODULE_1__["default"];
+/* harmony default export */ __webpack_exports__["default"] = (_Tabs__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/toast/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/toast/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Toast; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mask */ "./node_modules/zarm/es/mask/index.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+class Toast extends react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"] {
+  constructor(_props) {
+    super(_props);
+
+    _defineProperty(this, "timer", void 0);
+
+    _defineProperty(this, "enter", props => {
+      const {
+        stayTime,
+        onMaskClick
+      } = props;
+      this.setState({
+        visible: true
+      });
+
+      if (stayTime === 0) {
+        return;
+      }
+
+      this.timer = setTimeout(() => {
+        if (typeof onMaskClick === 'function') {
+          onMaskClick();
+        }
+
+        this.leave(props);
+        clearTimeout(this.timer);
+      }, stayTime);
+    });
+
+    _defineProperty(this, "leave", props => {
+      this.setState({
+        visible: false
+      });
+      const {
+        onClose
+      } = props;
+
+      if (typeof onClose === 'function') {
+        onClose();
+      }
+    });
+
+    this.state = {
+      visible: _props.visible || false
+    };
+  }
+
+  componentDidMount() {
+    const {
+      visible
+    } = this.props;
+
+    if (visible) {
+      this.enter(this.props);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    clearTimeout(this.timer);
+
+    if (nextProps.visible) {
+      this.enter(nextProps);
+    } else {
+      this.leave(nextProps);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      mask,
+      onMaskClick,
+      children
+    } = this.props;
+    const {
+      visible
+    } = this.state;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_2___default()(prefixCls, className, {
+      [`${prefixCls}--open`]: visible
+    });
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__container`
+    }, children), mask && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_mask__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      visible: visible,
+      type: "transparent",
+      onClick: onMaskClick
+    }));
+  }
+
+}
+
+_defineProperty(Toast, "defaultProps", {
+  prefixCls: 'za-toast',
+  visible: false,
+  stayTime: 3000,
+  mask: false
+});
+
+_defineProperty(Toast, "show", (children, stayTime, onClose) => {
+  if (!Toast.mounted) {
+    Toast.zarmToast = document.createElement('div');
+    document.body.appendChild(Toast.zarmToast);
+    Toast.mounted = true;
+  }
+
+  if (Toast.zarmToast) {
+    react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Toast, {
+      visible: true,
+      stayTime: stayTime,
+      onClose: onClose
+    }, children), Toast.zarmToast);
+  }
+});
+
+_defineProperty(Toast, "hide", () => {
+  if (Toast.zarmToast) {
+    react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Toast, {
+      visible: false
+    }), Toast.zarmToast);
+  }
+});
+
+_defineProperty(Toast, "zarmToast", void 0);
+
+_defineProperty(Toast, "mounted", false);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/tooltip/Popper.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/tooltip/Popper.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/dom */ "./node_modules/zarm/es/utils/dom.js");
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
+    }
+
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+/* eslint-disable */
+
+
+
+const {
+  getBoundingClientRect,
+  getSupportedPropertyName,
+  getOffsetParent,
+  getOuterSizes,
+  getScrollParent,
+  isFixed,
+  getScrollTopValue,
+  getScrollLeftValue,
+  setStyle,
+  getStyleComputedProperty
+} = _utils_dom__WEBPACK_IMPORTED_MODULE_0__["default"];
+let root = {};
+
+if (typeof window !== 'undefined') {
+  root = window;
+}
+
+const DEFAULTS = {
+  placement: 'bottom',
+  offset: 0,
+  boundariesPadding: 5,
+  preventOverflowOrder: ['left', 'right', 'top', 'bottom'],
+  modifiers: ['shift', 'offset', 'preventOverflow', 'keepTogether', 'arrow', 'flip', 'applyStyle'],
+  removeOnDestroy: false
+};
+/**
+ * 获取一个元素相对任意父元素的偏移值
+ */
+
+function getOffsetRectRelativeToCustomParent(element, parent, fixed) {
+  const elementRect = getBoundingClientRect(element);
+  const parentRect = getBoundingClientRect(parent);
+
+  if (fixed) {
+    const scrollParent = getScrollParent(parent);
+    parentRect.top += scrollParent.scrollTop;
+    parentRect.bottom += scrollParent.scrollTop;
+    parentRect.left += scrollParent.scrollLeft;
+    parentRect.right += scrollParent.scrollLeft;
+  }
+
+  const rect = {
+    top: elementRect.top - parentRect.top,
+    left: elementRect.left - parentRect.left,
+    bottom: elementRect.top - parentRect.top + elementRect.height,
+    right: elementRect.left - parentRect.left + elementRect.width,
+    width: elementRect.width,
+    height: elementRect.height
+  };
+  return rect;
+}
+/**
+ * Helpers
+ */
+
+/**
+ * 获取相反的方向
+ */
+
+
+function getOppositePlacement(placement) {
+  const hash = {
+    left: 'right',
+    right: 'left',
+    bottom: 'top',
+    top: 'bottom'
+  };
+  return placement.replace(/left|right|bottom|top/g, matched => {
+    return hash[matched];
+  });
+}
+/**
+ * 生成气泡框的ClientRect
+ */
+
+
+function getPopperClientRect(popperOffsets) {
+  const offsets = _objectSpread({}, popperOffsets);
+
+  offsets.right = offsets.left + offsets.width;
+  offsets.bottom = offsets.top + offsets.height;
+  return offsets;
+}
+/**
+ * 获取数组某个值的index
+ */
+
+
+function getArrayKeyIndex(arr, keyToFind) {
+  let i = 0;
+  let key;
+
+  for (key in arr) {
+    if (arr[key] === keyToFind) {
+      return i;
+    }
+
+    i++;
+  }
+
+  return null;
+}
+/**
+ * 检查是否是函数
+ */
+
+
+function isFunction(functionToCheck) {
+  const getType = {};
+  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
+/**
+ * 获取一个元素的各个offset值
+ */
+
+
+function getOffsetRect(element) {
+  const elementRect = {
+    width: element.offsetWidth,
+    height: element.offsetHeight,
+    left: element.offsetLeft,
+    top: element.offsetTop
+  };
+  elementRect.right = elementRect.left + elementRect.width;
+  elementRect.bottom = elementRect.top + elementRect.height;
+  return elementRect;
+}
+/**
+ * @constructor 气泡框构造函数
+ * @param {HTMLElement} reference
+ * @param {HTMLElement} popper
+ * @param {Object} options
+ */
+
+
+function Popper(reference, popper, options) {
+  this._reference = reference;
+  this._popper = popper;
+  this.state = {};
+  this._options = _objectSpread({}, DEFAULTS, options);
+  this._options.modifiers = this._options.modifiers.map(modifier => {
+    if (modifier === 'applyStyle') {
+      this._popper.setAttribute('x-placement', this._options.placement);
+    }
+
+    return this.modifiers[modifier] || modifier;
+  });
+  this.state.position = this._getPosition(this._popper, this._reference);
+  setStyle(this._popper, {
+    position: this.state.position,
+    top: 0
+  });
+  this.update();
+
+  if (root.requestAnimationFrame) {
+    requestAnimationFrame(this.update.bind(this));
+  } else {
+    setTimeout(this.update.bind(this));
+  }
+
+  this._setupEventListeners(); // return this;
+
+}
+/**
+ * 销毁
+ */
+
+
+Popper.prototype.destroy = function () {
+  this._popper.removeAttribute('x-placement');
+
+  this._popper.style.left = '';
+  this._popper.style.position = '';
+  this._popper.style.top = '';
+  this._popper.style[getSupportedPropertyName('transform')] = '';
+
+  this._removeEventListeners();
+
+  if (this._options.removeOnDestroy) {
+    this._popper.remove();
+  }
+
+  return this;
+};
+/**
+ * 更新方位，重新计算偏移量
+ */
+
+
+Popper.prototype.update = function () {
+  let data = {};
+  data.placement = this._options.placement;
+  data._originalPlacement = this._options.placement; // 根据方位计算气泡框和reference相对气泡框定位父元素的left，top等值
+
+  data.offsets = this._getOffsets(this._popper, this._reference, data.placement); // 获取边界，用于优化在边界情况下正常显示气泡框
+
+  data.boundaries = this._getBoundaries(data, this._options.boundariesPadding); // 运行各个modifier函数细调和修正偏移量，并最终应用样式
+
+  data = this.runModifiers(data, this._options.modifiers);
+};
+/**
+ * 判断气泡框应该使用什么定位
+ */
+
+
+Popper.prototype._getPosition = function (_, reference) {
+  const isParentFixed = isFixed(reference);
+  return isParentFixed ? 'fixed' : 'absolute';
+  return 'absolute';
+};
+/**
+ * 根据方位计算气泡框和reference相对气泡框定位父元素的left，top等值
+ */
+
+
+Popper.prototype._getOffsets = function (popper, reference, placement) {
+  placement = placement.split('-')[0];
+  const popperOffsets = {};
+  popperOffsets.position = this.state.position;
+  const isParentFixed = popperOffsets.position === 'fixed'; // 根据方位计算reference相对气泡框定位父元素left, top等值
+
+  const referenceOffsets = getOffsetRectRelativeToCustomParent(reference, getOffsetParent(popper), isParentFixed);
+  const popperRect = getOuterSizes(popper);
+
+  if (['right', 'left'].indexOf(placement) !== -1) {
+    popperOffsets.top = referenceOffsets.top + referenceOffsets.height / 2 - popperRect.height / 2;
+
+    if (placement === 'left') {
+      popperOffsets.left = referenceOffsets.left - popperRect.width;
+    } else {
+      popperOffsets.left = referenceOffsets.right;
+    }
+  } else {
+    popperOffsets.left = referenceOffsets.left + referenceOffsets.width / 2 - popperRect.width / 2;
+
+    if (placement === 'top') {
+      popperOffsets.top = referenceOffsets.top - popperRect.height;
+    } else {
+      popperOffsets.top = referenceOffsets.bottom;
+    }
+  }
+
+  popperOffsets.width = popperRect.width;
+  popperOffsets.height = popperRect.height;
+  return {
+    popper: popperOffsets,
+    reference: referenceOffsets
+  };
+};
+/**
+ * 设置resize和scroll事件，更新气泡框位置
+ */
+
+
+Popper.prototype._setupEventListeners = function () {
+  this.state.updateBound = this.update.bind(this);
+  root.addEventListener('resize', this.state.updateBound);
+  let target = getScrollParent(this._reference);
+
+  if (target === root.document.body || target === root.document.documentElement) {
+    target = root;
+  }
+
+  target.addEventListener('scroll', this.state.updateBound);
+};
+/**
+ * 移除事件
+ */
+
+
+Popper.prototype._removeEventListeners = function () {
+  root.removeEventListener('resize', this.state.updateBound);
+  let target = getScrollParent(this._reference);
+
+  if (target === root.document.body || target === root.document.documentElement) {
+    target = root;
+  }
+
+  target.removeEventListener('scroll', this.state.updateBound);
+  this.state.updateBound = null;
+};
+/**
+ * 获取边界，用于优化在边界情况下正常显示气泡框
+ */
+
+
+Popper.prototype._getBoundaries = function (data, padding) {
+  let boundaries = {};
+  const offsetParent = getOffsetParent(this._popper);
+  const scrollParent = getScrollParent(this._popper);
+  const offsetParentRect = getOffsetRect(offsetParent);
+  const scrollTop = data.offsets.popper.position === 'fixed' ? 0 : getScrollTopValue(scrollParent);
+  const scrollLeft = data.offsets.popper.position === 'fixed' ? 0 : getScrollLeftValue(scrollParent);
+  boundaries = {
+    top: 0 - (offsetParentRect.top - scrollTop),
+    right: root.document.documentElement.clientWidth - (offsetParentRect.left - scrollLeft),
+    bottom: root.document.documentElement.clientHeight - (offsetParentRect.top - scrollTop),
+    left: 0 - (offsetParentRect.left - scrollLeft)
+  };
+  boundaries.left += padding;
+  boundaries.right -= padding;
+  boundaries.top += padding;
+  boundaries.bottom -= padding;
+  return boundaries;
+};
+/**
+ * 运行各个modifier函数细调和修正偏移量，并最终应用样式
+ */
+
+
+Popper.prototype.runModifiers = function (data, modifiers, ends) {
+  let modifiersToRun = modifiers.slice();
+
+  if (ends !== undefined) {
+    modifiersToRun = this._options.modifiers.slice(0, getArrayKeyIndex(this._options.modifiers, ends));
+  }
+
+  modifiersToRun.forEach(modifier => {
+    if (isFunction(modifier)) {
+      data = modifier.call(this, data);
+    }
+  });
+  return data;
+};
+/**
+ * Modifiers list
+ */
+
+
+Popper.prototype.modifiers = {};
+/**
+ * 应用最后计算出的样式到气泡框
+ */
+
+Popper.prototype.modifiers.applyStyle = function (data) {
+  const styles = {
+    position: data.offsets.popper.position
+  };
+  const left = Math.round(data.offsets.popper.left);
+  const top = Math.round(data.offsets.popper.top);
+  let prefixedProperty;
+
+  if (getSupportedPropertyName('transform')) {
+    prefixedProperty = getSupportedPropertyName('transform');
+    styles[prefixedProperty] = `translate3d(${left}px, ${top}px, 0)`;
+    styles.top = 0;
+    styles.left = 0;
+  } else {
+    styles.left = left;
+    styles.top = top;
+  }
+
+  setStyle(this._popper, styles); // 给气泡框添加属性选择器，用于定位arrow
+
+  this._popper.setAttribute('x-placement', data.placement); // 设置arrow定位样式
+
+
+  if (data.offsets.arrow) {
+    setStyle(data.arrowElement, data.offsets.arrow);
+  }
+
+  return data;
+};
+/**
+ * 计算气泡框在不同方位的top，left值
+ */
+
+
+Popper.prototype.modifiers.shift = function (data) {
+  const placement = data.placement;
+  const basePlacement = placement.split('-')[0];
+  const shiftVariation = placement.split('-')[1];
+
+  if (shiftVariation) {
+    const reference = data.offsets.reference;
+    let popper = getPopperClientRect(data.offsets.popper);
+    const shiftOffsets = {
+      y: {
+        start: {
+          top: reference.top
+        },
+        end: {
+          top: reference.top + reference.height - popper.height
+        }
+      },
+      x: {
+        start: {
+          left: reference.left
+        },
+        end: {
+          left: reference.left + reference.width - popper.width
+        }
+      }
+    };
+    const axis = ['bottom', 'top'].indexOf(basePlacement) !== -1 ? 'x' : 'y';
+    data.offsets.popper = popper = _objectSpread({}, popper, shiftOffsets[axis][shiftVariation]);
+  }
+
+  return data;
+};
+/**
+ * 阻止并修正在边界情况下气泡框溢出问题
+ */
+
+
+Popper.prototype.modifiers.preventOverflow = function (data) {
+  const order = this._options.preventOverflowOrder;
+  let popper = getPopperClientRect(data.offsets.popper);
+  const check = {
+    left() {
+      let left = popper.left;
+
+      if (popper.left < data.boundaries.left) {
+        left = Math.max(popper.left, data.boundaries.left);
+      }
+
+      return {
+        left
+      };
+    },
+
+    right() {
+      let left = popper.left;
+
+      if (popper.right > data.boundaries.right) {
+        left = Math.min(popper.left, data.boundaries.right - popper.width);
+      }
+
+      return {
+        left
+      };
+    },
+
+    top() {
+      let top = popper.top;
+
+      if (popper.top < data.boundaries.top) {
+        top = Math.max(popper.top, data.boundaries.top);
+      }
+
+      return {
+        top
+      };
+    },
+
+    bottom() {
+      let top = popper.top;
+
+      if (popper.bottom > data.boundaries.bottom) {
+        top = Math.min(popper.top, data.boundaries.bottom - popper.height);
+      }
+
+      return {
+        top
+      };
+    }
+
+  };
+  order.forEach(direction => {
+    data.offsets.popper = popper = _objectSpread({}, popper, check[direction]());
+  });
+  return data;
+};
+/**
+ * 保持气泡框和reference始终在一起
+ */
+
+
+Popper.prototype.modifiers.keepTogether = function (data) {
+  const popper = getPopperClientRect(data.offsets.popper);
+  const reference = data.offsets.reference;
+  const f = Math.floor;
+
+  if (popper.right < f(reference.left)) {
+    data.offsets.popper.left = f(reference.left) - popper.width;
+  }
+
+  if (popper.left > f(reference.right)) {
+    data.offsets.popper.left = f(reference.right);
+  }
+
+  if (popper.bottom < f(reference.top)) {
+    data.offsets.popper.top = f(reference.top) - popper.height;
+  }
+
+  if (popper.top > f(reference.bottom)) {
+    data.offsets.popper.top = f(reference.bottom);
+  }
+
+  return data;
+};
+/**
+ * 如果气泡框被边界挤得和reference重叠了，进行方向翻转
+ */
+
+
+Popper.prototype.modifiers.flip = function (data) {
+  if (data.flipped && data.placement === data._originalPlacement) {
+    // 两边都没空间，导致循环翻转
+    return data;
+  }
+
+  let placement = data.placement.split('-')[0];
+  let placementOpposite = getOppositePlacement(placement);
+  const variation = data.placement.split('-')[1] || '';
+  const flipOrder = [placement, placementOpposite];
+  flipOrder.forEach((step, index) => {
+    if (placement !== step || flipOrder.length === index + 1) {
+      return;
+    }
+
+    placement = data.placement.split('-')[0];
+    placementOpposite = getOppositePlacement(placement);
+    const popperOffsets = getPopperClientRect(data.offsets.popper);
+    const a = ['right', 'bottom'].indexOf(placement) !== -1;
+
+    if (a && Math.floor(data.offsets.reference[placement]) > Math.floor(popperOffsets[placementOpposite]) || !a && Math.floor(data.offsets.reference[placement]) < Math.floor(popperOffsets[placementOpposite])) {
+      data.flipped = true;
+      data.placement = flipOrder[index + 1];
+
+      if (variation) {
+        data.placement += `-${variation}`;
+      } // 计算翻转后的偏移值
+
+
+      data.offsets.popper = this._getOffsets(this._popper, this._reference, data.placement).popper; // 因为翻转了反向，重新跑一遍flip之前的modifiers
+
+      data = this.runModifiers(data, this._options.modifiers, this._flip);
+    }
+  });
+  return data;
+};
+/**
+ * 根据传入的offset对气泡框做偏移
+ */
+
+
+Popper.prototype.modifiers.offset = function (data) {
+  const offset = this._options.offset;
+  const popper = data.offsets.popper;
+
+  if (data.placement.indexOf('left') !== -1) {
+    popper.top -= offset;
+  } else if (data.placement.indexOf('right') !== -1) {
+    popper.top += offset;
+  } else if (data.placement.indexOf('top') !== -1) {
+    popper.left -= offset;
+  } else if (data.placement.indexOf('bottom') !== -1) {
+    popper.left += offset;
+  }
+
+  return data;
+};
+/**
+ * 保证箭头永远在气泡框和reference之间
+ */
+
+
+Popper.prototype.modifiers.arrow = function (data) {
+  const arrow = this._popper.querySelector(this._options.arrowElement);
+
+  const arrowStyle = {};
+  const placement = data.placement.split('-')[0];
+  const placement1 = data.placement.split('-')[1];
+  const popper = getPopperClientRect(data.offsets.popper);
+  const reference = data.offsets.reference;
+  const isVertical = ['left', 'right'].indexOf(placement) !== -1;
+  const len = isVertical ? 'height' : 'width';
+  const side = isVertical ? 'top' : 'left';
+  const altSide = isVertical ? 'left' : 'top';
+  const opSide = isVertical ? 'bottom' : 'right';
+  const arrowSize = getOuterSizes(arrow)[len];
+  const offsetSize = parseFloat(getStyleComputedProperty(this._popper, 'paddingLeft'));
+  const hash = {
+    start: reference[side] + offsetSize,
+    center: reference[side] + reference[len] / 2 - arrowSize / 2,
+    end: reference[opSide] - offsetSize - arrowSize
+  };
+
+  if (reference[opSide] - arrowSize < popper[side]) {
+    data.offsets.popper[side] -= popper[side] - (reference[opSide] - arrowSize);
+  }
+
+  if (reference[side] + arrowSize > popper[opSide]) {
+    data.offsets.popper[side] += reference[side] + arrowSize - popper[opSide];
+  }
+
+  const place = hash[placement1 || 'center'];
+  let sideValue = place - popper[side];
+  arrowStyle[side] = Math.floor(sideValue);
+  arrowStyle[altSide] = '';
+  data.offsets.arrow = arrowStyle;
+  data.arrowElement = arrow;
+  return data;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Popper);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/tooltip/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zarm/es/tooltip/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _Popper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Popper */ "./node_modules/zarm/es/tooltip/Popper.js");
+/* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/events */ "./node_modules/zarm/es/utils/events.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const directMap = {
+  top: 'top',
+  topLeft: 'top-start',
+  topRight: 'top-end',
+  right: 'right',
+  rightTop: 'right-start',
+  rightBottom: 'right-end',
+  bottom: 'bottom',
+  bottomLeft: 'bottom-start',
+  bottomRight: 'bottom-end',
+  left: 'left',
+  leftTop: 'left-start',
+  leftBottom: 'left-end'
+};
+
+class Tooltip extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  // private abs;
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "instance", void 0);
+
+    _defineProperty(this, "pop", void 0);
+
+    _defineProperty(this, "reference", void 0);
+
+    _defineProperty(this, "popper", void 0);
+
+    _defineProperty(this, "timer", void 0);
+
+    this.state = {
+      visible: !!props.visible,
+      // placement: props.direction,
+      arrowElement: `#${props.prefixCls}-arrow`
+    };
+  }
+
+  componentDidMount() {
+    this.initEvent(); // Events.on(window, 'resize', this.onSetDirection);
+
+    this.componentDidUpdate();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      visible
+    } = this.state;
+
+    if (visible !== nextProps.visible) {
+      this.setState({
+        visible: !!nextProps.visible
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    const {
+      visible,
+      arrowElement
+    } = this.state;
+    const {
+      direction,
+      onVisibleChange
+    } = this.props;
+
+    if (visible) {
+      if (this.popper) {
+        this.popper.update();
+      } else {
+        this.popper = new _Popper__WEBPACK_IMPORTED_MODULE_3__["default"](this.reference, this.pop, {
+          placement: directMap[direction],
+          arrowElement
+        });
+      }
+    } else {
+      if (this.popper) {
+        this.popper.destroy();
+      }
+
+      delete this.popper;
+    }
+
+    onVisibleChange && onVisibleChange(visible);
+  }
+
+  componentWillUnmount() {
+    if (this.popper) {
+      this.popper.destroy();
+    }
+
+    delete this.popper; // 移除绑定事件
+    // Events.off(window, 'resize', this.onSetDirection);
+  }
+
+  initEvent() {
+    const {
+      visible
+    } = this.state;
+    const {
+      trigger
+    } = this.props;
+
+    if (trigger === 'click') {
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(this.reference, 'click', () => {
+        this.setState({
+          visible: !visible
+        });
+      });
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(document, 'click', ({
+        target
+      }) => {
+        if (!this.instance || this.instance.contains(target) || !this.reference || this.reference.contains(target) || !this.pop || this.pop.contains(target) || !this.popper) {
+          return;
+        }
+
+        this.hidePop();
+      });
+    } else {
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(this.reference, 'mouseenter', () => {
+        this.showPop();
+      });
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(this.reference, 'mouseleave', () => {
+        this.hidePop();
+      });
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(this.pop, 'mouseenter', () => {
+        this.showPop();
+      });
+      _utils_events__WEBPACK_IMPORTED_MODULE_4__["default"].on(this.pop, 'mouseleave', () => {
+        this.hidePop();
+      });
+    }
+  }
+
+  showPop() {
+    clearTimeout(this.timer);
+    this.setState({
+      visible: true
+    });
+  } // 修正方向
+  // onSetDirection = () => {
+  //   if ( !this.reference && !this.pop ) { return false; }
+  //   const { direction } = this.props;
+  //   const { placement } = this.state;
+  //   const referenceRc = this.reference.getBoundingClientRect();
+  //   const popRc = this.pop.getBoundingClientRect();
+  //   const dirArray = { left: 'right', right: 'left', bottom: 'top', top: 'bottom' };
+  //   let _direction = !this.abs ? direction : placement;
+  //   let first = directMap[_direction].split('-')[0];
+  //   let hash = _direction.replace(/left|right|bottom|top/g, (matched) => {
+  //     return dirArray[matched];
+  //   });
+  //   const last = dirArray[first];
+  //   const range = referenceRc[last] - popRc[first];
+  //   if (!this.abs) { this.abs = false; }
+  //   if (Math.abs(range) < 5) {
+  //     this.abs = true;
+  //     this.setState({
+  //       placement: hash,
+  //     });
+  //   }
+  // }
+
+
+  hidePop() {
+    const {
+      trigger
+    } = this.props;
+
+    if (trigger === 'click') {
+      this.setState({
+        visible: false
+      });
+      return;
+    }
+
+    this.timer = setTimeout(() => {
+      this.setState({
+        visible: false
+      });
+    }, 200);
+  }
+
+  render() {
+    const {
+      visible
+    } = this.state;
+    const {
+      children,
+      title,
+      prefixCls,
+      className
+    } = this.props;
+    const popContent = typeof title === 'function' ? title() : title;
+    const cls = classnames__WEBPACK_IMPORTED_MODULE_2___default()(prefixCls, className);
+    const contentCls = classnames__WEBPACK_IMPORTED_MODULE_2___default()(`${prefixCls}__content`, {
+      [`${prefixCls}__content--show`]: visible
+    });
+
+    const inner = () => {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: contentCls,
+        ref: pop => {
+          this.pop = pop;
+        }
+      }, popContent, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: `${prefixCls}__arrow`,
+        id: `${prefixCls}-arrow`
+      }));
+    };
+
+    const subElement = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: `${prefixCls}__inner`
+    }, children);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: cls,
+      ref: instance => {
+        this.instance = instance;
+      }
+    }, Object(react_dom__WEBPACK_IMPORTED_MODULE_1__["createPortal"])(inner(), document.body), Object(react__WEBPACK_IMPORTED_MODULE_0__["cloneElement"])(subElement, {
+      ref: reference => {
+        this.reference = reference;
+      }
+    }));
+  }
+
+}
+
+_defineProperty(Tooltip, "defaultProps", {
+  prefixCls: 'za-tooltip',
+  visible: false,
+  trigger: /(iPhone|iPad|iPod|iOS|Android)/i.test(navigator.userAgent) ? 'click' : 'hover',
+  direction: 'top',
+  onVisibleChange: () => {}
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (Tooltip);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/utils/date.js":
+/*!********************************************!*\
+  !*** ./node_modules/zarm/es/utils/date.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  // 返回月份中的第一天是星期几
+  firstDayOfMonth(date) {
+    const d = date.constructor === Date ? date : this.cloneDate(date, 'dd', 1);
+    return d.getDay();
+  },
+
+  // 获取当月天数
+  getDaysInMonth(year, month) {
+    return new Date(year, month, 0).getDate();
+  },
+
+  // 获取当月天数
+  getDaysByDate(date) {
+    const tmp = this.parseDate(date);
+    return new Date(tmp.getFullYear(), tmp.getMonth() + 1, 0).getDate();
+  },
+
+  // 获取当月信息
+  getCurrMonthInfo(year, month) {
+    return {
+      dayCount: new Date(year, month + 1, 0).getDate(),
+      // 总天数
+      firstDay: new Date(year, month, 1).getDay() // 第一天是周几
+
+    };
+  },
+
+  // 判断闰年还是平年
+  isLeapYear(year) {
+    if (!+year) {
+      throw new Error('年份格式不正确');
+    }
+
+    if (+year < 1790) {
+      throw new Error('年份不能低于1790');
+    }
+
+    return +year % 4 === 0 && +year % 100 !== 0 || +year % 400 === 0;
+  },
+
+  // 获取时间差的月份数
+  getMonthCount(date1, date2) {
+    const tmp1 = this.parseDate(date1);
+    const tmp2 = this.parseDate(date2);
+    const dur = (tmp2.getFullYear() - tmp1.getFullYear()) * 12 + (tmp2.getMonth() - tmp1.getMonth());
+    return Math.abs(dur) + 1;
+  },
+
+  // 是否是今天(只判断年月日)
+  isToday(date) {
+    return this.isOneDay(date, new Date());
+  },
+
+  // 两个日期是否同一天
+  isOneDay(date1, date2) {
+    if (!date1 || !date2) {
+      return false;
+    }
+
+    const tmp1 = this.parseDate(date1);
+    const tmp2 = this.parseDate(date2);
+    return tmp1.toDateString() === tmp2.toDateString();
+  },
+
+  // 两个日期是否同一个月
+  isOneMonth(date1, date2) {
+    if (!date1 || !date2) {
+      return false;
+    }
+
+    const tmp1 = this.parseDate(date1);
+    const tmp2 = this.parseDate(date2);
+    return tmp1.getFullYear() === tmp2.getFullYear() && tmp1.getMonth() === tmp2.getMonth();
+  },
+
+  // 周几
+  getDay(date, opt) {
+    const realDate = this.cloneDate(date);
+    let array = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+    if (opt && opt instanceof Array) {
+      array = opt;
+    }
+
+    return array[realDate.getDay()];
+  },
+
+  // 标准化日期, 时间均为00:00:00
+  parseDay(date) {
+    const tmp = this.parseDate(date);
+    return new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate());
+  },
+
+  // 标准化时间
+  parseDate(date) {
+    if (date.constructor === Date) {
+      return date;
+    }
+
+    if (date.constructor === String) {
+      date = +date ? +date : date.replace(/-/gi, '/');
+    }
+
+    return new Date(date);
+  },
+
+  // 克隆日期
+  cloneDate(date, type, during) {
+    const tmp = new Date(this.parseDate(date));
+
+    if (!type || !during) {
+      return tmp;
+    }
+
+    switch (type) {
+      case 'y':
+        tmp.setFullYear(tmp.getFullYear() + during);
+        break;
+
+      case 'yyyy':
+        tmp.setFullYear(during);
+        break;
+
+      case 'm':
+        tmp.setMonth(tmp.getMonth() + during);
+        break;
+
+      case 'mm':
+        tmp.setMonth(during);
+        break;
+
+      case 'd':
+        tmp.setDate(tmp.getDate() + during);
+        break;
+
+      case 'dd':
+        tmp.setDate(during);
+        break;
+
+      default:
+        break;
+    }
+
+    return tmp;
+  }
+
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/utils/dom.js":
+/*!*******************************************!*\
+  !*** ./node_modules/zarm/es/utils/dom.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const domUtil = {
+  // 获取元素的纵坐标（相对于窗口）
+  getTop: e => {
+    let offset = e.offsetTop;
+
+    if (e.offsetParent != null) {
+      offset += domUtil.getTop(e.offsetParent);
+    }
+
+    return offset;
+  },
+  // 获取元素的横坐标（相对于窗口）
+  getLeft: e => {
+    let offset = e.offsetLeft;
+
+    if (e.offsetParent != null) {
+      offset += domUtil.getLeft(e.offsetParent);
+    }
+
+    return offset;
+  },
+  probTouch: () => {
+    return 'ontouchend' in document;
+  },
+  // 获取元素大小以及相对窗口的位置
+  getBoundingClientRect: e => {
+    const rect = e.getBoundingClientRect(); // 解决ie下的兼容问题
+
+    const isIE = navigator.userAgent.indexOf('MSIE') !== -1;
+    const rectTop = isIE && e.tagName === 'HTML' ? -e.scrollTop : rect.top;
+    return {
+      left: rect.left,
+      top: rectTop,
+      right: rect.right,
+      bottom: rect.bottom,
+      width: rect.right - rect.left,
+      height: rect.bottom - rectTop
+    };
+  },
+  // 设置元素行内样式
+  setStyle: (e, styles) => {
+    const isNumeric = n => {
+      return n !== '' && !Number.isNaN(parseFloat(n)) && Number.isFinite(n);
+    };
+
+    Object.keys(styles).forEach(prop => {
+      let unit = '';
+
+      if (['width', 'height', 'top', 'right', 'bottom', 'left'].indexOf(prop) !== -1 && isNumeric(styles[prop])) {
+        unit = 'px';
+      }
+
+      e.style[prop] = styles[prop] + unit;
+    });
+  },
+  // 获取元素css的某一个计算后属性值
+  getStyleComputedProperty: (e, property) => {
+    const css = window.getComputedStyle(e, null);
+    return css[property];
+  },
+  // 判断元素是否固定定位或者是否在固定定位元素内
+  isFixed: e => {
+    if (e === window.document.body) {
+      return false;
+    }
+
+    if (domUtil.getStyleComputedProperty(e, 'position') === 'fixed') {
+      return true;
+    }
+
+    return e.parentNode ? domUtil.isFixed(e.parentNode) : e;
+  },
+  // 获取元素完整尺寸(offset size + margin)
+  getOuterSizes: e => {
+    const _display = e.style.display;
+    const _visibility = e.style.visibility;
+    e.style.display = 'block';
+    e.style.visibility = 'hidden'; // const calcWidthToForceRepaint = e.offsetWidth;
+
+    const styles = window.getComputedStyle(e);
+    const x = parseFloat(styles.marginTop) + parseFloat(styles.marginBottom);
+    const y = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight);
+    const result = {
+      width: e.offsetWidth + y,
+      height: e.offsetHeight + x
+    }; // reset
+
+    e.style.display = _display;
+    e.style.visibility = _visibility;
+    return result;
+  },
+  // 获取元素的offsetParent
+  getOffsetParent: e => {
+    const {
+      offsetParent
+    } = e;
+    return offsetParent === window.document.body || !offsetParent ? window.document.documentElement : offsetParent;
+  },
+
+  // 获取指定元素可滚动的父元素
+  getScrollParent(e) {
+    const parent = e.parentNode;
+
+    if (!parent) {
+      return e;
+    }
+
+    if (parent === window.document) {
+      if (window.document.body.scrollTop) {
+        return window.document.body;
+      }
+
+      return window.document.documentElement;
+    }
+
+    if (['scroll', 'auto'].indexOf(domUtil.getStyleComputedProperty(parent, 'overflow')) !== -1 || ['scroll', 'auto'].indexOf(domUtil.getStyleComputedProperty(parent, 'overflow-x')) !== -1 || ['scroll', 'auto'].indexOf(domUtil.getStyleComputedProperty(parent, 'overflow-y')) !== -1) {
+      return parent;
+    }
+
+    return domUtil.getScrollParent(e.parentNode);
+  },
+
+  // 获取浏览器支持的带前缀属性名
+  getSupportedPropertyName: property => {
+    const prefixes = ['', 'ms', 'webkit', 'moz', 'o'];
+
+    for (let i = 0; i < prefixes.length; i++) {
+      const toCheck = prefixes[i] ? prefixes[i] + property.charAt(0).toUpperCase() + property.slice(1) : property;
+
+      if (typeof window.document.body.style[toCheck] !== 'undefined') {
+        return toCheck;
+      }
+    }
+
+    return null;
+  },
+  // 获取元素scrollTop
+  getScrollTopValue: e => {
+    // tslint:disable-next-line
+    return e === document.body ? Math.max(document.documentElement.scrollTop, document.body.scrollTop) : e.scrollTop;
+  },
+  getScrollLeftValue: e => {
+    return e === document.body ? Math.max(document.documentElement.scrollLeft, document.body.scrollLeft) : e.scrollLeft;
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (domUtil);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/utils/events.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zarm/es/utils/events.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  on(el, type, callback) {
     if (el.addEventListener) {
       el.addEventListener(type, callback, {
         passive: false
       });
     } else {
-      el.attachEvent("on ".concat(type), function () {
+      el.attachEvent(`on ${type}`, () => {
         callback.call(el);
       });
     }
   },
-  off: function off(el, type, callback) {
+
+  off(el, type, callback) {
     if (el.removeEventListener) {
       el.removeEventListener(type, callback, {
         passive: false
       });
     } else {
-      el.detachEvent("off ".concat(type), callback);
+      el.detachEvent(`off ${type}`, callback);
     }
   },
-  once: function once(el, type, callback) {
-    var typeArray = type.split(' ');
 
-    var recursiveFunction = function recursiveFunction(e) {
+  once(el, type, callback) {
+    const typeArray = type.split(' ');
+
+    const recursiveFunction = e => {
       e.target.removeEventListener(e.type, recursiveFunction, {
         passive: false
       });
       return callback(e);
     };
 
-    for (var i = typeArray.length - 1; i >= 0; i -= 1) {
+    for (let i = typeArray.length - 1; i >= 0; i -= 1) {
       this.on(el, typeArray[i], recursiveFunction);
     }
   }
+
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/utils/throttle.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/utils/throttle.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const throttle = (func, delay) => {
+  let timer;
+  let startTime = Date.now();
+  return (...args) => {
+    const curTime = Date.now();
+    const remaining = delay - (curTime - startTime);
+    clearTimeout(timer);
+
+    if (remaining <= 0) {
+      func.apply(undefined, args);
+      startTime = Date.now();
+    } else {
+      timer = setTimeout(func, remaining);
+    }
+  };
 };
-exports.default = _default;
+
+/* harmony default export */ __webpack_exports__["default"] = (throttle);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/utils/validate.js":
+/*!************************************************!*\
+  !*** ./node_modules/zarm/es/utils/validate.js ***!
+  \************************************************/
+/*! exports provided: isArray, isCascader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArray", function() { return isArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCascader", function() { return isCascader; });
+const isArray = val => {
+  return Object.prototype.toString.call(val) === '[object Array]';
+};
+const isCascader = ({
+  dataSource
+}) => {
+  return dataSource && dataSource[0] && !isArray(dataSource[0]);
+};
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/wheel/Wheel.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/wheel/Wheel.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Wheel; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var better_scroll__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! better-scroll */ "./node_modules/zarm/node_modules/better-scroll/dist/bscroll.esm.js");
+/* harmony import */ var _utils_validate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/validate */ "./node_modules/zarm/es/utils/validate.js");
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+
+
+
+
+
+const getValue = (props, defaultValue) => {
+  if ('value' in props) {
+    return props.value;
+  }
+
+  if ('defaultValue' in props) {
+    return props.defaultValue;
+  }
+
+  if (Object(_utils_validate__WEBPACK_IMPORTED_MODULE_3__["isArray"])(props.dataSource) && props.dataSource[0]) {
+    return props.dataSource[0][props.valueMember];
+  }
+
+  return defaultValue;
+};
+
+class Wheel extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "BScroll", void 0);
+
+    _defineProperty(this, "wrapper", void 0);
+
+    _defineProperty(this, "isChangedByProps", void 0);
+
+    _defineProperty(this, "getSelectedIndex", (value, dataSource) => {
+      const {
+        valueMember
+      } = this.props;
+      let index;
+      dataSource.some((item, i) => {
+        if (item[valueMember] === value) {
+          index = i;
+          return true;
+        }
+
+        return false;
+      });
+      return index;
+    });
+
+    _defineProperty(this, "fireValueChange", value => {
+      const currentValue = getValue(this.props);
+
+      if (value === currentValue) {
+        return;
+      }
+
+      const {
+        onChange
+      } = this.props;
+
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
+    });
+  }
+
+  componentDidMount() {
+    const {
+      prefixCls,
+      dataSource,
+      disabled,
+      onTransition,
+      valueMember
+    } = this.props;
+    const value = getValue(this.props);
+    const initIndex = this.getSelectedIndex(value, dataSource);
+    this.BScroll = new better_scroll__WEBPACK_IMPORTED_MODULE_2__["default"](this.wrapper, {
+      wheel: {
+        selectedIndex: initIndex,
+        wheelWrapperClass: `${prefixCls}-content`,
+        wheelItemClass: `${prefixCls}-item`
+      },
+      probeType: 3
+    });
+    disabled && this.BScroll.disable();
+    this.BScroll.on('scroll', () => {
+      if (typeof onTransition === 'function') {
+        onTransition(this.BScroll.isInTransition);
+      }
+    });
+    this.BScroll.on('scrollEnd', () => {
+      // eslint-disable-next-line
+      const {
+        dataSource
+      } = this.props;
+
+      if (this.isChangedByProps) {
+        this.isChangedByProps = false;
+        return;
+      }
+
+      const index = this.BScroll.getSelectedIndex();
+      const child = dataSource[index];
+      onTransition(this.BScroll.isInTransition);
+
+      if (child) {
+        this.fireValueChange(child[valueMember]);
+      } // else if (console.warn) {
+      //   console.warn('child not found', dataSource, index);
+      // }
+
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.disabled) {
+      this.BScroll.disable();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const {
+      value,
+      dataSource
+    } = this.props;
+    this.BScroll.refresh();
+    const oldIndex = this.getSelectedIndex(prevProps.value, prevProps.dataSource);
+    const newIndex = this.getSelectedIndex(value, dataSource);
+
+    if (newIndex !== oldIndex) {
+      this.isChangedByProps = true;
+      this.BScroll.wheelTo(newIndex);
+    }
+  }
+
+  componentWillUnmount() {
+    this.BScroll.destroy();
+  }
+
+  render() {
+    const {
+      prefixCls,
+      className,
+      valueMember,
+      dataSource,
+      itemRender,
+      disabled
+    } = this.props;
+    const value = getValue(this.props);
+    const items = dataSource.map((item, index) => {
+      const itemCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(`${prefixCls}__item`, {
+        [`${prefixCls}__item--selected`]: value === item[valueMember],
+        [`${prefixCls}__item--disabled`]: disabled
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        key: +index,
+        className: itemCls
+      }, itemRender(item));
+    });
+    const rollerCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, className);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: rollerCls,
+      ref: wrapper => {
+        this.wrapper = wrapper;
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: `${prefixCls}__content`
+    }, items));
+  }
+
+}
+
+_defineProperty(Wheel, "defaultProps", {
+  prefixCls: 'za-wheel',
+  dataSource: [],
+  valueMember: 'value',
+  itemRender: item => item.label
+});
+
+/***/ }),
+
+/***/ "./node_modules/zarm/es/wheel/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zarm/es/wheel/index.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Wheel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Wheel */ "./node_modules/zarm/es/wheel/Wheel.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (_Wheel__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/zarm/node_modules/better-scroll/dist/bscroll.esm.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/zarm/node_modules/better-scroll/dist/bscroll.esm.js ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/*!
+ * better-normal-scroll v1.15.1
+ * (c) 2016-2019 ustbhuangyi
+ * Released under the MIT License.
+ */
+// As of V8 6.6, depending on the size of the array, this is anywhere
+// between 1.5-10x faster than the two-arg version of Array#splice()
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++) {
+    list[index] = list[index + 1];
+  }
+
+  list.pop();
+}
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
+function eventMixin(BScroll) {
+  BScroll.prototype.on = function (type, fn) {
+    var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
+
+    if (!this._events[type]) {
+      this._events[type] = [];
+    }
+
+    this._events[type].push([fn, context]);
+  };
+
+  BScroll.prototype.once = function (type, fn) {
+    var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
+
+    function magic() {
+      this.off(type, magic);
+      fn.apply(context, arguments);
+    } // To expose the corresponding function method in order to execute the off method
+
+
+    magic.fn = fn;
+    this.on(type, magic);
+  };
+
+  BScroll.prototype.off = function (type, fn) {
+    var _events = this._events[type];
+
+    if (!_events) {
+      return;
+    }
+
+    var count = _events.length;
+
+    while (count--) {
+      if (_events[count][0] === fn || _events[count][0] && _events[count][0].fn === fn) {
+        spliceOne(_events, count);
+      }
+    }
+  };
+
+  BScroll.prototype.trigger = function (type) {
+    var events = this._events[type];
+
+    if (!events) {
+      return;
+    }
+
+    var len = events.length;
+    var eventsCopy = [].concat(toConsumableArray(events));
+
+    for (var i = 0; i < len; i++) {
+      var event = eventsCopy[i];
+
+      var _event = slicedToArray(event, 2),
+          fn = _event[0],
+          context = _event[1];
+
+      if (fn) {
+        fn.apply(context, [].slice.call(arguments, 1));
+      }
+    }
+  };
+} // ssr support
+
+
+var inBrowser = typeof window !== 'undefined';
+var ua = inBrowser && navigator.userAgent.toLowerCase();
+var isWeChatDevTools = ua && /wechatdevtools/.test(ua);
+var isAndroid = ua && ua.indexOf('android') > 0;
+
+function getNow() {
+  return window.performance && window.performance.now ? window.performance.now() + window.performance.timing.navigationStart : +new Date();
+}
+
+function extend(target) {
+  for (var _len = arguments.length, rest = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    rest[_key - 1] = arguments[_key];
+  }
+
+  for (var i = 0; i < rest.length; i++) {
+    var source = rest[i];
+
+    for (var key in source) {
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function isUndef(v) {
+  return v === undefined || v === null;
+}
+
+function getDistance(x, y) {
+  return Math.sqrt(x * x + y * y);
+}
+
+var elementStyle = inBrowser && document.createElement('div').style;
+
+var vendor = function () {
+  if (!inBrowser) {
+    return false;
+  } // first pick up standard to fix #743
+
+
+  var transformNames = {
+    standard: 'transform',
+    webkit: 'webkitTransform',
+    Moz: 'MozTransform',
+    O: 'OTransform',
+    ms: 'msTransform'
+  };
+
+  for (var key in transformNames) {
+    if (elementStyle[transformNames[key]] !== undefined) {
+      return key;
+    }
+  }
+
+  return false;
+}();
+
+function prefixStyle(style) {
+  if (vendor === false) {
+    return false;
+  }
+
+  if (vendor === 'standard') {
+    if (style === 'transitionEnd') {
+      return 'transitionend';
+    }
+
+    return style;
+  }
+
+  return vendor + style.charAt(0).toUpperCase() + style.substr(1);
+}
+
+function addEvent(el, type, fn, capture) {
+  el.addEventListener(type, fn, {
+    passive: false,
+    capture: !!capture
+  });
+}
+
+function removeEvent(el, type, fn, capture) {
+  el.removeEventListener(type, fn, {
+    passive: false,
+    capture: !!capture
+  });
+}
+
+function offset(el) {
+  var left = 0;
+  var top = 0;
+
+  while (el) {
+    left -= el.offsetLeft;
+    top -= el.offsetTop;
+    el = el.offsetParent;
+  }
+
+  return {
+    left: left,
+    top: top
+  };
+}
+
+function offsetToBody(el) {
+  var rect = el.getBoundingClientRect();
+  return {
+    left: -(rect.left + window.pageXOffset),
+    top: -(rect.top + window.pageYOffset)
+  };
+}
+
+var cssVendor = vendor && vendor !== 'standard' ? '-' + vendor.toLowerCase() + '-' : '';
+var transform = prefixStyle('transform');
+var transition = prefixStyle('transition');
+var hasPerspective = inBrowser && prefixStyle('perspective') in elementStyle; // fix issue #361
+
+var hasTouch = inBrowser && ('ontouchstart' in window || isWeChatDevTools);
+var hasTransform = transform !== false;
+var hasTransition = inBrowser && transition in elementStyle;
+var style = {
+  transform: transform,
+  transition: transition,
+  transitionTimingFunction: prefixStyle('transitionTimingFunction'),
+  transitionDuration: prefixStyle('transitionDuration'),
+  transitionDelay: prefixStyle('transitionDelay'),
+  transformOrigin: prefixStyle('transformOrigin'),
+  transitionEnd: prefixStyle('transitionEnd')
+};
+var TOUCH_EVENT = 1;
+var MOUSE_EVENT = 2;
+var eventType = {
+  touchstart: TOUCH_EVENT,
+  touchmove: TOUCH_EVENT,
+  touchend: TOUCH_EVENT,
+  mousedown: MOUSE_EVENT,
+  mousemove: MOUSE_EVENT,
+  mouseup: MOUSE_EVENT
+};
+
+function getRect(el) {
+  if (el instanceof window.SVGElement) {
+    var rect = el.getBoundingClientRect();
+    return {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height
+    };
+  } else {
+    return {
+      top: el.offsetTop,
+      left: el.offsetLeft,
+      width: el.offsetWidth,
+      height: el.offsetHeight
+    };
+  }
+}
+
+function preventDefaultException(el, exceptions) {
+  for (var i in exceptions) {
+    if (exceptions[i].test(el[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function tap(e, eventName) {
+  var ev = document.createEvent('Event');
+  ev.initEvent(eventName, true, true);
+  ev.pageX = e.pageX;
+  ev.pageY = e.pageY;
+  e.target.dispatchEvent(ev);
+}
+
+function click(e) {
+  var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'click';
+  var eventSource = void 0;
+
+  if (e.type === 'mouseup' || e.type === 'mousecancel') {
+    eventSource = e;
+  } else if (e.type === 'touchend' || e.type === 'touchcancel') {
+    eventSource = e.changedTouches[0];
+  }
+
+  var posSrc = {};
+
+  if (eventSource) {
+    posSrc.screenX = eventSource.screenX || 0;
+    posSrc.screenY = eventSource.screenY || 0;
+    posSrc.clientX = eventSource.clientX || 0;
+    posSrc.clientY = eventSource.clientY || 0;
+  }
+
+  var ev = void 0;
+  var bubbles = true;
+  var cancelable = true;
+
+  if (typeof MouseEvent !== 'undefined') {
+    try {
+      ev = new MouseEvent(event, extend({
+        bubbles: bubbles,
+        cancelable: cancelable
+      }, posSrc));
+    } catch (e) {
+      createEvent();
+    }
+  } else {
+    createEvent();
+  }
+
+  function createEvent() {
+    ev = document.createEvent('Event');
+    ev.initEvent(event, bubbles, cancelable);
+    extend(ev, posSrc);
+  } // forwardedTouchEvent set to true in case of the conflict with fastclick
+
+
+  ev.forwardedTouchEvent = true;
+  ev._constructed = true;
+  e.target.dispatchEvent(ev);
+}
+
+function dblclick(e) {
+  click(e, 'dblclick');
+}
+
+function prepend(el, target) {
+  if (target.firstChild) {
+    before(el, target.firstChild);
+  } else {
+    target.appendChild(el);
+  }
+}
+
+function before(el, target) {
+  target.parentNode.insertBefore(el, target);
+}
+
+function removeChild(el, child) {
+  el.removeChild(child);
+}
+
+var DEFAULT_OPTIONS = {
+  startX: 0,
+  startY: 0,
+  scrollX: false,
+  scrollY: true,
+  freeScroll: false,
+  directionLockThreshold: 5,
+  eventPassthrough: '',
+  click: false,
+  tap: false,
+
+  /**
+   * support any side
+   * bounce: {
+   *   top: true,
+   *   bottom: true,
+   *   left: true,
+   *   right: true
+   * }
+   */
+  bounce: true,
+  bounceTime: 800,
+  momentum: true,
+  momentumLimitTime: 300,
+  momentumLimitDistance: 15,
+  swipeTime: 2500,
+  swipeBounceTime: 500,
+  deceleration: 0.0015,
+  flickLimitTime: 200,
+  flickLimitDistance: 100,
+  resizePolling: 60,
+  probeType: 0,
+  preventDefault: true,
+  preventDefaultException: {
+    tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|AUDIO)$/
+  },
+  HWCompositing: true,
+  useTransition: true,
+  useTransform: true,
+  bindToWrapper: false,
+  disableMouse: hasTouch,
+  disableTouch: !hasTouch,
+  observeDOM: true,
+  autoBlur: true,
+
+  /**
+   * for picker
+   * wheel: {
+   *   selectedIndex: 0,
+   *   rotate: 25,
+   *   adjustTime: 400
+   *   wheelWrapperClass: 'wheel-scroll',
+   *   wheelItemClass: 'wheel-item'
+   * }
+   */
+  wheel: false,
+
+  /**
+   * for slide
+   * snap: {
+   *   loop: false,
+   *   el: domEl,
+   *   threshold: 0.1,
+   *   stepX: 100,
+   *   stepY: 100,
+   *   speed: 400,
+   *   easing: {
+   *     style: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+   *     fn: function (t) {
+   *       return t * (2 - t)
+   *     }
+   *   }
+   *   listenFlick: true
+   * }
+   */
+  snap: false,
+
+  /**
+   * for scrollbar
+   * scrollbar: {
+   *   fade: true,
+   *   interactive: false
+   * }
+   */
+  scrollbar: false,
+
+  /**
+   * for pull down and refresh
+   * pullDownRefresh: {
+   *   threshold: 50,
+   *   stop: 20
+   * }
+   */
+  pullDownRefresh: false,
+
+  /**
+   * for pull up and load
+   * pullUpLoad: {
+   *   threshold: 50
+   * }
+   */
+  pullUpLoad: false,
+
+  /**
+   * for mouse wheel
+   * mouseWheel: {
+   *   speed: 20,
+   *   invert: false,
+   *   easeTime: 300
+   * }
+   */
+  mouseWheel: false,
+  stopPropagation: false,
+
+  /**
+   * for zoom
+   * zoom: {
+   *   start: 1,
+   *   min: 1,
+   *   max: 4
+   * }
+   */
+  zoom: false,
+
+  /**
+   * for infinity
+   * infinity: {
+   *   render(item, div) {
+   *   },
+   *   createTombstone() {
+   *   },
+   *   fetch(count) {
+   *   }
+   * }
+   */
+  infinity: false,
+
+  /**
+   * for double click
+   * dblclick: {
+   *   delay: 300
+   * }
+   */
+  dblclick: false
+};
+
+function initMixin(BScroll) {
+  BScroll.prototype._init = function (options) {
+    this._handleOptions(options); // init private custom events
+
+
+    this._events = {};
+    this.x = 0;
+    this.y = 0;
+    this.directionX = 0;
+    this.directionY = 0;
+    this.setScale(1);
+
+    this._addDOMEvents();
+
+    this._initExtFeatures();
+
+    this._watchTransition();
+
+    if (this.options.observeDOM) {
+      this._initDOMObserver();
+    }
+
+    if (this.options.autoBlur) {
+      this._handleAutoBlur();
+    }
+
+    this.refresh();
+
+    if (!this.options.snap) {
+      this.scrollTo(this.options.startX, this.options.startY);
+    }
+
+    this.enable();
+  };
+
+  BScroll.prototype.setScale = function (scale) {
+    this.lastScale = isUndef(this.scale) ? scale : this.scale;
+    this.scale = scale;
+  };
+
+  BScroll.prototype._handleOptions = function (options) {
+    this.options = extend({}, DEFAULT_OPTIONS, options);
+    this.translateZ = this.options.HWCompositing && hasPerspective ? ' translateZ(0)' : '';
+    this.options.useTransition = this.options.useTransition && hasTransition;
+    this.options.useTransform = this.options.useTransform && hasTransform;
+    this.options.preventDefault = !this.options.eventPassthrough && this.options.preventDefault; // If you want eventPassthrough I have to lock one of the axes
+
+    this.options.scrollX = this.options.eventPassthrough === 'horizontal' ? false : this.options.scrollX;
+    this.options.scrollY = this.options.eventPassthrough === 'vertical' ? false : this.options.scrollY; // With eventPassthrough we also need lockDirection mechanism
+
+    this.options.freeScroll = this.options.freeScroll && !this.options.eventPassthrough;
+    this.options.directionLockThreshold = this.options.eventPassthrough ? 0 : this.options.directionLockThreshold;
+
+    if (this.options.tap === true) {
+      this.options.tap = 'tap';
+    }
+  };
+
+  BScroll.prototype._addDOMEvents = function () {
+    var eventOperation = addEvent;
+
+    this._handleDOMEvents(eventOperation);
+  };
+
+  BScroll.prototype._removeDOMEvents = function () {
+    var eventOperation = removeEvent;
+
+    this._handleDOMEvents(eventOperation);
+  };
+
+  BScroll.prototype._handleDOMEvents = function (eventOperation) {
+    var target = this.options.bindToWrapper ? this.wrapper : window;
+    eventOperation(window, 'orientationchange', this);
+    eventOperation(window, 'resize', this);
+
+    if (this.options.click) {
+      eventOperation(this.wrapper, 'click', this, true);
+    }
+
+    if (!this.options.disableMouse) {
+      eventOperation(this.wrapper, 'mousedown', this);
+      eventOperation(target, 'mousemove', this);
+      eventOperation(target, 'mousecancel', this);
+      eventOperation(target, 'mouseup', this);
+    }
+
+    if (hasTouch && !this.options.disableTouch) {
+      eventOperation(this.wrapper, 'touchstart', this);
+      eventOperation(target, 'touchmove', this);
+      eventOperation(target, 'touchcancel', this);
+      eventOperation(target, 'touchend', this);
+    }
+
+    eventOperation(this.scroller, style.transitionEnd, this);
+  };
+
+  BScroll.prototype._initExtFeatures = function () {
+    if (this.options.snap) {
+      this._initSnap();
+    }
+
+    if (this.options.scrollbar) {
+      this._initScrollbar();
+    }
+
+    if (this.options.pullUpLoad) {
+      this._initPullUp();
+    }
+
+    if (this.options.pullDownRefresh) {
+      this._initPullDown();
+    }
+
+    if (this.options.wheel) {
+      this._initWheel();
+    }
+
+    if (this.options.mouseWheel) {
+      this._initMouseWheel();
+    }
+
+    if (this.options.zoom) {
+      this._initZoom();
+    }
+
+    if (this.options.infinity) {
+      this._initInfinite();
+    }
+  };
+
+  BScroll.prototype._watchTransition = function () {
+    if (typeof Object.defineProperty !== 'function') {
+      return;
+    }
+
+    var me = this;
+    var isInTransition = false;
+    var key = this.options.useTransition ? 'isInTransition' : 'isAnimating';
+    Object.defineProperty(this, key, {
+      get: function get() {
+        return isInTransition;
+      },
+      set: function set(newVal) {
+        isInTransition = newVal; // fix issue #359
+
+        var el = me.scroller.children.length ? me.scroller.children : [me.scroller];
+        var pointerEvents = isInTransition && !me.pulling ? 'none' : 'auto';
+
+        for (var i = 0; i < el.length; i++) {
+          el[i].style.pointerEvents = pointerEvents;
+        }
+      }
+    });
+  };
+
+  BScroll.prototype._handleAutoBlur = function () {
+    this.on('scrollStart', function () {
+      var activeElement = document.activeElement;
+
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+        activeElement.blur();
+      }
+    });
+  };
+
+  BScroll.prototype._initDOMObserver = function () {
+    var _this = this;
+
+    if (typeof MutationObserver !== 'undefined') {
+      var timer = void 0;
+      var observer = new MutationObserver(function (mutations) {
+        // don't do any refresh during the transition, or outside of the boundaries
+        if (_this._shouldNotRefresh()) {
+          return;
+        }
+
+        var immediateRefresh = false;
+        var deferredRefresh = false;
+
+        for (var i = 0; i < mutations.length; i++) {
+          var mutation = mutations[i];
+
+          if (mutation.type !== 'attributes') {
+            immediateRefresh = true;
+            break;
+          } else {
+            if (mutation.target !== _this.scroller) {
+              deferredRefresh = true;
+              break;
+            }
+          }
+        }
+
+        if (immediateRefresh) {
+          _this.refresh();
+        } else if (deferredRefresh) {
+          // attributes changes too often
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            if (!_this._shouldNotRefresh()) {
+              _this.refresh();
+            }
+          }, 60);
+        }
+      });
+      var config = {
+        attributes: true,
+        childList: true,
+        subtree: true
+      };
+      observer.observe(this.scroller, config);
+      this.on('destroy', function () {
+        observer.disconnect();
+      });
+    } else {
+      this._checkDOMUpdate();
+    }
+  };
+
+  BScroll.prototype._shouldNotRefresh = function () {
+    var outsideBoundaries = this.x > this.minScrollX || this.x < this.maxScrollX || this.y > this.minScrollY || this.y < this.maxScrollY;
+    return this.isInTransition || this.stopFromTransition || outsideBoundaries;
+  };
+
+  BScroll.prototype._checkDOMUpdate = function () {
+    var scrollerRect = getRect(this.scroller);
+    var oldWidth = scrollerRect.width;
+    var oldHeight = scrollerRect.height;
+
+    function check() {
+      if (this.destroyed) {
+        return;
+      }
+
+      scrollerRect = getRect(this.scroller);
+      var newWidth = scrollerRect.width;
+      var newHeight = scrollerRect.height;
+
+      if (oldWidth !== newWidth || oldHeight !== newHeight) {
+        this.refresh();
+      }
+
+      oldWidth = newWidth;
+      oldHeight = newHeight;
+      next.call(this);
+    }
+
+    function next() {
+      var _this2 = this;
+
+      setTimeout(function () {
+        check.call(_this2);
+      }, 1000);
+    }
+
+    next.call(this);
+  };
+
+  BScroll.prototype.handleEvent = function (e) {
+    switch (e.type) {
+      case 'touchstart':
+      case 'mousedown':
+        this._start(e);
+
+        if (this.options.zoom && e.touches && e.touches.length > 1) {
+          this._zoomStart(e);
+        }
+
+        break;
+
+      case 'touchmove':
+      case 'mousemove':
+        if (this.options.zoom && e.touches && e.touches.length > 1) {
+          this._zoom(e);
+        } else {
+          this._move(e);
+        }
+
+        break;
+
+      case 'touchend':
+      case 'mouseup':
+      case 'touchcancel':
+      case 'mousecancel':
+        if (this.scaled) {
+          this._zoomEnd(e);
+        } else {
+          this._end(e);
+        }
+
+        break;
+
+      case 'orientationchange':
+      case 'resize':
+        this._resize();
+
+        break;
+
+      case 'transitionend':
+      case 'webkitTransitionEnd':
+      case 'oTransitionEnd':
+      case 'MSTransitionEnd':
+        this._transitionEnd(e);
+
+        break;
+
+      case 'click':
+        if (this.enabled && !e._constructed) {
+          if (!preventDefaultException(e.target, this.options.preventDefaultException)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+
+        break;
+
+      case 'wheel':
+      case 'DOMMouseScroll':
+      case 'mousewheel':
+        this._onMouseWheel(e);
+
+        break;
+    }
+  };
+
+  BScroll.prototype.refresh = function () {
+    var isWrapperStatic = window.getComputedStyle(this.wrapper, null).position === 'static';
+    var wrapperRect = getRect(this.wrapper);
+    this.wrapperWidth = wrapperRect.width;
+    this.wrapperHeight = wrapperRect.height;
+    var scrollerRect = getRect(this.scroller);
+    this.scrollerWidth = Math.round(scrollerRect.width * this.scale);
+    this.scrollerHeight = Math.round(scrollerRect.height * this.scale);
+    this.relativeX = scrollerRect.left;
+    this.relativeY = scrollerRect.top;
+
+    if (isWrapperStatic) {
+      this.relativeX -= wrapperRect.left;
+      this.relativeY -= wrapperRect.top;
+    }
+
+    this.minScrollX = 0;
+    this.minScrollY = 0;
+    var wheel = this.options.wheel;
+
+    if (wheel) {
+      this.items = this.scroller.children; // check whether there are all disable items or not when refresh
+
+      this._checkWheelAllDisabled();
+
+      this.options.itemHeight = this.itemHeight = this.items.length ? this.scrollerHeight / this.items.length : 0;
+
+      if (this.selectedIndex === undefined) {
+        this.selectedIndex = wheel.selectedIndex || 0;
+      }
+
+      this.options.startY = -this.selectedIndex * this.itemHeight;
+      this.maxScrollX = 0;
+      this.maxScrollY = -this.itemHeight * (this.items.length - 1);
+    } else {
+      this.maxScrollX = this.wrapperWidth - this.scrollerWidth;
+
+      if (!this.options.infinity) {
+        this.maxScrollY = this.wrapperHeight - this.scrollerHeight;
+      }
+
+      if (this.maxScrollX < 0) {
+        this.maxScrollX -= this.relativeX;
+        this.minScrollX = -this.relativeX;
+      } else if (this.scale > 1) {
+        this.maxScrollX = this.maxScrollX / 2 - this.relativeX;
+        this.minScrollX = this.maxScrollX;
+      }
+
+      if (this.maxScrollY < 0) {
+        this.maxScrollY -= this.relativeY;
+        this.minScrollY = -this.relativeY;
+      } else if (this.scale > 1) {
+        this.maxScrollY = this.maxScrollY / 2 - this.relativeY;
+        this.minScrollY = this.maxScrollY;
+      }
+    }
+
+    this.hasHorizontalScroll = this.options.scrollX && this.maxScrollX < this.minScrollX;
+    this.hasVerticalScroll = this.options.scrollY && this.maxScrollY < this.minScrollY;
+
+    if (!this.hasHorizontalScroll) {
+      this.maxScrollX = this.minScrollX;
+      this.scrollerWidth = this.wrapperWidth;
+    }
+
+    if (!this.hasVerticalScroll) {
+      this.maxScrollY = this.minScrollY;
+      this.scrollerHeight = this.wrapperHeight;
+    }
+
+    this.endTime = 0;
+    this.directionX = 0;
+    this.directionY = 0;
+    this.wrapperOffset = offset(this.wrapper);
+    this.trigger('refresh');
+    !this.scaled && this.resetPosition();
+  };
+
+  BScroll.prototype.enable = function () {
+    this.enabled = true;
+  };
+
+  BScroll.prototype.disable = function () {
+    this.enabled = false;
+  };
+}
+
+var ease = {
+  // easeOutQuint
+  swipe: {
+    style: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    fn: function fn(t) {
+      return 1 + --t * t * t * t * t;
+    }
+  },
+  // easeOutQuard
+  swipeBounce: {
+    style: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    fn: function fn(t) {
+      return t * (2 - t);
+    }
+  },
+  // easeOutQuart
+  bounce: {
+    style: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    fn: function fn(t) {
+      return 1 - --t * t * t * t;
+    }
+  }
+};
+
+function momentum(current, start, time, lowerMargin, upperMargin, wrapperSize, options, scroll) {
+  var distance = current - start;
+  var speed = Math.abs(distance) / time;
+  var deceleration = options.deceleration,
+      itemHeight = options.itemHeight,
+      swipeBounceTime = options.swipeBounceTime,
+      wheel = options.wheel,
+      swipeTime = options.swipeTime;
+  var duration = swipeTime;
+  var rate = wheel ? 4 : 15;
+  var destination = current + speed / deceleration * (distance < 0 ? -1 : 1);
+
+  if (wheel && itemHeight) {
+    destination = scroll._findNearestValidWheel(destination).y;
+  }
+
+  if (destination < lowerMargin) {
+    destination = wrapperSize ? Math.max(lowerMargin - wrapperSize / 4, lowerMargin - wrapperSize / rate * speed) : lowerMargin;
+    duration = swipeBounceTime;
+  } else if (destination > upperMargin) {
+    destination = wrapperSize ? Math.min(upperMargin + wrapperSize / 4, upperMargin + wrapperSize / rate * speed) : upperMargin;
+    duration = swipeBounceTime;
+  }
+
+  return {
+    destination: Math.round(destination),
+    duration: duration
+  };
+}
+
+var DEFAULT_INTERVAL = 100 / 60;
+
+function noop() {}
+
+var requestAnimationFrame = function () {
+  if (!inBrowser) {
+    /* istanbul ignore if */
+    return noop;
+  }
+
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || // if all else fails, use setTimeout
+  function (callback) {
+    return window.setTimeout(callback, (callback.interval || DEFAULT_INTERVAL) / 2); // make interval as precise as possible.
+  };
+}();
+
+var cancelAnimationFrame = function () {
+  if (!inBrowser) {
+    /* istanbul ignore if */
+    return noop;
+  }
+
+  return window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.oCancelAnimationFrame || function (id) {
+    window.clearTimeout(id);
+  };
+}();
+
+var DIRECTION_UP = 1;
+var DIRECTION_DOWN = -1;
+var DIRECTION_LEFT = 1;
+var DIRECTION_RIGHT = -1;
+var PROBE_DEBOUNCE = 1;
+var PROBE_REALTIME = 3;
+
+function warn(msg) {
+  console.error('[BScroll warn]: ' + msg);
+}
+
+function assert(condition, msg) {
+  if (!condition) {
+    throw new Error('[BScroll] ' + msg);
+  }
+}
+
+function coreMixin(BScroll) {
+  BScroll.prototype._start = function (e) {
+    var _eventType = eventType[e.type];
+
+    if (_eventType !== TOUCH_EVENT) {
+      if (e.button !== 0) {
+        return;
+      }
+    }
+
+    if (!this.enabled || this.destroyed || this.initiated && this.initiated !== _eventType) {
+      return;
+    }
+
+    this.initiated = _eventType;
+
+    if (this.options.preventDefault && !preventDefaultException(e.target, this.options.preventDefaultException)) {
+      e.preventDefault();
+    }
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    this.moved = false;
+    this.distX = 0;
+    this.distY = 0;
+    this.directionX = 0;
+    this.directionY = 0;
+    this.movingDirectionX = 0;
+    this.movingDirectionY = 0;
+    this.directionLocked = 0;
+
+    this._transitionTime();
+
+    this.startTime = getNow();
+
+    if (this.options.wheel) {
+      this.target = e.target;
+    }
+
+    this.stop();
+    var point = e.touches ? e.touches[0] : e;
+    this.startX = this.x;
+    this.startY = this.y;
+    this.absStartX = this.x;
+    this.absStartY = this.y;
+    this.pointX = point.pageX;
+    this.pointY = point.pageY;
+    this.trigger('beforeScrollStart');
+  };
+
+  BScroll.prototype._move = function (e) {
+    if (!this.enabled || this.destroyed || eventType[e.type] !== this.initiated) {
+      return;
+    }
+
+    if (this.options.preventDefault) {
+      e.preventDefault();
+    }
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    var point = e.touches ? e.touches[0] : e;
+    var deltaX = point.pageX - this.pointX;
+    var deltaY = point.pageY - this.pointY;
+    this.pointX = point.pageX;
+    this.pointY = point.pageY;
+    this.distX += deltaX;
+    this.distY += deltaY;
+    var absDistX = Math.abs(this.distX);
+    var absDistY = Math.abs(this.distY);
+    var timestamp = getNow(); // We need to move at least momentumLimitDistance pixels for the scrolling to initiate
+
+    if (timestamp - this.endTime > this.options.momentumLimitTime && !this.moved && absDistY < this.options.momentumLimitDistance && absDistX < this.options.momentumLimitDistance) {
+      return;
+    } // If you are scrolling in one direction lock the other
+
+
+    if (!this.directionLocked && !this.options.freeScroll) {
+      if (absDistX > absDistY + this.options.directionLockThreshold) {
+        this.directionLocked = 'h'; // lock horizontally
+      } else if (absDistY >= absDistX + this.options.directionLockThreshold) {
+        this.directionLocked = 'v'; // lock vertically
+      } else {
+        this.directionLocked = 'n'; // no lock
+      }
+    }
+
+    if (this.directionLocked === 'h') {
+      if (this.options.eventPassthrough === 'vertical') {
+        e.preventDefault();
+      } else if (this.options.eventPassthrough === 'horizontal') {
+        this.initiated = false;
+        return;
+      }
+
+      deltaY = 0;
+    } else if (this.directionLocked === 'v') {
+      if (this.options.eventPassthrough === 'horizontal') {
+        e.preventDefault();
+      } else if (this.options.eventPassthrough === 'vertical') {
+        this.initiated = false;
+        return;
+      }
+
+      deltaX = 0;
+    }
+
+    deltaX = this.hasHorizontalScroll ? deltaX : 0;
+    deltaY = this.hasVerticalScroll ? deltaY : 0;
+    this.movingDirectionX = deltaX > 0 ? DIRECTION_RIGHT : deltaX < 0 ? DIRECTION_LEFT : 0;
+    this.movingDirectionY = deltaY > 0 ? DIRECTION_DOWN : deltaY < 0 ? DIRECTION_UP : 0;
+    var newX = this.x + deltaX;
+    var newY = this.y + deltaY;
+    var top = false;
+    var bottom = false;
+    var left = false;
+    var right = false; // Slow down or stop if outside of the boundaries
+
+    var bounce = this.options.bounce;
+
+    if (bounce !== false) {
+      top = bounce.top === undefined ? true : bounce.top;
+      bottom = bounce.bottom === undefined ? true : bounce.bottom;
+      left = bounce.left === undefined ? true : bounce.left;
+      right = bounce.right === undefined ? true : bounce.right;
+    }
+
+    if (newX > this.minScrollX || newX < this.maxScrollX) {
+      if (newX > this.minScrollX && left || newX < this.maxScrollX && right) {
+        newX = this.x + deltaX / 3;
+      } else {
+        newX = newX > this.minScrollX ? this.minScrollX : this.maxScrollX;
+      }
+    }
+
+    if (newY > this.minScrollY || newY < this.maxScrollY) {
+      if (newY > this.minScrollY && top || newY < this.maxScrollY && bottom) {
+        newY = this.y + deltaY / 3;
+      } else {
+        newY = newY > this.minScrollY ? this.minScrollY : this.maxScrollY;
+      }
+    }
+
+    if (!this.moved) {
+      this.moved = true;
+      this.trigger('scrollStart');
+    }
+
+    this._translate(newX, newY);
+
+    if (timestamp - this.startTime > this.options.momentumLimitTime) {
+      this.startTime = timestamp;
+      this.startX = this.x;
+      this.startY = this.y;
+
+      if (this.options.probeType === PROBE_DEBOUNCE) {
+        this.trigger('scroll', {
+          x: this.x,
+          y: this.y
+        });
+      }
+    }
+
+    if (this.options.probeType > PROBE_DEBOUNCE) {
+      this.trigger('scroll', {
+        x: this.x,
+        y: this.y
+      });
+    }
+
+    var scrollLeft = document.documentElement.scrollLeft || window.pageXOffset || document.body.scrollLeft;
+    var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+    var pX = this.pointX - scrollLeft;
+    var pY = this.pointY - scrollTop;
+
+    if (pX > document.documentElement.clientWidth - this.options.momentumLimitDistance || pX < this.options.momentumLimitDistance || pY < this.options.momentumLimitDistance || pY > document.documentElement.clientHeight - this.options.momentumLimitDistance) {
+      this._end(e);
+    }
+  };
+
+  BScroll.prototype._end = function (e) {
+    if (!this.enabled || this.destroyed || eventType[e.type] !== this.initiated) {
+      return;
+    }
+
+    this.initiated = false;
+
+    if (this.options.preventDefault && !preventDefaultException(e.target, this.options.preventDefaultException)) {
+      e.preventDefault();
+    }
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    this.trigger('touchEnd', {
+      x: this.x,
+      y: this.y
+    });
+    this.isInTransition = false; // ensures that the last position is rounded
+
+    var newX = Math.round(this.x);
+    var newY = Math.round(this.y);
+    var deltaX = newX - this.absStartX;
+    var deltaY = newY - this.absStartY;
+    this.directionX = deltaX > 0 ? DIRECTION_RIGHT : deltaX < 0 ? DIRECTION_LEFT : 0;
+    this.directionY = deltaY > 0 ? DIRECTION_DOWN : deltaY < 0 ? DIRECTION_UP : 0; // if configure pull down refresh, check it first
+
+    if (this.options.pullDownRefresh && this._checkPullDown()) {
+      return;
+    } // check if it is a click operation
+
+
+    if (this._checkClick(e)) {
+      this.trigger('scrollCancel');
+      return;
+    } // reset if we are outside of the boundaries
+
+
+    if (this.resetPosition(this.options.bounceTime, ease.bounce)) {
+      return;
+    }
+
+    this._translate(newX, newY);
+
+    this.endTime = getNow();
+    var duration = this.endTime - this.startTime;
+    var absDistX = Math.abs(newX - this.startX);
+    var absDistY = Math.abs(newY - this.startY); // flick
+
+    if (this._events.flick && duration < this.options.flickLimitTime && absDistX < this.options.flickLimitDistance && absDistY < this.options.flickLimitDistance) {
+      this.trigger('flick');
+      return;
+    }
+
+    var time = 0; // start momentum animation if needed
+
+    if (this.options.momentum && duration < this.options.momentumLimitTime && (absDistY > this.options.momentumLimitDistance || absDistX > this.options.momentumLimitDistance)) {
+      var top = false;
+      var bottom = false;
+      var left = false;
+      var right = false;
+      var bounce = this.options.bounce;
+
+      if (bounce !== false) {
+        top = bounce.top === undefined ? true : bounce.top;
+        bottom = bounce.bottom === undefined ? true : bounce.bottom;
+        left = bounce.left === undefined ? true : bounce.left;
+        right = bounce.right === undefined ? true : bounce.right;
+      }
+
+      var wrapperWidth = this.directionX === DIRECTION_RIGHT && left || this.directionX === DIRECTION_LEFT && right ? this.wrapperWidth : 0;
+      var wrapperHeight = this.directionY === DIRECTION_DOWN && top || this.directionY === DIRECTION_UP && bottom ? this.wrapperHeight : 0;
+      var momentumX = this.hasHorizontalScroll ? momentum(this.x, this.startX, duration, this.maxScrollX, this.minScrollX, wrapperWidth, this.options, this) : {
+        destination: newX,
+        duration: 0
+      };
+      var momentumY = this.hasVerticalScroll ? momentum(this.y, this.startY, duration, this.maxScrollY, this.minScrollY, wrapperHeight, this.options, this) : {
+        destination: newY,
+        duration: 0
+      };
+      newX = momentumX.destination;
+      newY = momentumY.destination;
+      time = Math.max(momentumX.duration, momentumY.duration);
+      this.isInTransition = true;
+    } else {
+      if (this.options.wheel) {
+        newY = this._findNearestValidWheel(newY).y;
+        time = this.options.wheel.adjustTime || 400;
+      }
+    }
+
+    var easing = ease.swipe;
+
+    if (this.options.snap) {
+      var snap = this._nearestSnap(newX, newY);
+
+      this.currentPage = snap;
+      time = this.options.snapSpeed || Math.max(Math.max(Math.min(Math.abs(newX - snap.x), 1000), Math.min(Math.abs(newY - snap.y), 1000)), 300);
+      newX = snap.x;
+      newY = snap.y;
+      this.directionX = 0;
+      this.directionY = 0;
+      easing = this.options.snap.easing || ease.bounce;
+    }
+
+    if (newX !== this.x || newY !== this.y) {
+      // change easing function when scroller goes out of the boundaries
+      if (newX > this.minScrollX || newX < this.maxScrollX || newY > this.minScrollY || newY < this.maxScrollY) {
+        easing = ease.swipeBounce;
+      }
+
+      this.scrollTo(newX, newY, time, easing);
+      return;
+    }
+
+    if (this.options.wheel) {
+      this.selectedIndex = this._findNearestValidWheel(this.y).index;
+    }
+
+    this.trigger('scrollEnd', {
+      x: this.x,
+      y: this.y
+    });
+  };
+
+  BScroll.prototype._checkClick = function (e) {
+    // when in the process of pulling down, it should not prevent click
+    var preventClick = this.stopFromTransition && !this.pulling;
+    this.stopFromTransition = false; // we scrolled less than 15 pixels
+
+    if (!this.moved) {
+      if (this.options.wheel) {
+        if (this.target && this.target.className === this.options.wheel.wheelWrapperClass) {
+          var index = this._findNearestValidWheel(this.y).index;
+
+          var _offset = Math.round((this.pointY + offsetToBody(this.wrapper).top - this.wrapperHeight / 2) / this.itemHeight);
+
+          this.target = this.items[index + _offset];
+        }
+
+        var top = offset(this.target).top;
+        var left = offset(this.target).left;
+        top -= this.wrapperOffset.top;
+        top -= Math.round(this.target.offsetHeight / 2 - this.wrapper.offsetHeight / 2) || 0;
+        left -= this.wrapperOffset.left;
+        left -= Math.round(this.target.offsetWidth / 2 - this.wrapper.offsetWidth / 2) || 0;
+        top = this._findNearestValidWheel(top).y;
+        this.scrollTo(left, top, this.options.wheel.adjustTime || 400, ease.swipe);
+        return true;
+      } else {
+        if (!preventClick) {
+          var _dblclick = this.options.dblclick;
+          var dblclickTrigged = false;
+
+          if (_dblclick && this.lastClickTime) {
+            var _dblclick$delay = _dblclick.delay,
+                delay = _dblclick$delay === undefined ? 300 : _dblclick$delay;
+
+            if (getNow() - this.lastClickTime < delay) {
+              dblclickTrigged = true;
+              dblclick(e);
+            }
+          }
+
+          if (this.options.tap) {
+            tap(e, this.options.tap);
+          }
+
+          if (this.options.click && !preventDefaultException(e.target, this.options.preventDefaultException)) {
+            click(e);
+          }
+
+          this.lastClickTime = dblclickTrigged ? null : getNow();
+          return true;
+        }
+
+        return false;
+      }
+    }
+
+    return false;
+  };
+
+  BScroll.prototype._resize = function () {
+    var _this = this;
+
+    if (!this.enabled) {
+      return;
+    } // fix a scroll problem under Android condition
+
+
+    if (isAndroid) {
+      this.wrapper.scrollTop = 0;
+    }
+
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(function () {
+      _this.refresh();
+    }, this.options.resizePolling);
+  };
+
+  BScroll.prototype._startProbe = function () {
+    cancelAnimationFrame(this.probeTimer);
+    this.probeTimer = requestAnimationFrame(probe);
+    var me = this;
+
+    function probe() {
+      var pos = me.getComputedPosition();
+      me.trigger('scroll', pos);
+
+      if (!me.isInTransition) {
+        me.trigger('scrollEnd', pos);
+        return;
+      }
+
+      me.probeTimer = requestAnimationFrame(probe);
+    }
+  };
+
+  BScroll.prototype._transitionTime = function () {
+    var time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    this.scrollerStyle[style.transitionDuration] = time + 'ms';
+
+    if (this.options.wheel) {
+      for (var i = 0; i < this.items.length; i++) {
+        this.items[i].style[style.transitionDuration] = time + 'ms';
+      }
+    }
+
+    if (this.indicators) {
+      for (var _i = 0; _i < this.indicators.length; _i++) {
+        this.indicators[_i].transitionTime(time);
+      }
+    }
+  };
+
+  BScroll.prototype._transitionTimingFunction = function (easing) {
+    this.scrollerStyle[style.transitionTimingFunction] = easing;
+
+    if (this.options.wheel) {
+      for (var i = 0; i < this.items.length; i++) {
+        this.items[i].style[style.transitionTimingFunction] = easing;
+      }
+    }
+
+    if (this.indicators) {
+      for (var _i2 = 0; _i2 < this.indicators.length; _i2++) {
+        this.indicators[_i2].transitionTimingFunction(easing);
+      }
+    }
+  };
+
+  BScroll.prototype._transitionEnd = function (e) {
+    if (e.target !== this.scroller || !this.isInTransition) {
+      return;
+    }
+
+    this._transitionTime();
+
+    var needReset = !this.pulling || this.movingDirectionY === DIRECTION_UP;
+
+    if (needReset && !this.resetPosition(this.options.bounceTime, ease.bounce)) {
+      this.isInTransition = false;
+
+      if (this.options.probeType !== PROBE_REALTIME) {
+        this.trigger('scrollEnd', {
+          x: this.x,
+          y: this.y
+        });
+      }
+    }
+  };
+
+  BScroll.prototype._translate = function (x, y, scale) {
+    assert(!isUndef(x) && !isUndef(y), 'Translate x or y is null or undefined.');
+
+    if (isUndef(scale)) {
+      scale = this.scale;
+    }
+
+    if (this.options.useTransform) {
+      this.scrollerStyle[style.transform] = 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')' + this.translateZ;
+    } else {
+      x = Math.round(x);
+      y = Math.round(y);
+      this.scrollerStyle.left = x + 'px';
+      this.scrollerStyle.top = y + 'px';
+    }
+
+    if (this.options.wheel) {
+      var _options$wheel$rotate = this.options.wheel.rotate,
+          rotate = _options$wheel$rotate === undefined ? 25 : _options$wheel$rotate;
+
+      for (var i = 0; i < this.items.length; i++) {
+        var deg = rotate * (y / this.itemHeight + i);
+        this.items[i].style[style.transform] = 'rotateX(' + deg + 'deg)';
+      }
+    }
+
+    this.x = x;
+    this.y = y;
+    this.setScale(scale);
+
+    if (this.indicators) {
+      for (var _i3 = 0; _i3 < this.indicators.length; _i3++) {
+        this.indicators[_i3].updatePosition();
+      }
+    }
+  };
+
+  BScroll.prototype._animate = function (destX, destY, duration, easingFn) {
+    var me = this;
+    var startX = this.x;
+    var startY = this.y;
+    var startScale = this.lastScale;
+    var destScale = this.scale;
+    var startTime = getNow();
+    var destTime = startTime + duration;
+
+    function step() {
+      var now = getNow();
+
+      if (now >= destTime) {
+        me.isAnimating = false;
+
+        me._translate(destX, destY, destScale);
+
+        me.trigger('scroll', {
+          x: me.x,
+          y: me.y
+        });
+
+        if (!me.pulling && !me.resetPosition(me.options.bounceTime)) {
+          me.trigger('scrollEnd', {
+            x: me.x,
+            y: me.y
+          });
+        }
+
+        return;
+      }
+
+      now = (now - startTime) / duration;
+      var easing = easingFn(now);
+      var newX = (destX - startX) * easing + startX;
+      var newY = (destY - startY) * easing + startY;
+      var newScale = (destScale - startScale) * easing + startScale;
+
+      me._translate(newX, newY, newScale);
+
+      if (me.isAnimating) {
+        me.animateTimer = requestAnimationFrame(step);
+      }
+
+      if (me.options.probeType === PROBE_REALTIME) {
+        me.trigger('scroll', {
+          x: me.x,
+          y: me.y
+        });
+      }
+    }
+
+    this.isAnimating = true;
+    cancelAnimationFrame(this.animateTimer);
+    step();
+  };
+
+  BScroll.prototype.scrollBy = function (x, y) {
+    var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var easing = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ease.bounce;
+    x = this.x + x;
+    y = this.y + y;
+    this.scrollTo(x, y, time, easing);
+  };
+
+  BScroll.prototype.scrollTo = function (x, y) {
+    var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var easing = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ease.bounce;
+    var isSilent = arguments[4];
+
+    if (this.options.wheel) {
+      y = this._findNearestValidWheel(y).y;
+    }
+
+    this.isInTransition = this.options.useTransition && time > 0 && (this.x !== x || this.y !== y);
+
+    if (!time || this.options.useTransition) {
+      this._transitionTimingFunction(easing.style);
+
+      this._transitionTime(time);
+
+      this._translate(x, y);
+
+      if (time && this.options.probeType === PROBE_REALTIME) {
+        this._startProbe();
+      }
+
+      if (!time && !isSilent) {
+        // don't trigger resetPosition when zoom feature is open, fix #748
+        if (this.options.zoom) return;
+        this.trigger('scroll', {
+          x: x,
+          y: y
+        }); // force reflow to put everything in position
+
+        this._reflow = document.body.offsetHeight;
+
+        if (!this.resetPosition(this.options.bounceTime, ease.bounce)) {
+          this.trigger('scrollEnd', {
+            x: x,
+            y: y
+          });
+        }
+      }
+
+      if (this.options.wheel) {
+        this.selectedIndex = this._findNearestValidWheel(y).index;
+      }
+    } else {
+      this._animate(x, y, time, easing.fn);
+    }
+  };
+
+  BScroll.prototype.scrollToElement = function (el, time, offsetX, offsetY, easing) {
+    if (!el) {
+      return;
+    }
+
+    el = el.nodeType ? el : this.scroller.querySelector(el);
+
+    if (this.options.wheel && !el.classList.contains(this.options.wheel.wheelItemClass)) {
+      return;
+    }
+
+    var pos = offset(el);
+    pos.left -= this.wrapperOffset.left;
+    pos.top -= this.wrapperOffset.top; // if offsetX/Y are true we center the element to the screen
+
+    if (offsetX === true) {
+      offsetX = Math.round(el.offsetWidth / 2 - this.wrapper.offsetWidth / 2);
+    }
+
+    if (offsetY === true) {
+      offsetY = Math.round(el.offsetHeight / 2 - this.wrapper.offsetHeight / 2);
+    }
+
+    pos.left -= offsetX || 0;
+    pos.top -= offsetY || 0;
+    pos.left = pos.left > this.minScrollX ? this.minScrollX : pos.left < this.maxScrollX ? this.maxScrollX : pos.left;
+    pos.top = pos.top > this.minScrollY ? this.minScrollY : pos.top < this.maxScrollY ? this.maxScrollY : pos.top;
+
+    if (this.options.wheel) {
+      pos.top = this._findNearestValidWheel(pos.top).y;
+    }
+
+    this.scrollTo(pos.left, pos.top, time, easing);
+  };
+
+  BScroll.prototype.resetPosition = function () {
+    var time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var easeing = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ease.bounce;
+    var x = this.x;
+    var roundX = Math.round(x);
+
+    if (!this.hasHorizontalScroll || roundX > this.minScrollX) {
+      x = this.minScrollX;
+    } else if (roundX < this.maxScrollX) {
+      x = this.maxScrollX;
+    }
+
+    var y = this.y;
+    var roundY = Math.round(y);
+
+    if (!this.hasVerticalScroll || roundY > this.minScrollY) {
+      y = this.minScrollY;
+    } else if (roundY < this.maxScrollY) {
+      y = this.maxScrollY;
+    }
+
+    if (x === this.x && y === this.y) {
+      return false;
+    }
+
+    this.scrollTo(x, y, time, easeing);
+    return true;
+  };
+
+  BScroll.prototype.getComputedPosition = function () {
+    var matrix = window.getComputedStyle(this.scroller, null);
+    var x = void 0;
+    var y = void 0;
+
+    if (this.options.useTransform) {
+      matrix = matrix[style.transform].split(')')[0].split(', ');
+      x = +(matrix[12] || matrix[4]);
+      y = +(matrix[13] || matrix[5]);
+    } else {
+      x = +matrix.left.replace(/[^-\d.]/g, '');
+      y = +matrix.top.replace(/[^-\d.]/g, '');
+    }
+
+    return {
+      x: x,
+      y: y
+    };
+  };
+
+  BScroll.prototype.stop = function () {
+    if (this.options.useTransition && this.isInTransition) {
+      this.isInTransition = false;
+      cancelAnimationFrame(this.probeTimer);
+      var pos = this.getComputedPosition();
+
+      this._translate(pos.x, pos.y);
+
+      if (this.options.wheel) {
+        this.target = this.items[this._findNearestValidWheel(pos.y).index];
+      } else {
+        this.trigger('scrollEnd', {
+          x: this.x,
+          y: this.y
+        });
+      }
+
+      this.stopFromTransition = true;
+    } else if (!this.options.useTransition && this.isAnimating) {
+      this.isAnimating = false;
+      cancelAnimationFrame(this.animateTimer);
+      this.trigger('scrollEnd', {
+        x: this.x,
+        y: this.y
+      });
+      this.stopFromTransition = true;
+    }
+  };
+
+  BScroll.prototype.destroy = function () {
+    this.destroyed = true;
+    this.trigger('destroy');
+
+    if (this.options.useTransition) {
+      cancelAnimationFrame(this.probeTimer);
+    } else {
+      cancelAnimationFrame(this.animateTimer);
+    }
+
+    this._removeDOMEvents(); // remove custom events
+
+
+    this._events = {};
+  };
+}
+
+function snapMixin(BScroll) {
+  BScroll.prototype._initSnap = function () {
+    var _this = this;
+
+    this.currentPage = {};
+    var snap = this.options.snap;
+
+    if (snap.loop) {
+      var children = this.scroller.children;
+
+      if (children.length > 1) {
+        prepend(children[children.length - 1].cloneNode(true), this.scroller);
+        this.scroller.appendChild(children[1].cloneNode(true));
+      } else {
+        // Loop does not make any sense if there is only one child.
+        snap.loop = false;
+      }
+    }
+
+    var el = snap.el;
+
+    if (typeof el === 'string') {
+      el = this.scroller.querySelectorAll(el);
+    }
+
+    this.on('refresh', function () {
+      _this.pages = [];
+
+      if (!_this.wrapperWidth || !_this.wrapperHeight || !_this.scrollerWidth || !_this.scrollerHeight) {
+        return;
+      }
+
+      var stepX = snap.stepX || _this.wrapperWidth;
+      var stepY = snap.stepY || _this.wrapperHeight;
+      var x = 0;
+      var y = void 0;
+      var cx = void 0;
+      var cy = void 0;
+      var i = 0;
+      var l = void 0;
+      var m = 0;
+      var n = void 0;
+      var rect = void 0;
+
+      if (!el) {
+        cx = Math.round(stepX / 2);
+        cy = Math.round(stepY / 2);
+
+        while (x > -_this.scrollerWidth) {
+          _this.pages[i] = [];
+          l = 0;
+          y = 0;
+
+          while (y > -_this.scrollerHeight) {
+            _this.pages[i][l] = {
+              x: Math.max(x, _this.maxScrollX),
+              y: Math.max(y, _this.maxScrollY),
+              width: stepX,
+              height: stepY,
+              cx: x - cx,
+              cy: y - cy
+            };
+            y -= stepY;
+            l++;
+          }
+
+          x -= stepX;
+          i++;
+        }
+      } else {
+        l = el.length;
+        n = -1;
+
+        for (; i < l; i++) {
+          rect = getRect(el[i]);
+
+          if (i === 0 || rect.left <= getRect(el[i - 1]).left) {
+            m = 0;
+            n++;
+          }
+
+          if (!_this.pages[m]) {
+            _this.pages[m] = [];
+          }
+
+          x = Math.max(-rect.left, _this.maxScrollX);
+          y = Math.max(-rect.top, _this.maxScrollY);
+          cx = x - Math.round(rect.width / 2);
+          cy = y - Math.round(rect.height / 2);
+          _this.pages[m][n] = {
+            x: x,
+            y: y,
+            width: rect.width,
+            height: rect.height,
+            cx: cx,
+            cy: cy
+          };
+
+          if (x > _this.maxScrollX) {
+            m++;
+          }
+        }
+      }
+
+      _this._checkSnapLoop();
+
+      var initPageX = snap._loopX ? 1 : 0;
+      var initPageY = snap._loopY ? 1 : 0;
+
+      _this._goToPage(_this.currentPage.pageX || initPageX, _this.currentPage.pageY || initPageY, 0, undefined, true); // Update snap threshold if needed.
+
+
+      var snapThreshold = snap.threshold;
+
+      if (snapThreshold % 1 === 0) {
+        _this.snapThresholdX = snapThreshold;
+        _this.snapThresholdY = snapThreshold;
+      } else {
+        _this.snapThresholdX = Math.round(_this.pages[_this.currentPage.pageX][_this.currentPage.pageY].width * snapThreshold);
+        _this.snapThresholdY = Math.round(_this.pages[_this.currentPage.pageX][_this.currentPage.pageY].height * snapThreshold);
+      }
+    });
+    this.on('scrollEnd', function () {
+      if (snap.loop) {
+        if (snap._loopX) {
+          if (_this.currentPage.pageX === 0) {
+            _this._goToPage(_this.pages.length - 2, _this.currentPage.pageY, 0, undefined, true);
+          }
+
+          if (_this.currentPage.pageX === _this.pages.length - 1) {
+            _this._goToPage(1, _this.currentPage.pageY, 0, undefined, true);
+          }
+        } else {
+          if (_this.currentPage.pageY === 0) {
+            _this._goToPage(_this.currentPage.pageX, _this.pages[0].length - 2, 0, undefined, true);
+          }
+
+          if (_this.currentPage.pageY === _this.pages[0].length - 1) {
+            _this._goToPage(_this.currentPage.pageX, 1, 0, undefined, true);
+          }
+        }
+      }
+    });
+
+    if (snap.listenFlick !== false) {
+      this.on('flick', function () {
+        var time = snap.speed || Math.max(Math.max(Math.min(Math.abs(_this.x - _this.startX), 1000), Math.min(Math.abs(_this.y - _this.startY), 1000)), 300);
+
+        _this._goToPage(_this.currentPage.pageX + _this.directionX, _this.currentPage.pageY + _this.directionY, time);
+      });
+    }
+
+    this.on('destroy', function () {
+      if (snap.loop) {
+        var _children = _this.scroller.children;
+
+        if (_children.length > 2) {
+          removeChild(_this.scroller, _children[_children.length - 1]);
+          removeChild(_this.scroller, _children[0]);
+        }
+      }
+    });
+  };
+
+  BScroll.prototype._checkSnapLoop = function () {
+    var snap = this.options.snap;
+
+    if (!snap.loop || !this.pages || !this.pages.length) {
+      return;
+    }
+
+    if (this.pages.length > 1) {
+      snap._loopX = true;
+    }
+
+    if (this.pages[0] && this.pages[0].length > 1) {
+      snap._loopY = true;
+    }
+
+    if (snap._loopX && snap._loopY) {
+      warn('Loop does not support two direction at the same time.');
+    }
+  };
+
+  BScroll.prototype._nearestSnap = function (x, y) {
+    if (!this.pages.length) {
+      return {
+        x: 0,
+        y: 0,
+        pageX: 0,
+        pageY: 0
+      };
+    }
+
+    var i = 0; // Check if we exceeded the snap threshold
+
+    if (Math.abs(x - this.absStartX) <= this.snapThresholdX && Math.abs(y - this.absStartY) <= this.snapThresholdY) {
+      return this.currentPage;
+    }
+
+    if (x > this.minScrollX) {
+      x = this.minScrollX;
+    } else if (x < this.maxScrollX) {
+      x = this.maxScrollX;
+    }
+
+    if (y > this.minScrollY) {
+      y = this.minScrollY;
+    } else if (y < this.maxScrollY) {
+      y = this.maxScrollY;
+    }
+
+    var l = this.pages.length;
+
+    for (; i < l; i++) {
+      if (x >= this.pages[i][0].cx) {
+        x = this.pages[i][0].x;
+        break;
+      }
+    }
+
+    l = this.pages[i].length;
+    var m = 0;
+
+    for (; m < l; m++) {
+      if (y >= this.pages[0][m].cy) {
+        y = this.pages[0][m].y;
+        break;
+      }
+    }
+
+    if (i === this.currentPage.pageX) {
+      i += this.directionX;
+
+      if (i < 0) {
+        i = 0;
+      } else if (i >= this.pages.length) {
+        i = this.pages.length - 1;
+      }
+
+      x = this.pages[i][0].x;
+    }
+
+    if (m === this.currentPage.pageY) {
+      m += this.directionY;
+
+      if (m < 0) {
+        m = 0;
+      } else if (m >= this.pages[0].length) {
+        m = this.pages[0].length - 1;
+      }
+
+      y = this.pages[0][m].y;
+    }
+
+    return {
+      x: x,
+      y: y,
+      pageX: i,
+      pageY: m
+    };
+  };
+
+  BScroll.prototype._goToPage = function (x) {
+    var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var time = arguments[2];
+    var easing = arguments[3];
+    var isSilent = arguments[4];
+    var snap = this.options.snap;
+
+    if (!snap || !this.pages || !this.pages.length) {
+      return;
+    }
+
+    easing = easing || snap.easing || ease.bounce;
+
+    if (x >= this.pages.length) {
+      x = this.pages.length - 1;
+    } else if (x < 0) {
+      x = 0;
+    }
+
+    if (!this.pages[x]) {
+      return;
+    }
+
+    if (y >= this.pages[x].length) {
+      y = this.pages[x].length - 1;
+    } else if (y < 0) {
+      y = 0;
+    }
+
+    var posX = this.pages[x][y].x;
+    var posY = this.pages[x][y].y;
+    time = time === undefined ? snap.speed || Math.max(Math.max(Math.min(Math.abs(posX - this.x), 1000), Math.min(Math.abs(posY - this.y), 1000)), 300) : time;
+    this.currentPage = {
+      x: posX,
+      y: posY,
+      pageX: x,
+      pageY: y
+    };
+    this.scrollTo(posX, posY, time, easing, isSilent);
+  };
+
+  BScroll.prototype.goToPage = function (x, y, time, easing) {
+    var snap = this.options.snap;
+
+    if (!snap || !this.pages || !this.pages.length) {
+      return;
+    }
+
+    if (snap.loop) {
+      var len = void 0;
+
+      if (snap._loopX) {
+        len = this.pages.length - 2;
+
+        if (x >= len) {
+          x = len - 1;
+        } else if (x < 0) {
+          x = 0;
+        }
+
+        x += 1;
+      } else {
+        len = this.pages[0].length - 2;
+
+        if (y >= len) {
+          y = len - 1;
+        } else if (y < 0) {
+          y = 0;
+        }
+
+        y += 1;
+      }
+    }
+
+    this._goToPage(x, y, time, easing);
+  };
+
+  BScroll.prototype.next = function (time, easing) {
+    var snap = this.options.snap;
+
+    if (!snap) {
+      return;
+    }
+
+    var x = this.currentPage.pageX;
+    var y = this.currentPage.pageY;
+    x++;
+
+    if (x >= this.pages.length && this.hasVerticalScroll) {
+      x = 0;
+      y++;
+    }
+
+    this._goToPage(x, y, time, easing);
+  };
+
+  BScroll.prototype.prev = function (time, easing) {
+    var snap = this.options.snap;
+
+    if (!snap) {
+      return;
+    }
+
+    var x = this.currentPage.pageX;
+    var y = this.currentPage.pageY;
+    x--;
+
+    if (x < 0 && this.hasVerticalScroll) {
+      x = 0;
+      y--;
+    }
+
+    this._goToPage(x, y, time, easing);
+  };
+
+  BScroll.prototype.getCurrentPage = function () {
+    var snap = this.options.snap;
+
+    if (!snap) {
+      return null;
+    }
+
+    if (snap.loop) {
+      var currentPage = void 0;
+
+      if (snap._loopX) {
+        currentPage = extend({}, this.currentPage, {
+          pageX: this.currentPage.pageX - 1
+        });
+      } else {
+        currentPage = extend({}, this.currentPage, {
+          pageY: this.currentPage.pageY - 1
+        });
+      }
+
+      return currentPage;
+    }
+
+    return this.currentPage;
+  };
+}
+
+function wheelMixin(BScroll) {
+  BScroll.prototype.wheelTo = function () {
+    var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+    if (this.options.wheel) {
+      var y = -index * this.itemHeight;
+      this.scrollTo(0, y);
+    }
+  };
+
+  BScroll.prototype.getSelectedIndex = function () {
+    return this.options.wheel && this.selectedIndex;
+  };
+
+  BScroll.prototype._initWheel = function () {
+    var wheel = this.options.wheel;
+
+    if (!wheel.wheelWrapperClass) {
+      wheel.wheelWrapperClass = 'wheel-scroll';
+    }
+
+    if (!wheel.wheelItemClass) {
+      wheel.wheelItemClass = 'wheel-item';
+    }
+
+    if (!wheel.wheelDisabledItemClass) {
+      wheel.wheelDisabledItemClass = 'wheel-disabled-item';
+    }
+
+    if (wheel.selectedIndex === undefined) {
+      wheel.selectedIndex = 0;
+    }
+  };
+
+  BScroll.prototype._findNearestValidWheel = function (y) {
+    y = y > 0 ? 0 : y < this.maxScrollY ? this.maxScrollY : y;
+    var wheel = this.options.wheel;
+    var currentIndex = Math.abs(Math.round(-y / this.itemHeight));
+    var cacheIndex = currentIndex;
+    var items = this.items; // Impersonation web native select
+    // first, check whether there is a enable item whose index is smaller than currentIndex
+    // then, check whether there is a enable item whose index is bigger than currentIndex
+    // otherwise, there are all disabled items, just keep currentIndex unchange
+
+    while (currentIndex >= 0) {
+      if (items[currentIndex].className.indexOf(wheel.wheelDisabledItemClass) === -1) {
+        break;
+      }
+
+      currentIndex--;
+    }
+
+    if (currentIndex < 0) {
+      currentIndex = cacheIndex;
+
+      while (currentIndex <= items.length - 1) {
+        if (items[currentIndex].className.indexOf(wheel.wheelDisabledItemClass) === -1) {
+          break;
+        }
+
+        currentIndex++;
+      }
+    } // keep it unchange when all the items are disabled
+
+
+    if (currentIndex === items.length) {
+      currentIndex = cacheIndex;
+    } // when all the items are disabled, this.selectedIndex should always be -1
+
+
+    return {
+      index: this.wheelItemsAllDisabled ? -1 : currentIndex,
+      y: -currentIndex * this.itemHeight
+    };
+  };
+
+  BScroll.prototype._checkWheelAllDisabled = function () {
+    var wheel = this.options.wheel;
+    var items = this.items;
+    this.wheelItemsAllDisabled = true;
+
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].className.indexOf(wheel.wheelDisabledItemClass) === -1) {
+        this.wheelItemsAllDisabled = false;
+        break;
+      }
+    }
+  };
+}
+
+var INDICATOR_MIN_LEN = 8;
+
+function scrollbarMixin(BScroll) {
+  BScroll.prototype._initScrollbar = function () {
+    var _this = this;
+
+    var _options$scrollbar = this.options.scrollbar,
+        _options$scrollbar$fa = _options$scrollbar.fade,
+        fade = _options$scrollbar$fa === undefined ? true : _options$scrollbar$fa,
+        _options$scrollbar$in = _options$scrollbar.interactive,
+        interactive = _options$scrollbar$in === undefined ? false : _options$scrollbar$in;
+    this.indicators = [];
+    var indicator = void 0;
+
+    if (this.options.scrollX) {
+      indicator = {
+        el: createScrollbar('horizontal'),
+        direction: 'horizontal',
+        fade: fade,
+        interactive: interactive
+      };
+
+      this._insertScrollBar(indicator.el);
+
+      this.indicators.push(new Indicator(this, indicator));
+    }
+
+    if (this.options.scrollY) {
+      indicator = {
+        el: createScrollbar('vertical'),
+        direction: 'vertical',
+        fade: fade,
+        interactive: interactive
+      };
+
+      this._insertScrollBar(indicator.el);
+
+      this.indicators.push(new Indicator(this, indicator));
+    }
+
+    this.on('refresh', function () {
+      for (var i = 0; i < _this.indicators.length; i++) {
+        _this.indicators[i].refresh();
+      }
+    });
+
+    if (fade) {
+      this.on('scrollEnd', function () {
+        for (var i = 0; i < _this.indicators.length; i++) {
+          _this.indicators[i].fade();
+        }
+      });
+      this.on('scrollCancel', function () {
+        for (var i = 0; i < _this.indicators.length; i++) {
+          _this.indicators[i].fade();
+        }
+      });
+      this.on('scrollStart', function () {
+        for (var i = 0; i < _this.indicators.length; i++) {
+          _this.indicators[i].fade(true);
+        }
+      });
+      this.on('beforeScrollStart', function () {
+        for (var i = 0; i < _this.indicators.length; i++) {
+          _this.indicators[i].fade(true, true);
+        }
+      });
+    }
+
+    this.on('destroy', function () {
+      _this._removeScrollBars();
+    });
+  };
+
+  BScroll.prototype._insertScrollBar = function (scrollbar) {
+    this.wrapper.appendChild(scrollbar);
+  };
+
+  BScroll.prototype._removeScrollBars = function () {
+    for (var i = 0; i < this.indicators.length; i++) {
+      this.indicators[i].destroy();
+    }
+  };
+}
+
+function createScrollbar(direction) {
+  var scrollbar = document.createElement('div');
+  var indicator = document.createElement('div');
+  scrollbar.style.cssText = 'position:absolute;z-index:9999;pointerEvents:none';
+  indicator.style.cssText = 'box-sizing:border-box;position:absolute;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.9);border-radius:3px;';
+  indicator.className = 'bscroll-indicator';
+
+  if (direction === 'horizontal') {
+    scrollbar.style.cssText += ';height:7px;left:2px;right:2px;bottom:0';
+    indicator.style.height = '100%';
+    scrollbar.className = 'bscroll-horizontal-scrollbar';
+  } else {
+    scrollbar.style.cssText += ';width:7px;bottom:2px;top:2px;right:1px';
+    indicator.style.width = '100%';
+    scrollbar.className = 'bscroll-vertical-scrollbar';
+  }
+
+  scrollbar.style.cssText += ';overflow:hidden';
+  scrollbar.appendChild(indicator);
+  return scrollbar;
+}
+
+function Indicator(scroller, options) {
+  this.wrapper = options.el;
+  this.wrapperStyle = this.wrapper.style;
+  this.indicator = this.wrapper.children[0];
+  this.indicatorStyle = this.indicator.style;
+  this.scroller = scroller;
+  this.direction = options.direction;
+
+  if (options.fade) {
+    this.visible = 0;
+    this.wrapperStyle.opacity = '0';
+  } else {
+    this.visible = 1;
+  }
+
+  this.sizeRatioX = 1;
+  this.sizeRatioY = 1;
+  this.maxPosX = 0;
+  this.maxPosY = 0;
+  this.x = 0;
+  this.y = 0;
+
+  if (options.interactive) {
+    this._addDOMEvents();
+  }
+}
+
+Indicator.prototype.handleEvent = function (e) {
+  switch (e.type) {
+    case 'touchstart':
+    case 'mousedown':
+      this._start(e);
+
+      break;
+
+    case 'touchmove':
+    case 'mousemove':
+      this._move(e);
+
+      break;
+
+    case 'touchend':
+    case 'mouseup':
+    case 'touchcancel':
+    case 'mousecancel':
+      this._end(e);
+
+      break;
+  }
+};
+
+Indicator.prototype.refresh = function () {
+  if (this._shouldShow()) {
+    this.transitionTime();
+
+    this._calculate();
+
+    this.updatePosition();
+  }
+};
+
+Indicator.prototype.fade = function (visible, hold) {
+  var _this2 = this;
+
+  if (hold && !this.visible) {
+    return;
+  }
+
+  var time = visible ? 250 : 500;
+  visible = visible ? '1' : '0';
+  this.wrapperStyle[style.transitionDuration] = time + 'ms';
+  clearTimeout(this.fadeTimeout);
+  this.fadeTimeout = setTimeout(function () {
+    _this2.wrapperStyle.opacity = visible;
+    _this2.visible = +visible;
+  }, 0);
+};
+
+Indicator.prototype.updatePosition = function () {
+  if (this.direction === 'vertical') {
+    var y = Math.round(this.sizeRatioY * this.scroller.y);
+
+    if (y < 0) {
+      this.transitionTime(500);
+      var height = Math.max(this.indicatorHeight + y * 3, INDICATOR_MIN_LEN);
+      this.indicatorStyle.height = height + 'px';
+      y = 0;
+    } else if (y > this.maxPosY) {
+      this.transitionTime(500);
+
+      var _height = Math.max(this.indicatorHeight - (y - this.maxPosY) * 3, INDICATOR_MIN_LEN);
+
+      this.indicatorStyle.height = _height + 'px';
+      y = this.maxPosY + this.indicatorHeight - _height;
+    } else {
+      this.indicatorStyle.height = this.indicatorHeight + 'px';
+    }
+
+    this.y = y;
+
+    if (this.scroller.options.useTransform) {
+      this.indicatorStyle[style.transform] = 'translateY(' + y + 'px)' + this.scroller.translateZ;
+    } else {
+      this.indicatorStyle.top = y + 'px';
+    }
+  } else {
+    var x = Math.round(this.sizeRatioX * this.scroller.x);
+
+    if (x < 0) {
+      this.transitionTime(500);
+      var width = Math.max(this.indicatorWidth + x * 3, INDICATOR_MIN_LEN);
+      this.indicatorStyle.width = width + 'px';
+      x = 0;
+    } else if (x > this.maxPosX) {
+      this.transitionTime(500);
+
+      var _width = Math.max(this.indicatorWidth - (x - this.maxPosX) * 3, INDICATOR_MIN_LEN);
+
+      this.indicatorStyle.width = _width + 'px';
+      x = this.maxPosX + this.indicatorWidth - _width;
+    } else {
+      this.indicatorStyle.width = this.indicatorWidth + 'px';
+    }
+
+    this.x = x;
+
+    if (this.scroller.options.useTransform) {
+      this.indicatorStyle[style.transform] = 'translateX(' + x + 'px)' + this.scroller.translateZ;
+    } else {
+      this.indicatorStyle.left = x + 'px';
+    }
+  }
+};
+
+Indicator.prototype.transitionTime = function () {
+  var time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  this.indicatorStyle[style.transitionDuration] = time + 'ms';
+};
+
+Indicator.prototype.transitionTimingFunction = function (easing) {
+  this.indicatorStyle[style.transitionTimingFunction] = easing;
+};
+
+Indicator.prototype.destroy = function () {
+  this._removeDOMEvents();
+
+  this.wrapper.parentNode.removeChild(this.wrapper);
+};
+
+Indicator.prototype._start = function (e) {
+  var point = e.touches ? e.touches[0] : e;
+  e.preventDefault();
+  e.stopPropagation();
+  this.transitionTime();
+  this.initiated = true;
+  this.moved = false;
+  this.lastPointX = point.pageX;
+  this.lastPointY = point.pageY;
+  this.startTime = getNow();
+
+  this._handleMoveEvents(addEvent);
+
+  this.scroller.trigger('beforeScrollStart');
+};
+
+Indicator.prototype._move = function (e) {
+  var point = e.touches ? e.touches[0] : e;
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (!this.moved) {
+    this.scroller.trigger('scrollStart');
+  }
+
+  this.moved = true;
+  var deltaX = point.pageX - this.lastPointX;
+  this.lastPointX = point.pageX;
+  var deltaY = point.pageY - this.lastPointY;
+  this.lastPointY = point.pageY;
+  var newX = this.x + deltaX;
+  var newY = this.y + deltaY;
+
+  this._pos(newX, newY);
+};
+
+Indicator.prototype._end = function (e) {
+  if (!this.initiated) {
+    return;
+  }
+
+  this.initiated = false;
+  e.preventDefault();
+  e.stopPropagation();
+
+  this._handleMoveEvents(removeEvent);
+
+  var snapOption = this.scroller.options.snap;
+
+  if (snapOption) {
+    var speed = snapOption.speed,
+        _snapOption$easing = snapOption.easing,
+        easing = _snapOption$easing === undefined ? ease.bounce : _snapOption$easing;
+
+    var snap = this.scroller._nearestSnap(this.scroller.x, this.scroller.y);
+
+    var time = speed || Math.max(Math.max(Math.min(Math.abs(this.scroller.x - snap.x), 1000), Math.min(Math.abs(this.scroller.y - snap.y), 1000)), 300);
+
+    if (this.scroller.x !== snap.x || this.scroller.y !== snap.y) {
+      this.scroller.directionX = 0;
+      this.scroller.directionY = 0;
+      this.scroller.currentPage = snap;
+      this.scroller.scrollTo(snap.x, snap.y, time, easing);
+    }
+  }
+
+  if (this.moved) {
+    this.scroller.trigger('scrollEnd', {
+      x: this.scroller.x,
+      y: this.scroller.y
+    });
+  }
+};
+
+Indicator.prototype._pos = function (x, y) {
+  if (x < 0) {
+    x = 0;
+  } else if (x > this.maxPosX) {
+    x = this.maxPosX;
+  }
+
+  if (y < 0) {
+    y = 0;
+  } else if (y > this.maxPosY) {
+    y = this.maxPosY;
+  }
+
+  x = Math.round(x / this.sizeRatioX);
+  y = Math.round(y / this.sizeRatioY);
+  this.scroller.scrollTo(x, y);
+  this.scroller.trigger('scroll', {
+    x: this.scroller.x,
+    y: this.scroller.y
+  });
+};
+
+Indicator.prototype._shouldShow = function () {
+  if (this.direction === 'vertical' && this.scroller.hasVerticalScroll || this.direction === 'horizontal' && this.scroller.hasHorizontalScroll) {
+    this.wrapper.style.display = '';
+    return true;
+  }
+
+  this.wrapper.style.display = 'none';
+  return false;
+};
+
+Indicator.prototype._calculate = function () {
+  if (this.direction === 'vertical') {
+    var wrapperHeight = this.wrapper.clientHeight;
+    this.indicatorHeight = Math.max(Math.round(wrapperHeight * wrapperHeight / (this.scroller.scrollerHeight || wrapperHeight || 1)), INDICATOR_MIN_LEN);
+    this.indicatorStyle.height = this.indicatorHeight + 'px';
+    this.maxPosY = wrapperHeight - this.indicatorHeight;
+    this.sizeRatioY = this.maxPosY / this.scroller.maxScrollY;
+  } else {
+    var wrapperWidth = this.wrapper.clientWidth;
+    this.indicatorWidth = Math.max(Math.round(wrapperWidth * wrapperWidth / (this.scroller.scrollerWidth || wrapperWidth || 1)), INDICATOR_MIN_LEN);
+    this.indicatorStyle.width = this.indicatorWidth + 'px';
+    this.maxPosX = wrapperWidth - this.indicatorWidth;
+    this.sizeRatioX = this.maxPosX / this.scroller.maxScrollX;
+  }
+};
+
+Indicator.prototype._addDOMEvents = function () {
+  var eventOperation = addEvent;
+
+  this._handleDOMEvents(eventOperation);
+};
+
+Indicator.prototype._removeDOMEvents = function () {
+  var eventOperation = removeEvent;
+
+  this._handleDOMEvents(eventOperation);
+
+  this._handleMoveEvents(eventOperation);
+};
+
+Indicator.prototype._handleMoveEvents = function (eventOperation) {
+  if (!this.scroller.options.disableTouch) {
+    eventOperation(window, 'touchmove', this);
+  }
+
+  if (!this.scroller.options.disableMouse) {
+    eventOperation(window, 'mousemove', this);
+  }
+};
+
+Indicator.prototype._handleDOMEvents = function (eventOperation) {
+  if (!this.scroller.options.disableTouch) {
+    eventOperation(this.indicator, 'touchstart', this);
+    eventOperation(window, 'touchend', this);
+  }
+
+  if (!this.scroller.options.disableMouse) {
+    eventOperation(this.indicator, 'mousedown', this);
+    eventOperation(window, 'mouseup', this);
+  }
+};
+
+function pullDownMixin(BScroll) {
+  BScroll.prototype._initPullDown = function () {
+    // must watch scroll in real time
+    this.options.probeType = PROBE_REALTIME;
+  };
+
+  BScroll.prototype._checkPullDown = function () {
+    var _options$pullDownRefr = this.options.pullDownRefresh,
+        _options$pullDownRefr2 = _options$pullDownRefr.threshold,
+        threshold = _options$pullDownRefr2 === undefined ? 90 : _options$pullDownRefr2,
+        _options$pullDownRefr3 = _options$pullDownRefr.stop,
+        stop = _options$pullDownRefr3 === undefined ? 40 : _options$pullDownRefr3; // check if a real pull down action
+
+    if (this.directionY !== DIRECTION_DOWN || this.y < threshold) {
+      return false;
+    }
+
+    if (!this.pulling) {
+      this.pulling = true;
+      this.trigger('pullingDown');
+    }
+
+    this.scrollTo(this.x, stop, this.options.bounceTime, ease.bounce);
+    return this.pulling;
+  };
+
+  BScroll.prototype.finishPullDown = function () {
+    this.pulling = false;
+    this.resetPosition(this.options.bounceTime, ease.bounce);
+  };
+
+  BScroll.prototype.openPullDown = function () {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    this.options.pullDownRefresh = config;
+
+    this._initPullDown();
+  };
+
+  BScroll.prototype.closePullDown = function () {
+    this.options.pullDownRefresh = false;
+  };
+
+  BScroll.prototype.autoPullDownRefresh = function () {
+    var _options$pullDownRefr4 = this.options.pullDownRefresh,
+        _options$pullDownRefr5 = _options$pullDownRefr4.threshold,
+        threshold = _options$pullDownRefr5 === undefined ? 90 : _options$pullDownRefr5,
+        _options$pullDownRefr6 = _options$pullDownRefr4.stop,
+        stop = _options$pullDownRefr6 === undefined ? 40 : _options$pullDownRefr6;
+
+    if (this.pulling) {
+      return;
+    }
+
+    this.pulling = true;
+    this.scrollTo(this.x, threshold);
+    this.trigger('pullingDown');
+    this.scrollTo(this.x, stop, this.options.bounceTime, ease.bounce);
+  };
+}
+
+function pullUpMixin(BScroll) {
+  BScroll.prototype._initPullUp = function () {
+    // must watch scroll in real time
+    this.options.probeType = PROBE_REALTIME;
+    this.pullupWatching = false;
+
+    this._watchPullUp();
+  };
+
+  BScroll.prototype._watchPullUp = function () {
+    if (this.pullupWatching) {
+      return;
+    }
+
+    this.pullupWatching = true;
+    this.on('scroll', this._checkToEnd);
+  };
+
+  BScroll.prototype._checkToEnd = function (pos) {
+    var _this = this;
+
+    var _options$pullUpLoad$t = this.options.pullUpLoad.threshold,
+        threshold = _options$pullUpLoad$t === undefined ? 0 : _options$pullUpLoad$t;
+
+    if (this.movingDirectionY === DIRECTION_UP && pos.y <= this.maxScrollY + threshold) {
+      // reset pullupWatching status after scroll end.
+      this.once('scrollEnd', function () {
+        _this.pullupWatching = false;
+      });
+      this.trigger('pullingUp');
+      this.off('scroll', this._checkToEnd);
+    }
+  };
+
+  BScroll.prototype.finishPullUp = function () {
+    var _this2 = this;
+
+    if (this.pullupWatching) {
+      this.once('scrollEnd', function () {
+        _this2._watchPullUp();
+      });
+    } else {
+      this._watchPullUp();
+    }
+  };
+
+  BScroll.prototype.openPullUp = function () {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    this.options.pullUpLoad = config;
+
+    this._initPullUp();
+  };
+
+  BScroll.prototype.closePullUp = function () {
+    this.options.pullUpLoad = false;
+
+    if (!this.pullupWatching) {
+      return;
+    }
+
+    this.pullupWatching = false;
+    this.off('scroll', this._checkToEnd);
+  };
+}
+
+function mouseWheelMixin(BScroll) {
+  BScroll.prototype._initMouseWheel = function () {
+    var _this = this;
+
+    this._handleMouseWheelEvent(addEvent);
+
+    this.on('destroy', function () {
+      clearTimeout(_this.mouseWheelTimer);
+      clearTimeout(_this.mouseWheelEndTimer);
+
+      _this._handleMouseWheelEvent(removeEvent);
+    });
+    this.firstWheelOpreation = true;
+  };
+
+  BScroll.prototype._handleMouseWheelEvent = function (eventOperation) {
+    eventOperation(this.wrapper, 'wheel', this);
+    eventOperation(this.wrapper, 'mousewheel', this);
+    eventOperation(this.wrapper, 'DOMMouseScroll', this);
+  };
+
+  BScroll.prototype._onMouseWheel = function (e) {
+    var _this2 = this;
+
+    if (!this.enabled) {
+      return;
+    }
+
+    e.preventDefault();
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    if (this.firstWheelOpreation) {
+      this.trigger('scrollStart');
+    }
+
+    this.firstWheelOpreation = false;
+    var _options$mouseWheel = this.options.mouseWheel,
+        _options$mouseWheel$s = _options$mouseWheel.speed,
+        speed = _options$mouseWheel$s === undefined ? 20 : _options$mouseWheel$s,
+        _options$mouseWheel$i = _options$mouseWheel.invert,
+        invert = _options$mouseWheel$i === undefined ? false : _options$mouseWheel$i,
+        _options$mouseWheel$e = _options$mouseWheel.easeTime,
+        easeTime = _options$mouseWheel$e === undefined ? 300 : _options$mouseWheel$e;
+    clearTimeout(this.mouseWheelTimer);
+    this.mouseWheelTimer = setTimeout(function () {
+      if (!_this2.options.snap && !easeTime) {
+        _this2.trigger('scrollEnd', {
+          x: _this2.x,
+          y: _this2.y
+        });
+      }
+
+      _this2.firstWheelOpreation = true;
+    }, 400);
+    var wheelDeltaX = void 0;
+    var wheelDeltaY = void 0;
+
+    switch (true) {
+      case 'deltaX' in e:
+        if (e.deltaMode === 1) {
+          wheelDeltaX = -e.deltaX * speed;
+          wheelDeltaY = -e.deltaY * speed;
+        } else {
+          wheelDeltaX = -e.deltaX;
+          wheelDeltaY = -e.deltaY;
+        }
+
+        break;
+
+      case 'wheelDeltaX' in e:
+        wheelDeltaX = e.wheelDeltaX / 120 * speed;
+        wheelDeltaY = e.wheelDeltaY / 120 * speed;
+        break;
+
+      case 'wheelDelta' in e:
+        wheelDeltaX = wheelDeltaY = e.wheelDelta / 120 * speed;
+        break;
+
+      case 'detail' in e:
+        wheelDeltaX = wheelDeltaY = -e.detail / 3 * speed;
+        break;
+
+      default:
+        return;
+    }
+
+    var direction = invert ? -1 : 1;
+    wheelDeltaX *= direction;
+    wheelDeltaY *= direction;
+
+    if (!this.hasVerticalScroll) {
+      wheelDeltaX = wheelDeltaY;
+      wheelDeltaY = 0;
+    }
+
+    var newX = void 0;
+    var newY = void 0;
+
+    if (this.options.snap) {
+      newX = this.currentPage.pageX;
+      newY = this.currentPage.pageY;
+
+      if (wheelDeltaX > 0) {
+        newX--;
+      } else if (wheelDeltaX < 0) {
+        newX++;
+      }
+
+      if (wheelDeltaY > 0) {
+        newY--;
+      } else if (wheelDeltaY < 0) {
+        newY++;
+      }
+
+      this._goToPage(newX, newY);
+
+      return;
+    }
+
+    newX = this.x + Math.round(this.hasHorizontalScroll ? wheelDeltaX : 0);
+    newY = this.y + Math.round(this.hasVerticalScroll ? wheelDeltaY : 0);
+    this.movingDirectionX = this.directionX = wheelDeltaX > 0 ? -1 : wheelDeltaX < 0 ? 1 : 0;
+    this.movingDirectionY = this.directionY = wheelDeltaY > 0 ? -1 : wheelDeltaY < 0 ? 1 : 0;
+
+    if (newX > this.minScrollX) {
+      newX = this.minScrollX;
+    } else if (newX < this.maxScrollX) {
+      newX = this.maxScrollX;
+    }
+
+    if (newY > this.minScrollY) {
+      newY = this.minScrollY;
+    } else if (newY < this.maxScrollY) {
+      newY = this.maxScrollY;
+    }
+
+    var needTriggerEnd = this.y === newY;
+    this.scrollTo(newX, newY, easeTime, ease.swipe);
+    this.trigger('scroll', {
+      x: this.x,
+      y: this.y
+    });
+    clearTimeout(this.mouseWheelEndTimer);
+
+    if (needTriggerEnd) {
+      this.mouseWheelEndTimer = setTimeout(function () {
+        _this2.trigger('scrollEnd', {
+          x: _this2.x,
+          y: _this2.y
+        });
+      }, easeTime);
+    }
+  };
+}
+
+function zoomMixin(BScroll) {
+  BScroll.prototype._initZoom = function () {
+    var _options$zoom = this.options.zoom,
+        _options$zoom$start = _options$zoom.start,
+        start = _options$zoom$start === undefined ? 1 : _options$zoom$start,
+        _options$zoom$min = _options$zoom.min,
+        min = _options$zoom$min === undefined ? 1 : _options$zoom$min,
+        _options$zoom$max = _options$zoom.max,
+        max = _options$zoom$max === undefined ? 4 : _options$zoom$max;
+    this.scale = Math.min(Math.max(start, min), max);
+    this.setScale(this.scale);
+    this.scrollerStyle[style.transformOrigin] = '0 0';
+  };
+
+  BScroll.prototype._zoomTo = function (scale, originX, originY, startScale) {
+    this.scaled = true;
+    var lastScale = scale / (startScale || this.scale);
+    this.setScale(scale);
+    this.refresh();
+    var newX = Math.round(this.startX - (originX - this.relativeX) * (lastScale - 1));
+    var newY = Math.round(this.startY - (originY - this.relativeY) * (lastScale - 1));
+
+    if (newX > this.minScrollX) {
+      newX = this.minScrollX;
+    } else if (newX < this.maxScrollX) {
+      newX = this.maxScrollX;
+    }
+
+    if (newY > this.minScrollY) {
+      newY = this.minScrollY;
+    } else if (newY < this.maxScrollY) {
+      newY = this.maxScrollY;
+    }
+
+    if (this.x !== newX || this.y !== newY) {
+      this.scrollTo(newX, newY, this.options.bounceTime);
+    }
+
+    this.scaled = false;
+  };
+
+  BScroll.prototype.zoomTo = function (scale, x, y) {
+    var _offsetToBody = offsetToBody(this.wrapper),
+        left = _offsetToBody.left,
+        top = _offsetToBody.top;
+
+    var originX = x + left - this.x;
+    var originY = y + top - this.y;
+
+    this._zoomTo(scale, originX, originY);
+  };
+
+  BScroll.prototype._zoomStart = function (e) {
+    var firstFinger = e.touches[0];
+    var secondFinger = e.touches[1];
+    var deltaX = Math.abs(firstFinger.pageX - secondFinger.pageX);
+    var deltaY = Math.abs(firstFinger.pageY - secondFinger.pageY);
+    this.startDistance = getDistance(deltaX, deltaY);
+    this.startScale = this.scale;
+
+    var _offsetToBody2 = offsetToBody(this.wrapper),
+        left = _offsetToBody2.left,
+        top = _offsetToBody2.top;
+
+    this.originX = Math.abs(firstFinger.pageX + secondFinger.pageX) / 2 + left - this.x;
+    this.originY = Math.abs(firstFinger.pageY + secondFinger.pageY) / 2 + top - this.y;
+    this.trigger('zoomStart');
+  };
+
+  BScroll.prototype._zoom = function (e) {
+    if (!this.enabled || this.destroyed || eventType[e.type] !== this.initiated) {
+      return;
+    }
+
+    if (this.options.preventDefault) {
+      e.preventDefault();
+    }
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    var firstFinger = e.touches[0];
+    var secondFinger = e.touches[1];
+    var deltaX = Math.abs(firstFinger.pageX - secondFinger.pageX);
+    var deltaY = Math.abs(firstFinger.pageY - secondFinger.pageY);
+    var distance = getDistance(deltaX, deltaY);
+    var scale = distance / this.startDistance * this.startScale;
+    this.scaled = true;
+    var _options$zoom2 = this.options.zoom,
+        _options$zoom2$min = _options$zoom2.min,
+        min = _options$zoom2$min === undefined ? 1 : _options$zoom2$min,
+        _options$zoom2$max = _options$zoom2.max,
+        max = _options$zoom2$max === undefined ? 4 : _options$zoom2$max;
+
+    if (scale < min) {
+      scale = 0.5 * min * Math.pow(2.0, scale / min);
+    } else if (scale > max) {
+      scale = 2.0 * max * Math.pow(0.5, max / scale);
+    }
+
+    var lastScale = scale / this.startScale;
+    var x = this.startX - (this.originX - this.relativeX) * (lastScale - 1);
+    var y = this.startY - (this.originY - this.relativeY) * (lastScale - 1);
+    this.setScale(scale);
+    this.scrollTo(x, y, 0);
+  };
+
+  BScroll.prototype._zoomEnd = function (e) {
+    if (!this.enabled || this.destroyed || eventType[e.type] !== this.initiated) {
+      return;
+    }
+
+    if (this.options.preventDefault) {
+      e.preventDefault();
+    }
+
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    this.isInTransition = false;
+    this.isAnimating = false;
+    this.initiated = 0;
+    var _options$zoom3 = this.options.zoom,
+        _options$zoom3$min = _options$zoom3.min,
+        min = _options$zoom3$min === undefined ? 1 : _options$zoom3$min,
+        _options$zoom3$max = _options$zoom3.max,
+        max = _options$zoom3$max === undefined ? 4 : _options$zoom3$max;
+    var scale = this.scale > max ? max : this.scale < min ? min : this.scale;
+
+    this._zoomTo(scale, this.originX, this.originY, this.startScale);
+
+    this.trigger('zoomEnd');
+  };
+} // import { ease } from '../util/ease'
+// Number of items to instantiate beyond current view in the scroll direction.
+
+
+var RUNWAY_ITEMS = 30; // Number of items to instantiate beyond current view in the opposite direction.
+
+var RUNWAY_ITEMS_OPPOSITE = 10; // The animation interval (in ms) for fading in content from tombstones.
+
+var ANIMATION_DURATION_MS = 200; // The number of pixels of default additional length to allow scrolling to.
+
+var DEFAULT_SCROLL_RUNWAY = 2000;
+
+function infiniteMixin(BScroll) {
+  BScroll.prototype._initInfinite = function () {
+    this.options.probeType = 3;
+    this.maxScrollY = -DEFAULT_SCROLL_RUNWAY;
+    this.infiniteScroller = new InfiniteScroller(this, this.options.infinity);
+  };
+}
+
+function isTombstoneNode(node) {
+  if (node && node.classList) {
+    return node.classList.contains('tombstone');
+  }
+}
+
+function InfiniteScroller(scroller, options) {
+  var _this = this;
+
+  this.options = options;
+  assert(typeof this.options.createTombstone === 'function', 'Infinite scroll need createTombstone Function to create tombstone');
+  assert(typeof this.options.fetch === 'function', 'Infinite scroll need fetch Function to fetch new data.');
+  assert(typeof this.options.render === 'function', 'Infinite scroll need render Function to render each item.');
+  this.firstAttachedItem = 0;
+  this.lastAttachedItem = 0;
+  this.anchorScrollTop = 0;
+  this.anchorItem = {
+    index: 0,
+    offset: 0
+  };
+  this.tombstoneHeight = 0;
+  this.tombstoneWidth = 0;
+  this.tombstones = [];
+  this.tombstonesAnimationHandlers = [];
+  this.items = [];
+  this.loadedItems = 0;
+  this.requestInProgress = false;
+  this.hasMore = true;
+  this.scroller = scroller;
+  this.wrapperEl = this.scroller.wrapper;
+  this.scrollerEl = this.scroller.scroller;
+  this.scroller.on('resize', function () {
+    _this.onResize();
+  });
+  this.scroller.on('destroy', function () {
+    _this.destroy();
+  }); // wait scroll core init
+
+  this._onResizeHandler = setTimeout(function () {
+    _this.onResize(); // must wait tombstoneHeight has size
+
+
+    _this.scroller.on('scroll', function () {
+      _this.onScroll();
+    });
+  });
+}
+
+InfiniteScroller.prototype.destroy = function () {
+  var _this2 = this; // In extreme scene, destroy is triggered before _onResizeHandler
+
+
+  clearTimeout(this._onResizeHandler);
+  this.tombstonesAnimationHandlers.forEach(function (handler) {
+    clearTimeout(handler);
+  });
+  this.tombstonesAnimationHandlers = null;
+  this.items.forEach(function (item) {
+    if (item.node) {
+      _this2.scrollerEl.removeChild(item.node);
+
+      item.node = null;
+    }
+  });
+  this.scroller.infiniteScroller = null;
+  this.scroller = null;
+  this.wrapperEl = null;
+  this.scrollerEl = null;
+  this.items = null;
+  this.tombstones = null;
+};
+
+InfiniteScroller.prototype.onScroll = function () {
+  var scrollTop = -this.scroller.y;
+  var delta = scrollTop - this.anchorScrollTop;
+
+  if (scrollTop === 0) {
+    this.anchorItem = {
+      index: 0,
+      offset: 0
+    };
+  } else {
+    this.anchorItem = this._calculateAnchoredItem(this.anchorItem, delta);
+  }
+
+  this.anchorScrollTop = scrollTop;
+
+  var lastScreenItem = this._calculateAnchoredItem(this.anchorItem, this.scroller.wrapperHeight);
+
+  var start = this.anchorItem.index;
+  var end = lastScreenItem.index;
+
+  if (delta < 0) {
+    start -= RUNWAY_ITEMS;
+    end += RUNWAY_ITEMS_OPPOSITE;
+  } else {
+    start -= RUNWAY_ITEMS_OPPOSITE;
+    end += RUNWAY_ITEMS;
+  }
+
+  this.fill(start, end);
+  this.maybeRequestContent();
+};
+
+InfiniteScroller.prototype.onResize = function () {
+  var tombstone = this.options.createTombstone();
+  tombstone.style.position = 'absolute';
+  this.scrollerEl.appendChild(tombstone);
+  tombstone.style.display = '';
+  this.tombstoneHeight = tombstone.offsetHeight;
+  this.tombstoneWidth = tombstone.offsetWidth;
+  this.scrollerEl.removeChild(tombstone);
+
+  for (var i = 0; i < this.items.length; i++) {
+    this.items[i].height = this.items[i].width = 0;
+  }
+
+  this.onScroll();
+};
+
+InfiniteScroller.prototype.fill = function (start, end) {
+  this.firstAttachedItem = Math.max(0, start);
+
+  if (!this.hasMore) {
+    end = Math.min(end, this.items.length);
+  }
+
+  this.lastAttachedItem = end;
+  this.attachContent();
+};
+
+InfiniteScroller.prototype.maybeRequestContent = function () {
+  var _this3 = this;
+
+  if (this.requestInProgress || !this.hasMore) {
+    return;
+  }
+
+  var itemsNeeded = this.lastAttachedItem - this.loadedItems;
+
+  if (itemsNeeded <= 0) {
+    return;
+  }
+
+  this.requestInProgress = true;
+  this.options.fetch(itemsNeeded).then(function (items) {
+    _this3.requestInProgress = false;
+
+    if (items) {
+      _this3.addContent(items);
+    } else {
+      _this3.hasMore = false;
+
+      var tombstoneLen = _this3._removeTombstones();
+
+      var curPos = 0;
+
+      if (_this3.anchorItem.index <= _this3.items.length) {
+        curPos = _this3._fixScrollPosition();
+
+        _this3._setupAnimations({}, curPos);
+
+        _this3.scroller.resetPosition(_this3.scroller.options.bounceTime);
+      } else {
+        _this3.anchorItem.index -= tombstoneLen;
+        curPos = _this3._fixScrollPosition();
+
+        _this3._setupAnimations({}, curPos);
+
+        _this3.scroller.stop();
+
+        _this3.scroller.resetPosition();
+
+        _this3.onScroll();
+      }
+    }
+  });
+};
+
+InfiniteScroller.prototype.addContent = function (items) {
+  for (var i = 0; i < items.length; i++) {
+    if (this.items.length <= this.loadedItems) {
+      this._addItem();
+    }
+
+    this.items[this.loadedItems++].data = items[i];
+  }
+
+  this.attachContent();
+  this.maybeRequestContent();
+};
+
+InfiniteScroller.prototype.attachContent = function () {
+  var unusedNodes = this._collectUnusedNodes();
+
+  var tombstoneAnimations = this._createDOMNodes(unusedNodes);
+
+  this._cleanupUnusedNodes(unusedNodes);
+
+  this._cacheNodeSize();
+
+  var curPos = this._fixScrollPosition();
+
+  this._setupAnimations(tombstoneAnimations, curPos);
+};
+
+InfiniteScroller.prototype.resetMore = function () {
+  this.hasMore = true;
+};
+
+InfiniteScroller.prototype._removeTombstones = function () {
+  var markIndex = void 0;
+  var tombstoneLen = 0;
+  var itemLen = this.items.length;
+
+  for (var i = 0; i < itemLen; i++) {
+    var currentNode = this.items[i].node;
+    var currentData = this.items[i].data;
+
+    if ((!currentNode || isTombstoneNode(currentNode)) && !currentData) {
+      // 0 should be excluded
+      if (markIndex === void 0) {
+        markIndex = i;
+      }
+
+      if (currentNode) {
+        this.scrollerEl.removeChild(currentNode);
+      }
+    }
+  }
+
+  tombstoneLen = itemLen - markIndex;
+  this.items.splice(markIndex);
+  this.lastAttachedItem = Math.min(this.lastAttachedItem, this.items.length);
+  return tombstoneLen;
+};
+
+InfiniteScroller.prototype._collectUnusedNodes = function () {
+  var unusedNodes = [];
+
+  for (var i = 0; i < this.items.length; i++) {
+    // Skip the items which should be visible.
+    if (i === this.firstAttachedItem) {
+      i = this.lastAttachedItem - 1;
+      continue;
+    }
+
+    var currentNode = this.items[i].node;
+
+    if (currentNode) {
+      if (isTombstoneNode(currentNode)) {
+        // Cache tombstones for reuse
+        this.tombstones.push(currentNode);
+        this.tombstones[this.tombstones.length - 1].style.display = 'none';
+      } else {
+        unusedNodes.push(currentNode);
+      }
+    }
+
+    this.items[i].node = null;
+  }
+
+  return unusedNodes;
+};
+
+InfiniteScroller.prototype._createDOMNodes = function (unusedNodes) {
+  var tombstoneAnimations = {};
+
+  for (var i = this.firstAttachedItem; i < this.lastAttachedItem; i++) {
+    while (this.items.length <= i) {
+      this._addItem();
+    }
+
+    var currentNode = this.items[i].node;
+    var currentData = this.items[i].data;
+
+    if (currentNode) {
+      if (isTombstoneNode(currentNode) && currentData) {
+        currentNode.style.zIndex = 1;
+        tombstoneAnimations[i] = [currentNode, this.items[i].top - this.anchorScrollTop];
+        this.items[i].node = null;
+      } else {
+        continue;
+      }
+    }
+
+    var node = currentData ? this.options.render(currentData, unusedNodes.pop()) : this._getTombStone();
+    node.style.position = 'absolute';
+    this.items[i].top = -1;
+    this.scrollerEl.appendChild(node);
+    this.items[i].node = node;
+  }
+
+  return tombstoneAnimations;
+};
+
+InfiniteScroller.prototype._cleanupUnusedNodes = function (unusedNodes) {
+  while (unusedNodes.length) {
+    this.scrollerEl.removeChild(unusedNodes.pop());
+  }
+};
+
+InfiniteScroller.prototype._cacheNodeSize = function () {
+  for (var i = this.firstAttachedItem; i < this.lastAttachedItem; i++) {
+    var item = this.items[i]; // Only cache the height if we have the real contents, not a placeholder.
+
+    if (item.data && !item.height) {
+      var isTombstone = isTombstoneNode(item.node);
+      item.height = isTombstone ? this.tombstoneHeight : item.node.offsetHeight;
+      item.width = isTombstone ? this.tombstoneWidth : item.node.offsetWidth;
+    }
+  }
+};
+
+InfiniteScroller.prototype._fixScrollPosition = function () {
+  this.anchorScrollTop = 0;
+
+  for (var _i = 0; _i < this.anchorItem.index; _i++) {
+    this.anchorScrollTop += this.items[_i].height || this.tombstoneHeight;
+  }
+
+  this.anchorScrollTop += this.anchorItem.offset; // Position all nodes.
+
+  var curPos = this.anchorScrollTop - this.anchorItem.offset;
+  var i = this.anchorItem.index;
+
+  while (i > this.firstAttachedItem) {
+    curPos -= this.items[i - 1].height || this.tombstoneHeight;
+    i--;
+  }
+
+  return curPos;
+};
+
+InfiniteScroller.prototype._setupAnimations = function (tombstoneAnimations, curPos) {
+  var _this4 = this;
+
+  for (var i in tombstoneAnimations) {
+    var animation = tombstoneAnimations[i];
+    this.items[i].node.style[style.transform] = 'translateY(' + (this.anchorScrollTop + animation[1]) + 'px) scale(' + this.tombstoneWidth / this.items[i].width + ', ' + this.tombstoneHeight / this.items[i].height + ')'; // Call offsetTop on the nodes to be animated to force them to apply current transforms.
+
+    /* eslint-disable no-unused-expressions */
+
+    this.items[i].node.offsetTop;
+    animation[0].offsetTop;
+    this.items[i].node.style[style.transition] = cssVendor + 'transform ' + ANIMATION_DURATION_MS + 'ms';
+  }
+
+  for (var _i2 = this.firstAttachedItem; _i2 < this.lastAttachedItem; _i2++) {
+    var _animation = tombstoneAnimations[_i2];
+
+    if (_animation) {
+      var tombstoneNode = _animation[0];
+      tombstoneNode.style[style.transition] = cssVendor + 'transform ' + ANIMATION_DURATION_MS + 'ms, opacity ' + ANIMATION_DURATION_MS + 'ms';
+      tombstoneNode.style[style.transform] = 'translateY(' + curPos + 'px) scale(' + this.items[_i2].width / this.tombstoneWidth + ', ' + this.items[_i2].height / this.tombstoneHeight + ')';
+      tombstoneNode.style.opacity = 0;
+    }
+
+    if (curPos !== this.items[_i2].top) {
+      if (!_animation) {
+        this.items[_i2].node.style[style.transition] = '';
+      }
+
+      this.items[_i2].node.style[style.transform] = 'translateY(' + curPos + 'px)';
+    }
+
+    this.items[_i2].top = curPos;
+    curPos += this.items[_i2].height || this.tombstoneHeight;
+  }
+
+  this.scroller.maxScrollY = -(curPos - this.scroller.wrapperHeight + (this.hasMore ? DEFAULT_SCROLL_RUNWAY : 0));
+  var tombstoneAnimationsHandler = setTimeout(function () {
+    for (var _i3 in tombstoneAnimations) {
+      var _animation2 = tombstoneAnimations[_i3];
+      _animation2[0].style.display = 'none'; // Tombstone can be recycled now.
+
+      _this4.tombstones.push(_animation2[0]);
+    }
+  }, ANIMATION_DURATION_MS);
+  this.tombstonesAnimationHandlers.push(tombstoneAnimationsHandler);
+};
+
+InfiniteScroller.prototype._getTombStone = function () {
+  var tombstone = this.tombstones.pop();
+
+  if (tombstone) {
+    tombstone.style.display = '';
+    tombstone.style.opacity = 1;
+    tombstone.style[style.transform] = '';
+    tombstone.style[style.transition] = '';
+    return tombstone;
+  }
+
+  return this.options.createTombstone();
+};
+
+InfiniteScroller.prototype._addItem = function () {
+  this.items.push({
+    data: null,
+    node: null,
+    height: 0,
+    width: 0,
+    top: 0
+  });
+};
+
+InfiniteScroller.prototype._calculateAnchoredItem = function (initialAnchor, delta) {
+  if (delta === 0) {
+    return initialAnchor;
+  }
+
+  var i = initialAnchor.index;
+  var tombstones = 0;
+  delta += initialAnchor.offset;
+
+  if (delta < 0) {
+    while (delta < 0 && i > 0 && this.items[i - 1].height) {
+      delta += this.items[i - 1].height;
+      i--;
+    }
+
+    tombstones = Math.max(-i, Math.ceil(Math.min(delta, 0) / this.tombstoneHeight));
+  } else {
+    while (delta > 0 && i < this.items.length && this.items[i].height && this.items[i].height < delta) {
+      delta -= this.items[i].height;
+      i++;
+    }
+
+    if (i >= this.items.length || !this.items[i].height) {
+      tombstones = Math.floor(Math.max(delta, 0) / this.tombstoneHeight);
+    }
+  }
+
+  i += tombstones;
+  delta -= tombstones * this.tombstoneHeight;
+  return {
+    index: i,
+    offset: delta
+  };
+};
+
+function BScroll(el, options) {
+  this.wrapper = typeof el === 'string' ? document.querySelector(el) : el;
+
+  if (!this.wrapper) {
+    warn('Can not resolve the wrapper DOM.');
+  }
+
+  this.scroller = this.wrapper.children[0];
+
+  if (!this.scroller) {
+    warn('The wrapper need at least one child element to be scroller.');
+  } // cache style for better performance
+
+
+  this.scrollerStyle = this.scroller.style;
+
+  this._init(options);
+}
+
+initMixin(BScroll);
+coreMixin(BScroll);
+eventMixin(BScroll);
+snapMixin(BScroll);
+wheelMixin(BScroll);
+scrollbarMixin(BScroll);
+pullDownMixin(BScroll);
+pullUpMixin(BScroll);
+mouseWheelMixin(BScroll);
+zoomMixin(BScroll);
+infiniteMixin(BScroll);
+BScroll.Version = '1.15.1';
+/* harmony default export */ __webpack_exports__["default"] = (BScroll);
 
 /***/ }),
 
@@ -15752,8 +33393,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var zarm_lib_popup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! zarm/lib/popup */ "./node_modules/zarm/lib/popup/index.js");
-/* harmony import */ var zarm_lib_popup__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(zarm_lib_popup__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var zarm__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! zarm */ "./node_modules/zarm/es/index.js");
 /* harmony import */ var better_scroll__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! better-scroll */ "./node_modules/better-scroll/dist/bscroll.esm.js");
 /* harmony import */ var _picker__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./picker */ "./src/picker.js");
 /* harmony import */ var zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! zarm/dist/zarm.min.css */ "./node_modules/zarm/dist/zarm.min.css");
@@ -15806,7 +33446,11 @@ function (_React$Component) {
         }
       }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_9__["default"], {
         dataSource: this.state.dataSource
-      }));
+      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm__WEBPACK_IMPORTED_MODULE_7__["Popup"], {
+        visible: this.state.visible
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        dataSource: this.state.dataSource
+      })));
     }
   }]);
 
@@ -15928,4 +33572,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.3656e97.js.map
+//# sourceMappingURL=index.802116f.js.map
