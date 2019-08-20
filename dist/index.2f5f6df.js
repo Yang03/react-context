@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "149bd5a20112fd0a1e98";
+/******/ 	var hotCurrentHash = "2f5f6dfddfbbf2ade641";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -41646,9 +41646,7 @@ function (_React$Component) {
         className: "za-popup__wrapper"
       }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
         className: "picker-content"
-      }, this.props.children)), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "za-mask za-mask--normal"
-      }))), document.body);
+      }, this.props.children)))), document.body);
     }
   }]);
 
@@ -41660,4 +41658,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.149bd5a.js.map
+//# sourceMappingURL=index.2f5f6df.js.map

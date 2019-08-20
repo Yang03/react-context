@@ -21,7 +21,7 @@ export default class Popup extends React.Component {
                             {this.props.children}
                         </div>
                     </div>
-                    <div className="za-mask za-mask--normal"></div>
+                    {/* <div className="za-mask za-mask--normal"></div> */}
                    
                 </div>
                
