@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "2f5f6dfddfbbf2ade641";
+/******/ 	var hotCurrentHash = "72a4a2c21c19b9eee662";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -41460,7 +41460,8 @@ function (_React$Component) {
         }
       }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
         dataSource: this.state.dataSource
-      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_9__["Popup"], {
+        mask: false,
         visible: this.state.visible
       }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
         dataSource: this.state.dataSource
@@ -41658,4 +41659,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.2f5f6df.js.map
+//# sourceMappingURL=index.72a4a2c.js.map
