@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Popup } from 'zarm/lib'
 import BScroll from 'better-scroll'
 import Picker from './picker'
-
+import { Modal } from 'zarm/lib'
+import Popup from './popup'
 import 'zarm/dist/zarm.min.css'
 import './main3.css'
 

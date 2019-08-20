@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "fbba8d081445141295a9";
+/******/ 	var hotCurrentHash = "87f4b1d020fda671886f";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -7074,7 +7074,7 @@ exports.push([module.i, "/*!\n * \n *     Zarm v2.0.0-alpha.37\n * \n *     Gith
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "\n* {\n    margin: 0;\n    padding: 0;\n}\n\n.picker-content {\n    width: 100%;\n    background: #fff;\n    text-align: center;\n    position: relative;\n}\n\n.wheel-wrapper{\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    padding: 0 16px;\n}\n\n.mask-top {\n    position: absolute;\n    top: 0;\n    background: -webkit-gradient(linear, left bottom, left top, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));\n    background: -webkit-linear-gradient(bottom, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: -o-linear-gradient(bottom, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: linear-gradient(0deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    z-index: 10;\n    width: 100%;\n    height: 68px;\n    pointer-events: none;\n    -webkit-transform: translateZ(0);\n    transform: translateZ(0);\n}\n\n.mask-top::before {\n    content: \"\";\n    display: block;\n    position: absolute;\n    -webkit-transform-origin: 0 0;\n    -ms-transform-origin: 0 0;\n        transform-origin: 0 0;\n}\n\n.mask-top::after {\n    content: \"\";\n    display: block;\n    position: absolute;\n    border-bottom: 1px solid #ebebeb;\n    left: 0;\n    bottom: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 bottom;\n    -ms-transform-origin: 0 bottom;\n        transform-origin: 0 bottom;\n}\n\n.mask-bottom {\n    position: absolute;\n    bottom: 1px;\n    background: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));\n    background: -webkit-linear-gradient(top, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: -o-linear-gradient(top, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: linear-gradient(180deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    border-top: 1px solid #ebebeb;\n    left: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 top;\n    z-index: 10;\n    width: 100%;\n    height: 68px;\n    pointer-events: none;\n    -webkit-transform: translateZ(0);\n    transform: translateZ(0);\n}\n\n.mask-bottom::after {\n    content: \"\";\n    display: block;\n    position: absolute;\n    -webkit-transform-origin: 0 0;\n    -ms-transform-origin: 0 0;\n        transform-origin: 0 0;\n}\n\n.mask-bottom::before {\n    content: \"\";\n    display: block;\n    position: absolute;\n    border-bottom: 1px solid #ebebeb;\n    left: 0;\n    bottom: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 bottom;\n    -ms-transform-origin: 0 bottom;\n        transform-origin: 0 bottom;\n}\n\n.wheel-item {\n    list-style: none;\n    height: 36px;\n    overflow: hidden;\n    white-space: nowrap;\n    color: #333;\n}\n\n.wheel-scroll {\n    padding: 0;\n    margin-top: 68px;\n    line-height: 36px;\n    list-style: none;\n}\n\n.wheel {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    height: 173px;\n    overflow: hidden;\n    font-size: 20px;\n}\n\n.wheel-wrapper {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    padding: 0 16px;\n}\n\nul, li {\n    list-style: none;\n}", ""]);
+exports.push([module.i, "\n* {\n    margin: 0;\n    padding: 0;\n}\n\n.picker-content {\n    width: 100%;\n    background: #fff;\n    text-align: center;\n    position: relative;\n}\n\n.wheel-wrapper{\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    padding: 0 16px;\n}\n\n.mask-top {\n    position: absolute;\n    top: 0;\n    background: -webkit-gradient(linear, left bottom, left top, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));\n    background: -webkit-linear-gradient(bottom, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: -o-linear-gradient(bottom, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: linear-gradient(0deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    z-index: 10;\n    width: 100%;\n    height: 68px;\n    pointer-events: none;\n    -webkit-transform: translateZ(0);\n    transform: translateZ(0);\n}\n\n.mask-top::before {\n    content: \"\";\n    display: block;\n    position: absolute;\n    -webkit-transform-origin: 0 0;\n    -ms-transform-origin: 0 0;\n        transform-origin: 0 0;\n}\n\n.mask-top::after {\n    content: \"\";\n    display: block;\n    position: absolute;\n    border-bottom: 1px solid #ebebeb;\n    left: 0;\n    bottom: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 bottom;\n    -ms-transform-origin: 0 bottom;\n        transform-origin: 0 bottom;\n}\n\n.mask-bottom {\n    position: absolute;\n    bottom: 1px;\n    background: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));\n    background: -webkit-linear-gradient(top, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: -o-linear-gradient(top, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    background: linear-gradient(180deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));\n    border-top: 1px solid #ebebeb;\n    left: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 top;\n    z-index: 10;\n    width: 100%;\n    height: 68px;\n    pointer-events: none;\n    -webkit-transform: translateZ(0);\n    transform: translateZ(0);\n}\n\n.mask-bottom::after {\n    content: \"\";\n    display: block;\n    position: absolute;\n    -webkit-transform-origin: 0 0;\n    -ms-transform-origin: 0 0;\n        transform-origin: 0 0;\n}\n\n.mask-bottom::before {\n    content: \"\";\n    display: block;\n    position: absolute;\n    border-bottom: 1px solid #ebebeb;\n    left: 0;\n    bottom: 0;\n    width: 100%;\n    -webkit-transform-origin: 0 bottom;\n    -ms-transform-origin: 0 bottom;\n        transform-origin: 0 bottom;\n}\n\n.wheel-item {\n    list-style: none;\n    height: 36px;\n    overflow: hidden;\n    white-space: nowrap;\n    color: #333;\n}\n\n.wheel-scroll {\n    padding: 0;\n    margin-top: 68px;\n    line-height: 36px;\n    list-style: none;\n}\n\n.wheel {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    height: 173px;\n    overflow: hidden;\n    font-size: 20px;\n}\n\n.wheel-wrapper {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    padding: 0 16px;\n}\n\nul, li {\n    list-style: none;\n}\n\n.popup {\n    position: fixed;\n    bottom: 0;\n    z-index: 1111;\n    width: 100%;\n}", ""]);
 
 
 
@@ -41404,14 +41404,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var zarm_lib__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! zarm/lib */ "./node_modules/zarm/lib/index.js");
-/* harmony import */ var zarm_lib__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(zarm_lib__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var better_scroll__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! better-scroll */ "./node_modules/better-scroll/dist/bscroll.esm.js");
-/* harmony import */ var _picker__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./picker */ "./src/picker.js");
-/* harmony import */ var zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! zarm/dist/zarm.min.css */ "./node_modules/zarm/dist/zarm.min.css");
-/* harmony import */ var zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _main3_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./main3.css */ "./src/main3.css");
-/* harmony import */ var _main3_css__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_main3_css__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var better_scroll__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! better-scroll */ "./node_modules/better-scroll/dist/bscroll.esm.js");
+/* harmony import */ var _picker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./picker */ "./src/picker.js");
+/* harmony import */ var zarm_lib__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! zarm/lib */ "./node_modules/zarm/lib/index.js");
+/* harmony import */ var zarm_lib__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(zarm_lib__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _popup__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./popup */ "./src/popup.js");
+/* harmony import */ var zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! zarm/dist/zarm.min.css */ "./node_modules/zarm/dist/zarm.min.css");
+/* harmony import */ var zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(zarm_dist_zarm_min_css__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _main3_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./main3.css */ "./src/main3.css");
+/* harmony import */ var _main3_css__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_main3_css__WEBPACK_IMPORTED_MODULE_12__);
+
 
 
 
@@ -41456,11 +41458,11 @@ function (_React$Component) {
             visible: true
           });
         }
-      }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_9__["default"], {
+      }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
         dataSource: this.state.dataSource
-      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_7__["Popup"], {
+      }), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_popup__WEBPACK_IMPORTED_MODULE_10__["default"], {
         visible: this.state.visible
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_9__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
         dataSource: this.state.dataSource
       })));
     }
@@ -41581,7 +41583,71 @@ function (_React$Component) {
 
 
 
+/***/ }),
+
+/***/ "./src/popup.js":
+/*!**********************!*\
+  !*** ./src/popup.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Popup; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var better_scroll__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! better-scroll */ "./node_modules/better-scroll/dist/bscroll.esm.js");
+
+
+
+
+
+
+
+
+
+var Popup =
+/*#__PURE__*/
+function (_React$Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(Popup, _React$Component);
+
+  function Popup(props) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Popup);
+
+    return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Popup).call(this, props));
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Popup, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "render",
+    value: function render() {
+      return react_dom__WEBPACK_IMPORTED_MODULE_6___default.a.createPortal(react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
+        className: "popup"
+      }, this.props.children), document.body);
+    }
+  }]);
+
+  return Popup;
+}(react__WEBPACK_IMPORTED_MODULE_5___default.a.Component);
+
+
+
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.fbba8d0.js.map
+//# sourceMappingURL=index.87f4b1d.js.map

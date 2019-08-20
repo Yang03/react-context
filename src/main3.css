@@ -119,3 +119,10 @@
 ul, li {
     list-style: none;
 }
+
+.popup {
+    position: fixed;
+    bottom: 0;
+    z-index: 1111;
+    width: 100%;
+}
