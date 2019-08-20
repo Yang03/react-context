@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import Popup from 'zarm/lib/popup'
 import BScroll from 'better-scroll'
 import Picker from './picker'
+import 'core-js'
 
 import 'zarm/dist/zarm.min.css'
 import './main3.css'
