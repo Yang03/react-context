@@ -1,0 +1,121 @@
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.picker-content {
+    width: 100%;
+    background: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.wheel-wrapper{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 0 16px;
+}
+
+.mask-top {
+    position: absolute;
+    top: 0;
+    background: -webkit-gradient(linear, left bottom, left top, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));
+    background: linear-gradient(0deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));
+    z-index: 10;
+    width: 100%;
+    height: 68px;
+    pointer-events: none;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.mask-top::before {
+    content: "";
+    display: block;
+    position: absolute;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+
+.mask-top::after {
+    content: "";
+    display: block;
+    position: absolute;
+    border-bottom: 1px solid #ebebeb;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    -webkit-transform-origin: 0 bottom;
+    transform-origin: 0 bottom;
+}
+
+.mask-bottom {
+    position: absolute;
+    bottom: 1px;
+    background: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 0%, 100%, .4)), to(hsla(0, 0%, 100%, .8)));
+    background: linear-gradient(180deg, hsla(0, 0%, 100%, .4), hsla(0, 0%, 100%, .8));
+    border-top: 1px solid #ebebeb;
+    left: 0;
+    width: 100%;
+    -webkit-transform-origin: 0 top;
+    z-index: 10;
+    width: 100%;
+    height: 68px;
+    pointer-events: none;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.mask-bottom::after {
+    content: "";
+    display: block;
+    position: absolute;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+
+.mask-bottom::before {
+    content: "";
+    display: block;
+    position: absolute;
+    border-bottom: 1px solid #ebebeb;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    -webkit-transform-origin: 0 bottom;
+    transform-origin: 0 bottom;
+}
+
+.wheel-item {
+    list-style: none;
+    height: 36px;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #333;
+}
+
+.wheel-scroll {
+    padding: 0;
+    margin-top: 68px;
+    line-height: 36px;
+    list-style: none;
+}
+
+.wheel {
+    flex: 1;
+    height: 173px;
+    overflow: hidden;
+    font-size: 20px;
+}
+
+.wheel-wrapper {
+    display: flex;
+    padding: 0 16px;
+}
+
+ul, li {
+    list-style: none;
+}

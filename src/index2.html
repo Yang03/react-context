@@ -7,14 +7,100 @@
     <meta name="viewport" content="width=device-width">
     <base href="/" />
     <style>
+        .water-waves {
+            margin: 0 auto;
+            overflow: hidden;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 1px solid #e1e1e1;
+            position: relative;
+
+        }
+        .water-wave1 {
+            background: #bcd5f3;
+            width: 200%;
+            height: 200%;
+            border-radius: 40%;
+            position: absolute;
+            /* transform: rotate(135deg) */
+            top: 40%;
+            left: -25%;
+            animation:move-forever 12s linear infinite;
+            text-align: center;
+            animation-delay: 5s
+            /* top: 30; */
+        }
+        .water-wave2 {
+            background: #9991f2;
+            width: 200%;
+            height: 200%;
+            border-radius: 35%;
+            
+            position: absolute;
+              top: 45%;
+              left: -35%;
+               animation: move-forever 12s linear infinite;
+               animation-delay: 7s
+            
+        }
+        .water-wave3 {
+            background: #8880f2;
+            width: 200%;
+            height: 200%;
+            border-radius: 33%;
+            position: absolute;
+            top: 50%;
+            left: -35%;
+             animation: move-forever 12s linear infinite;
+             animation-delay: 11s
+            /* top: 20; */
+        }
+
+        @keyframes move-forever {
+            0%{transform: rotate(0)}
+            100%{transform: rotate(360deg)}
+        }
+        @-webkit-keyframes move-forever {
+            0%{transform: rotate(0)}
+            100%{transform: rotate(360deg)}
+        }
+        
     </style>
 </head>
 
 <body>
-    <div id="start">
+    <div class="water-waves">
+        <div class="water-wave1"></div>
+        <div class="water-wave2"></div>
+        <div class="water-wave3"></div>
+    </div>
+
+    <!-- <div class="water-waves">
+        <svg class="editorial" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 
+            58-18 88-18s
+            58 18 88 18 
+            58-18 88-18 
+            58 18 88 18
+            v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="50" y="0" fill="#4579e2" />
+                <use xlink:href="#gentle-wave" x="50" y="3" fill="#3461c1" />
+                <use xlink:href="#gentle-wave" x="50" y="6" fill="#2d55aa" />
+            </g>
+        </svg>
+       
+        
+       
+    </div> -->
+    <!-- <div id="start">
         开始
     </div>
-    <div id="result"></div>
+    <div id="result"></div> -->
     
 </body>
 <script>

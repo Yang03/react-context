@@ -21,11 +21,14 @@
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.55",
     "autoprefixer": "^9.5.1",
+    "better-scroll": "^1.15.2",
     "css-loader": "^2.1.1",
     "postcss-loader": "^3.0.0",
     "react": "^16.8.6",
     "style-loader": "^0.23.1",
-    "zarm": "^2.0.0-alpha.37"
+    "use-data-api": "^1.0.1",
+    "zarm": "^2.0.0-alpha.37",
+    "zarm-form": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",

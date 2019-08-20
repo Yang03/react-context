@@ -6,26 +6,26 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const distDir = __dirname + "/dist";
 
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/main3.js',
     output: {
         path: distDir,
         filename: 'index.[hash:7].js'
     },
     devtool: 'source-map',
     mode: process.env.NODE_ENV || 'development',
-    devServer: {
-        contentBase: './',
-        historyApiFallback: true,
-        inline: true,
-        port: 8090,
-        hot: true,
-        // proxy: {
-        //     '/api': {
-        //         target: 'http://localhost:3000',
-        //         secure: false
-        //     }
-        // }
-    },
+    // devServer: {
+    //     contentBase: './',
+    //     historyApiFallback: true,
+    //     inline: true,
+    //     port: 8090,
+    //     hot: true,
+    //     // proxy: {
+    //     //     '/api': {
+    //     //         target: 'http://localhost:3000',
+    //     //         secure: false
+    //     //     }
+    //     // }
+    // },
     module: {
         rules: [
             {
