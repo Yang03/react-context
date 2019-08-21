@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "426a36cfc3eb8358a1c5";
+/******/ 	var hotCurrentHash = "dc2dfcd87c87d464cd53";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -41429,6 +41429,28 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var CASCADE_DATA = [{
+  code: '1',
+  label: '北京市',
+  children: [{
+    code: '11',
+    label: '海淀区'
+  }, {
+    code: '12',
+    label: '西城区'
+  }]
+}, {
+  code: '2',
+  label: '上海市',
+  children: [{
+    code: '21',
+    label: '杨浦区'
+  }, {
+    code: '22',
+    label: '静安区'
+  }]
+}];
+
 var App =
 /*#__PURE__*/
 function (_React$Component) {
@@ -41450,7 +41472,9 @@ function (_React$Component) {
         label: '选项二'
       }],
       value: '',
-      visible: false
+      visible: false,
+      dataSource3: CASCADE_DATA,
+      value3: ['1', '2']
     };
     _this.wheelWrapper = null;
     _this.wheels = [];
@@ -41475,8 +41499,13 @@ function (_React$Component) {
       }, "open"), react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_9__["Popup"], {
         visible: this.state.visible,
         mask: false
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_picker__WEBPACK_IMPORTED_MODULE_8__["default"], {
-        dataSource: this.state.dataSource2
+      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(zarm_lib__WEBPACK_IMPORTED_MODULE_9__["PickerView"], {
+        dataSource: this.state.dataSource3,
+        value: this.state.value3,
+        valueMember: "code",
+        onChange: function onChange(selected) {
+          return console.log('PickerView onChange: ', selected);
+        }
       })));
     }
   }]);
@@ -41650,16 +41679,22 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var visible = this.props.visible;
-      if (!visible) return null;
+      if (!visible) return null; // return ReactDOM.createPortal(
+      //     <div className="popup-container">
+      //         <div className="za-popup za-popup--bottom za-popup--mask">
+      //             <div className="za-popup__wrapper">
+      //                 <div className="picker-content">
+      //                     {this.props.children}
+      //                 </div>
+      //             </div>
+      //             {/* <div className="za-mask za-mask--normal"></div> */}
+      //         </div>
+      //     </div>
+      // , document.body)
+
       return react_dom__WEBPACK_IMPORTED_MODULE_6___default.a.createPortal(react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "popup-container"
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "za-popup za-popup--bottom za-popup--mask"
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "za-popup__wrapper"
-      }, react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
-        className: "picker-content"
-      }, this.props.children)))), document.body);
+        className: "popup"
+      }, this.props.children), document.body);
     }
   }]);
 
@@ -41671,4 +41706,4 @@ function (_React$Component) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.426a36c.js.map
+//# sourceMappingURL=index.dc2dfcd.js.map
