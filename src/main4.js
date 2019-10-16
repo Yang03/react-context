@@ -27,7 +27,8 @@ function B () {
    let history = useHistory();
 
    function go() {
-     history.replace('/c')
+     // history.replace('/c')
+     window.location.href = '/c'
    }
     return(<div>
       <h3>B</h3>
