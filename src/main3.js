@@ -91,10 +91,36 @@ class App extends React.Component {
                 /> */}
                 {/* <Picker  dataSource={this.state.dataSource}/> */}
 
-                <Popup2 visible={this.state.visible} mask={false}>
-                    {/* <Picker dataSource={this.state.dataSource2}/> */}
-                    <PickerView2  dataSource={this.state.dataSource3} value={this.state.value3} valueMember="code" onChange={selected => console.log('PickerView onChange: ', selected)}/>
-                </Popup2>
+                {/* <Popup visible={this.state.visible} mask={false}>
+                    <Picker dataSource={this.state.dataSource2}/>
+                   
+                </Popup> */}
+
+                 <Picker2
+                 visible={this.state.visible}
+                 dataSource = {
+                     this.state.dataSource3
+                 }
+                 value = {
+                     this.state.value3
+                 }
+                 valueMember = "code"
+                 onChange = {
+                     selected => console.log('PickerView onChange: ', selected)
+                 }
+                 onOk = {
+                     (selected) => {
+                         console.log('Picker onOk: ', selected);
+                         const value3 = selected.map(item => item.code);
+                         console.log(value3)
+                         this.setState({
+                            value3: value3,
+                            visible: false
+                         });
+                     }
+                 }
+
+                 />
 
                 {/* <Popup2 mask={false} visible={this.state.visible}>
                     <Picker  dataSource={this.state.dataSource}/>

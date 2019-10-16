@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const distDir = __dirname + "/dist";
 
 module.exports = {
-    entry: './src/main3.js',
+    entry: './src/main2.js',
     output: {
         path: distDir,
         filename: 'index.[hash:7].js'
@@ -27,15 +27,19 @@ module.exports = {
                     {loader: "style-loader"},
                     {loader: "css-loader"},
                     {
-                        loader: "postcss-loader",
+                        loader: 'postcss-loader',
                         options: {
-                            plugins:[
-                                require('autoprefixer')({
-                                    browsers:['last 5 version']
-                                })
+                            plugins: [
+                                require('postcss-flexbugs-fixes'),
+                                require('postcss-preset-env')({
+                                    autoprefixer: {
+                                        flexbox: 'no-2009',
+                                    },
+                                    stage: 3,
+                                }),
                             ],
-                        }
-                    }
+                        },
+                    },
                 ]
                     
                 

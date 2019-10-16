@@ -8,7 +8,7 @@ import ZarmForm, {
     getFieldError
 } from 'zarm-form'
 
-import 'zarm/dist/zarm.min.css'
+// import 'zarm/dist/index.css'
 class Example extends React.Component {
     formRef = React.createRef()
     constructor() {

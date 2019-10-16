@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --progress --config webpack.config.js --content-base public --history-api-fallback --hot --inline",
+    "dev": "webpack-dev-server --progress --host 0.0.0.0 --port 3001 --config webpack.config.js --content-base public --history-api-fallback --hot --inline",
     "build": "webpack --config  webpack.config.js"
   },
   "repository": {
@@ -30,7 +30,7 @@
     "style-loader": "^0.23.1",
     "use-data-api": "^1.0.1",
     "zarm": "^2.0.0-alpha.37",
-    "zarm-form": "^1.0.2"
+    "zarm-form": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
@@ -41,6 +41,8 @@
     "babel-loader": "^8.0.4",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "html-webpack-plugin": "^3.2.0",
+    "postcss-flexbugs-fixes": "^4.1.0",
+    "postcss-preset-env": "^6.7.0",
     "react-dom": "^16.8.6",
     "sass": "^1.22.10",
     "sass-loader": "^7.2.0",

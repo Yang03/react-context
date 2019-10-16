@@ -5,7 +5,11 @@ import React, {
 } from 'react'
 import ReactDOM from 'react-dom'
 
-// import 'zarm/dist/zarm.min.css';
+import {
+    Carousel, Modal
+} from 'zarm'
+
+import 'zarm/dist/zarm.css';
 // import {
 //     Provider,
 //     Consumer,
@@ -107,6 +111,58 @@ import ReactDOM from 'react-dom'
 //         </div>
 //     );
 // }
+
+const ITEMS = [
+    'https://static.zhongan.com/website/health/zarm/images/banners/1.png',
+    'https://static.zhongan.com/website/health/zarm/images/banners/2.png',
+    'https://static.zhongan.com/website/health/zarm/images/banners/3.png',
+];
+class App extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            visible: false,
+            items: [],
+            active: 2
+        }
+    }
+
+    open = () => {
+        this.setState({
+            visible: true,
+            items: ITEMS
+        })
+    }
+    contentRender = () => {
+        return this.state.items.map((item, i) => {
+            return (
+            <div className="carousel__item__pic" key={+i} >
+                <img src={item} alt="" draggable={false} />
+            </div>
+        );
+  });
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.open}>open</button>
+                <Modal visible={this.state.visible}>
+                    <Carousel
+                        activeIndex = {
+                            this.state.active
+                        }
+                        onChange={(index) => {
+                        console.log(`onChange: ${index}`);
+                        }}
+                    >
+                        {this.contentRender()}
+                    </Carousel>
+                </Modal>
+            </div>
+            
+        )
+    }
+}
 
 ReactDOM.render(
     <App/> ,
