@@ -19,9 +19,9 @@
     window.onload = function() {
        //var query = new URLSearchParams(window.location.search)
        document.getElementById('b').addEventListener('click', function(){
-         history.pushState({ a: 1 }, 'b', '/src/index2.html?pageId=B')
+         history.pushState({ a: 1 }, 'b', '/react-context/src/index2.html?pageId=B')
          setTimeout(function() {
-             history.replaceState({ a: 2 }, 'c', '/src/index2.html?pageId=C')
+             history.replaceState({ a: 2 }, 'c', '/react-context/src/index2.html?pageId=C')
          }, 3000)
        })
 
