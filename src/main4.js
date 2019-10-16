@@ -45,6 +45,7 @@ function App() {
     return (
          <Router>
       <div>
+        <A />
         {/* <ul>
           <li>
             <Link to="/">a</Link>
@@ -67,9 +68,9 @@ function App() {
           of them to render at a time
         */}
         <Switch>
-          <Route exact path="/">
+          {/* <Route exact path="/">
             <A />
-          </Route>
+          </Route> */}
           <Route path="/b">
             <B />
           </Route>

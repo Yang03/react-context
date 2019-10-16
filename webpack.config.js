@@ -56,7 +56,7 @@ module.exports = {
             filename: 'index.html',
             template: './src/index.html',
         }),
-        new webpack.HotModuleReplacementPlugin(),//热加载插件
+        // new webpack.HotModuleReplacementPlugin(),//热加载插件
         new ExtractTextPlugin({
             filename: "style.scss"
         })
