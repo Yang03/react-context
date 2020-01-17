@@ -27,10 +27,11 @@
     "css-loader": "^2.1.1",
     "postcss-loader": "^3.0.0",
     "react": "^16.8.6",
+    "react-pinch-and-zoom": "^1.2.4",
     "react-router-dom": "^5.1.2",
     "style-loader": "^0.23.1",
     "use-data-api": "^1.0.1",
-    "zarm": "^2.0.0-alpha.37",
+    "zarm": "^2.0.0-beta.3",
     "zarm-form": "^1.1.0"
   },
   "devDependencies": {
