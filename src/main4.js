@@ -57,6 +57,7 @@ function App() {
     console.log('startMove', '______________>')
     const image = event.currentTarget;
     const rect = image.getBoundingClientRect();
+    console.log(rect, ':--------rect:--------')
     const winWidth = window.innerWidth;
     const winHeight = window.innerHeight;
     moving = true;
@@ -90,16 +91,18 @@ function App() {
 
     if (moving) {
       const x = deltaX + startMoveX
-      const y = deltaY = startMoveY
+      const y = deltaY + startMoveY
       moveX = range(x, -maxMoveX. maxMoveX)
       moveY = range(y, -maxMoveY, maxMoveY)
     }
     console.log(zooming && touches.length === 2, '-------------------->')
     if (zooming && touches.length === 2) {
-      console.log('setStyle')
+      console.log('setStyle------->')
       const distance = getDistance(touches)
       const temp = startScale * distance / startDistance
+      console.log('temp-scale:------->:', temp)
       scale = range(temp, 1, 3)
+      console.log('scale:------->:', scale, moveX, moveY)
       setStyle({
         transform: `scale3d(${scale}, ${scale}, 1) translate(${
           moveX / scale}px, ${moveY / scale}px)`
