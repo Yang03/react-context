@@ -46,6 +46,7 @@ function App() {
   const [activeIndex, setActiveIndex] = useState(0)
 
   function startZoom(event) {
+    console.log('startZoom')
     moving = false;
     zooming = true;
     startScale = scale
@@ -53,6 +54,7 @@ function App() {
   }
 
   function startMove(event) {
+    consolee.log('startMove')
     const image = event.currentTarget;
     const rect = image.getBoundingClientRect();
     const winWidth = window.innerWidth;
@@ -65,6 +67,7 @@ function App() {
   }
 
   function onImageTouchStart(event) {
+    console.log('onImageTouchStart')
     const { touches } = event
     startX = event.touches[0].clientX;
     startY = event.touches[0].clientY;
@@ -76,6 +79,7 @@ function App() {
   }
 
   function onImageTouchMove(event) {
+    console.log('onImageTouchMove')
      const { touches } = event
      deltaX = touches.clientX - startX
      deltaY = touches.clientY - startY
@@ -92,6 +96,7 @@ function App() {
     }
 
     if (zooming && touches.length === 2) {
+      console.log('setStyle')
       const distance = getDistance(touches)
       const temp = startScale * distance / startDistance
       scale = range(temp, 1, 3)
@@ -103,6 +108,7 @@ function App() {
   }
 
   function onImageTouchEnd(event) {
+    console.log('onImageTouchEnd')
     if (moving || zooming) {
       let stopPropagation = true
 
@@ -125,26 +131,26 @@ function App() {
     }
     
   }
-  const contentRender = () => {
-  return ITEMS.map((item, i) => {
-    return (
-      <div className="carousel__item__pic" key={+i}>
-        <img src={item} 
-            alt=""
-            style={parseInt(activeIndex, 10) === i ? style : {}}
-            draggable={false} 
-            onTouchStart={onImageTouchStart}
-            onTouchMove={onImageTouchMove}
-            onTouchEnd={onImageTouchEnd}
-            // touchcancel={onImageTouchEnd}
-          />
-      </div>
-    );
-  });
-}
-
+//   const contentRender = () => {
+//   return ITEMS.map((item, i) => {
+//     return (
+//       <div className="carousel__item__pic" key={+i}>
+//         <img src={item} 
+//             alt=""
+//             style={parseInt(activeIndex, 10) === i ? style : {}}
+//             draggable={false} 
+//             onTouchStart={onImageTouchStart}
+//             onTouchMove={onImageTouchMove}
+//             onTouchEnd={onImageTouchEnd}
+//             // touchcancel={onImageTouchEnd}
+//           />
+//       </div>
+//     );
+//   });
+// }
+  console.log(style)
   return (<div>
-     <Popup
+     {/* <Popup
           visible={true}
           direction="center"
           width="100%"
@@ -159,7 +165,14 @@ function App() {
           >
             {contentRender()}
           </Carousel>
-        </Popup>
+        </Popup> */}
+        <img
+        src="https://static.zhongan.com/website/health/zarm/images/banners/1.png"
+        style={style} 
+        onTouchEnd={onImageTouchEnd}
+        onTouchMove={onImageTouchMove}
+        onTouchStart={onImageTouchStart}
+        />
   </div>)
 }
 
