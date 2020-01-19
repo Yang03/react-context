@@ -75,7 +75,7 @@ function App() {
     }
   }
 
-  function onImageTouchMove() {
+  function onImageTouchMove(event) {
      const { touches } = event
      deltaX = touches.clientX - startX
      deltaY = touches.clientY - startY
@@ -102,7 +102,7 @@ function App() {
     }
   }
 
-  function onImageTouchEnd() {
+  function onImageTouchEnd(event) {
     if (moving || zooming) {
       let stopPropagation = true
 
