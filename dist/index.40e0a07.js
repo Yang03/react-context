@@ -38682,7 +38682,7 @@ function App() {
   }
 
   function startMove(event) {
-    consolee.log('startMove');
+    console.log('startMove');
     var image = event.currentTarget;
     var rect = image.getBoundingClientRect();
     var winWidth = window.innerWidth;
@@ -38793,4 +38793,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.cc168ce.js.map
+//# sourceMappingURL=index.40e0a07.js.map

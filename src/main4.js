@@ -54,7 +54,7 @@ function App() {
   }
 
   function startMove(event) {
-    consolee.log('startMove')
+    console.log('startMove')
     const image = event.currentTarget;
     const rect = image.getBoundingClientRect();
     const winWidth = window.innerWidth;
