@@ -203,12 +203,14 @@ class PinchZoomPan extends React.Component {
   }
 }
 
-const Usage = ({width, height}) => (
+const Usage = () => (
   <div>
-    <PinchZoomPan width={width} height={height}>
+    <PinchZoomPan>
     {(x, y, scale) => (
         <img
-          src={`https://placekitten.com/100/200`}
+          src = {
+            `https://cdn.glitch.com/d824d0c2-e771-4c9f-9fe2-a66b3ac139c5%2Fcats.jpg`
+          }
           style={{
             pointerEvents: scale === 1 ? 'auto' : 'none',
             transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
@@ -219,4 +221,4 @@ const Usage = ({width, height}) => (
   </div>
 );
 
-ReactDOM.render(<Usage width={375} height={667} />, document.getElementById('root'));
+ReactDOM.render(<Usage />, document.getElementById('root'));
