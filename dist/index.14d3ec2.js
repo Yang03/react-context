@@ -38725,7 +38725,9 @@ function App() {
       moveY = range(y, -maxMoveY, maxMoveY);
     }
 
-    if (zooming && touches.length === 2) {
+    console.log(zooming && touches.length === 1);
+
+    if (zooming && touches.length === 1) {
       console.log('setStyle');
       var distance = getDistance(touches);
       var temp = startScale * distance / startDistance;
@@ -38793,4 +38795,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.40e0a07.js.map
+//# sourceMappingURL=index.14d3ec2.js.map

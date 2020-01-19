@@ -94,8 +94,8 @@ function App() {
       moveX = range(x, -maxMoveX. maxMoveX)
       moveY = range(y, -maxMoveY, maxMoveY)
     }
-
-    if (zooming && touches.length === 2) {
+    console.log(zooming && touches.length === 1)
+    if (zooming && touches.length === 1) {
       console.log('setStyle')
       const distance = getDistance(touches)
       const temp = startScale * distance / startDistance
