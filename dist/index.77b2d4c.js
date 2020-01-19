@@ -11009,10 +11009,6 @@ function (_React$Component) {
   return PinchZoomPan;
 }(react__WEBPACK_IMPORTED_MODULE_6___default.a.Component);
 
-PinchZoomPan.propTypes = {
-  children: react__WEBPACK_IMPORTED_MODULE_6___default.a.PropTypes.func.isRequired
-};
-
 var Usage = function Usage(_ref2) {
   var width = _ref2.width,
       height = _ref2.height;
@@ -11039,4 +11035,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_7___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.604f892.js.map
+//# sourceMappingURL=index.77b2d4c.js.map

@@ -204,10 +204,6 @@ class PinchZoomPan extends React.Component {
   }
 }
 
-PinchZoomPan.propTypes = {
-  children: React.PropTypes.func.isRequired,
-};
-
 const Usage = ({width, height}) => (
   <div>
     <PinchZoomPan width={width} height={height}>
