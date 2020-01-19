@@ -25,6 +25,7 @@ const settle = (val, target, range) => {
 const inverse = (x) => x * -1;
 
 const getPointFromTouch = (touch, element) => {
+  console.log(touch)
   const rect = element.getBoundingClientRect(); 
   return {
     x: touch.clientX - rect.left,
@@ -106,6 +107,7 @@ class PinchZoomPan extends React.Component {
   }
 
   handleTouchStart(event) {
+    console.log('handleTouchStart______________________>')
     this.animation && cancelAnimationFrame(this.animation);
     if (event.touches.length == 2) this.handlePinchStart(event);
     if (event.touches.length == 1) this.handleTapStart(event);
@@ -129,6 +131,7 @@ class PinchZoomPan extends React.Component {
   }
 
   handleTapStart(event) {
+    console.log(this.handlePinchStart)
     this.lastPanPoint = getPointFromTouch(event.touches[0], this.container);
   }
 
@@ -203,9 +206,9 @@ class PinchZoomPan extends React.Component {
   }
 }
 
-const Usage = () => (
+const Usage = (width, height) => (
   <div>
-    <PinchZoomPan>
+    <PinchZoomPan width={width} height={height}>
     {(x, y, scale) => (
         <img
           src = {
@@ -221,4 +224,4 @@ const Usage = () => (
   </div>
 );
 
-ReactDOM.render(<Usage />, document.getElementById('root'));
+ReactDOM.render(<Usage width="375" height="auto" />, document.getElementById('root'));
