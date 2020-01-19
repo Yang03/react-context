@@ -38714,8 +38714,8 @@ function App() {
   function onImageTouchMove(event) {
     console.log('onImageTouchMove');
     var touches = event.touches;
-    deltaX = touches.clientX - startX;
-    deltaY = touches.clientY - startY;
+    deltaX = touches[0].clientX - startX;
+    deltaY = touches[0].clientY - startY; // console.log('touches.clientX', touches.clientX)
 
     if (moving || zooming) {
       event.preventDefault();
@@ -38724,20 +38724,20 @@ function App() {
 
     if (moving) {
       var x = deltaX + startMoveX;
-      var y = deltaY + startMoveY;
+      var y = deltaY + startMoveY; // console.log('moving:', deltaX, deltaY)
+
       moveX = range(x, -maxMoveX.maxMoveX);
       moveY = range(y, -maxMoveY, maxMoveY);
-    }
+    } // console.log('moveX:', moveX, 'moveY:', moveY)
 
-    console.log(zooming && touches.length === 2, '-------------------->');
 
     if (zooming && touches.length === 2) {
-      console.log('setStyle------->');
+      // console.log('setStyle------->')
       var distance = getDistance(touches);
-      var temp = startScale * distance / startDistance;
-      console.log('temp-scale:------->:', temp);
-      scale = range(temp, 1, 3);
-      console.log('scale:------->:', scale, moveX, moveY);
+      var temp = startScale * distance / startDistance; // console.log('temp-scale:------->:', temp)
+
+      scale = range(temp, 1, 3); //console.log('scale:------->:', scale, moveX, moveY)
+
       setStyle({
         transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
       });
@@ -38801,4 +38801,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.96284c8.js.map
+//# sourceMappingURL=index.5a6a97d.js.map
