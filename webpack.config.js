@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const distDir = __dirname + "/dist";
 
 module.exports = {
-    entry: './src/main4.js',
+    entry: './src/main2.js',
     output: {
         path: distDir,
         filename: 'index.[hash:7].js'

@@ -5,166 +5,223 @@ import React, {
 } from 'react'
 import ReactDOM from 'react-dom'
 
-import {
-    Carousel, Modal
-} from 'zarm'
+const MIN_SCALE = 1;
+const MAX_SCALE = 4;
+const SETTLE_RANGE = 0.001;
+const ADDITIONAL_LIMIT = 0.2;
+const DOUBLE_TAP_THRESHOLD = 300;
+const ANIMATION_SPEED = 0.04;
+const RESET_ANIMATION_SPEED = 0.08;
+const INITIAL_X = 0;
+const INITIAL_Y = 0;
+const INITIAL_SCALE = 1;
 
-import 'zarm/dist/zarm.css';
-// import {
-//     Provider,
-//     Consumer,
-//     actions,
-//     connect
-// } from './stroe'
+const settle = (val, target, range) => {
+  const lowerRange = val > target - range && val < target;
+  const upperRange = val < target + range && val > target;
+  return lowerRange || upperRange ? target : val;
+};
 
-// const Context = createContext()
-// const ContextProvider = Context.Provider
-// const ContextConsumer = Context.Consumer
+const inverse = (x) => x * -1;
 
-// function Test() {
-//     return (
-//         <ContextProvider value={{name: 'yp'}}>
-//             <ContextConsumer>
-//                 {
-//                     (context) => (
-//                         <div>{context.name}</div>
-//                     )
-//                 }
-//             </ContextConsumer>
-//         </ContextProvider>
-//     )
-// }
+const getPointFromTouch = (touch, element) => {
+  const rect = element.getBoundingClientRect(); 
+  return {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top,
+  };
+};
 
+const getMidpoint = (pointA, pointB) => ({
+    x: (pointA.x + pointB.x) / 2,
+    y: (pointA.y + pointB.y) / 2,
+});
 
+const getDistanceBetweenPoints = (pointA, pointB) => (
+  Math.sqrt(Math.pow(pointA.y - pointB.y, 2) + Math.pow(pointA.x - pointB.x, 2))
+);
 
-// let User = ({ user }) => {
-//     console.log(user)
-//     return user && <img src={user.avatar} width={50} alt="avatar" />
-//   }
-  
-  
-// const mapStatToProps = ( {user}) => {
-//     return {
-//         user
-//     }
-// }
-// //User = connect( ({user }) => ({ user }))(User)
-// User = connect(mapStatToProps)(User)
-// class App extends Component {
-//     componentDidMount() {
-//         // actions.getUser()
-//        console.log(actions)
-//        actions['getUser']()
-//     }
-//     render() {
-//         return (<Provider><User /></Provider>)
-//     }
-// }
+const between = (min, max, value) => Math.min(max, Math.max(min, value));
 
-// ReactDOM.render(
-//     <App />,
-//     document.getElementById('root')
-// )
+class PinchZoomPan extends React.Component {
+  constructor() {
+    super(...arguments);
+    this.state = this.getInititalState();
 
+    this.handleTouchStart = this.handleTouchStart.bind(this);
+    this.handleTouchMove = this.handleTouchMove.bind(this);
+    this.handleTouchEnd = this.handleTouchEnd.bind(this);
+  }
 
-// function Example() {
-//     const [count, setCount] = useState(0)
-//     return (<div>
-//          <p> You clicked {count}times </p> 
-//          <button onClick = {
-//                 () => setCount(count + 1)
-//             } >
-//         Click me </button>
-//     </div>)
-// }
+  zoomTo(scale, midpoint) {
+    const frame = () => {
+      if (this.state.scale === scale) return null;
 
+      const distance = scale - this.state.scale;
+      const targetScale = this.state.scale + (ANIMATION_SPEED * distance);
 
-// const ThemeContext = React.createContext();
+      this.zoom(settle(targetScale, scale, SETTLE_RANGE), midpoint);
+      this.animation = requestAnimationFrame(frame);
+    };
 
-// function TestHookContext() {
-//     const context = useContext(ThemeContext);
+    this.animation = requestAnimationFrame(frame);
+  }
 
-//     return ( <div style = {context}> TestFuncContext </div>)
-// }
+  reset() {
+    const frame = () => {
+      if (this.state.scale === INITIAL_SCALE && this.state.x === INITIAL_X && this.state.y === INITIAL_Y) return null;
+      const distance = INITIAL_SCALE - this.state.scale;
+      const distanceX = INITIAL_X - this.state.x;
+      const distanceY = INITIAL_Y - this.state.y;
 
-// function TestNativeContext() {
-//     return ( <ThemeContext.Consumer>{
-//         value => (
-//             <div style={value}>TestNativeContext</div>
-//         )
-//     }</ThemeContext.Consumer>)
-// }
+      const targetScale = settle(this.state.scale + (RESET_ANIMATION_SPEED * distance), INITIAL_SCALE, SETTLE_RANGE);
+      const targetX = settle(this.state.x + (RESET_ANIMATION_SPEED * distanceX), INITIAL_X, SETTLE_RANGE);
+      const targetY = settle(this.state.y + (RESET_ANIMATION_SPEED * distanceY), INITIAL_Y, SETTLE_RANGE);
 
-// function useMemoHook() {
+      const nextWidth = this.props.width * targetScale;
+      const nextHeight = this.props.height * targetScale;
 
-// }
-// function App () {
-//     return (
-//         <div className = "App" >
-//             <h1 > Hello </h1> <h2 > Start editing to see some magic happen! </h2>
-//             <ThemeContext.Provider value={{color: 'red'}}>
-//                 <TestHookContext />
-//             </ThemeContext.Provider>
-//             <ThemeContext.Provider value={{color: 'green'}}>
-//                 <TestNativeContext/>
-//             </ThemeContext.Provider>
-//         </div>
-//     );
-// }
+      this.setState({
+        x: targetX,
+        y: targetY,
+        scale: targetScale,
+        width: nextWidth,
+        height: nextHeight,
+      }, () => {
+        this.animation = requestAnimationFrame(frame);
+      });
+    };
 
-const ITEMS = [
-    'https://static.zhongan.com/website/health/zarm/images/banners/1.png',
-    'https://static.zhongan.com/website/health/zarm/images/banners/2.png',
-    'https://static.zhongan.com/website/health/zarm/images/banners/3.png',
-];
-class App extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            visible: false,
-            items: [],
-            active: 2
-        }
+    this.animation = requestAnimationFrame(frame);
+  }
+
+  getInititalState() {
+    return {
+      x: INITIAL_X,
+      y: INITIAL_Y,
+      scale: INITIAL_SCALE,
+      width: this.props.width,
+      height: this.props.height,
+    };
+  }
+
+  handleTouchStart(event) {
+    this.animation && cancelAnimationFrame(this.animation);
+    if (event.touches.length == 2) this.handlePinchStart(event);
+    if (event.touches.length == 1) this.handleTapStart(event);
+  }
+
+  handleTouchMove(event) {
+    if (event.touches.length == 2) this.handlePinchMove(event);
+    if (event.touches.length == 1) this.handlePanMove(event);
+  }
+
+  handleTouchEnd(event) {
+    if (event.touches.length > 0) return null;
+    
+    if (this.state.scale > MAX_SCALE) return this.zoomTo(MAX_SCALE, this.lastMidpoint);
+    if (this.state.scale < MIN_SCALE) return this.zoomTo(MIN_SCALE, this.lastMidpoint);
+
+    if (this.lastTouchEnd && this.lastTouchEnd + DOUBLE_TAP_THRESHOLD > event.timeStamp) {
+      this.reset();
     }
 
-    open = () => {
-        this.setState({
-            visible: true,
-            items: ITEMS
-        })
-    }
-    contentRender = () => {
-        return this.state.items.map((item, i) => {
-            return (
-            <div className="carousel__item__pic" key={+i} >
-                <img src={item} alt="" draggable={false} />
-            </div>
-        );
-  });
-    }
-    render() {
-        return (
-            <div>
-                <button onClick={this.open}>open</button>
-                <Modal visible={this.state.visible}>
-                    <Carousel
-                        activeIndex = {
-                            this.state.active
-                        }
-                        onChange={(index) => {
-                        console.log(`onChange: ${index}`);
-                        }}
-                    >
-                        {this.contentRender()}
-                    </Carousel>
-                </Modal>
-            </div>
-            
-        )
-    }
+    this.lastTouchEnd = event.timeStamp;
+  }
+
+  handleTapStart(event) {
+    this.lastPanPoint = getPointFromTouch(event.touches[0], this.container);
+  }
+
+  handlePanMove(event) {
+    if (this.state.scale === 1) return null;
+
+    event.preventDefault();
+
+    const point = getPointFromTouch(event.touches[0], this.container);
+    const nextX = this.state.x + point.x - this.lastPanPoint.x;
+    const nextY = this.state.y + point.y - this.lastPanPoint.y;
+
+    this.setState({
+      x: between(this.props.width - this.state.width, 0, nextX),
+      y: between(this.props.height - this.state.height, 0, nextY),
+    });
+    
+    this.lastPanPoint = point;
+  }
+
+  handlePinchStart(event) {
+    const pointA = getPointFromTouch(event.touches[0], this.container);
+    const pointB = getPointFromTouch(event.touches[1], this.container);
+    this.lastDistance = getDistanceBetweenPoints(pointA, pointB);
+  }
+
+  handlePinchMove(event) {
+    event.preventDefault();
+    const pointA = getPointFromTouch(event.touches[0], this.container);
+    const pointB = getPointFromTouch(event.touches[1], this.container);
+    const distance = getDistanceBetweenPoints(pointA, pointB);
+    const midpoint = getMidpoint(pointA, pointB);
+    const scale = between(MIN_SCALE - ADDITIONAL_LIMIT, MAX_SCALE + ADDITIONAL_LIMIT, this.state.scale * (distance / this.lastDistance));
+
+    this.zoom(scale, midpoint);
+
+    this.lastMidpoint = midpoint;
+    this.lastDistance = distance;
+  }
+
+  zoom(scale, midpoint) {
+    const nextWidth = this.props.width * scale;
+    const nextHeight = this.props.height * scale;
+    const nextX = this.state.x + (inverse(midpoint.x * scale) * (nextWidth - this.state.width) / nextWidth);
+    const nextY = this.state.y + (inverse(midpoint.y * scale) * (nextHeight - this.state.height) / nextHeight);
+
+    this.setState({
+      width: nextWidth,
+      height: nextHeight,
+      x: nextX,
+      y: nextY,
+      scale,
+    });
+  }
+
+  render() {
+    return (
+      <div 
+        ref={(ref) => this.container = ref}
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        onTouchEnd={this.handleTouchEnd}
+        style={{
+          overflow: 'hidden',
+          width: this.props.width,
+          height: this.props.height,
+        }}
+      >
+        {this.props.children(this.state.x, this.state.y, this.state.scale)} 
+      </div>
+    );
+  }
 }
 
-ReactDOM.render(
-    <App/> ,
-    document.getElementById('root')
-)
+PinchZoomPan.propTypes = {
+  children: React.PropTypes.func.isRequired,
+};
+
+const Usage = ({width, height}) => (
+  <div>
+    <PinchZoomPan width={width} height={height}>
+    {(x, y, scale) => (
+        <img
+          src={`https://placekitten.com/100/200`}
+          style={{
+            pointerEvents: scale === 1 ? 'auto' : 'none',
+            transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+            transformOrigin: '0 0',
+          }} />
+    )}
+    </PinchZoomPan>
+  </div>
+);
+
+ReactDOM.render(<Usage width={375} height={667} />, document.getElementById('app'));
