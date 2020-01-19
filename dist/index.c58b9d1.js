@@ -38692,10 +38692,10 @@ function App() {
     startMoveX = moveX;
     startMoveY = moveY;
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
-    maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
-    console.log({
-      transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
-    });
+    maxMoveY = Math.max(0, (rect.height - winHeight) / 2); // console.log({
+    //   transform: `scale3d(${scale}, ${scale}, 1) translate(${
+    //       moveX / scale}px, ${moveY / scale}px)`
+    // })
   }
 
   function onImageTouchStart(event) {
@@ -38708,7 +38708,8 @@ function App() {
       startMove(event);
     } else if (touches.length === 2) {
       startZoom(event);
-    }
+    } // startMove(event)
+
   }
 
   function onImageTouchMove(event) {
@@ -38724,20 +38725,24 @@ function App() {
 
     if (moving) {
       var x = deltaX + startMoveX;
-      var y = deltaY + startMoveY; // console.log('moving:', deltaX, deltaY)
-
-      moveX = range(x, -maxMoveX.maxMoveX);
+      var y = deltaY + startMoveY;
+      moveX = range(x, -maxMoveX, maxMoveX);
       moveY = range(y, -maxMoveY, maxMoveY);
-    } // console.log('moveX:', moveX, 'moveY:', moveY)
+    }
 
+    console.log('moving2:', moveX, moveY); // console.log('moveX:', moveX, 'moveY:', moveY)
 
     if (zooming && touches.length === 2) {
       // console.log('setStyle------->')
       var distance = getDistance(touches);
       var temp = startScale * distance / startDistance; // console.log('temp-scale:------->:', temp)
 
-      scale = range(temp, 1, 3); //console.log('scale:------->:', scale, moveX, moveY)
+      scale = range(temp, 1, 3);
+      console.log(moveY, moveX); //console.log('scale:------->:', scale, moveX, moveY)
 
+      console.log({
+        transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
+      });
       setStyle({
         transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
       });
@@ -38751,7 +38756,7 @@ function App() {
       var stopPropagation = true;
 
       if (moving && startMoveY === moveX && startMoveY === moveY) {
-        stopPropagation = flase;
+        stopPropagation = false;
       }
 
       if (event.touches.length) {
@@ -38801,4 +38806,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.5a6a97d.js.map
+//# sourceMappingURL=index.c58b9d1.js.map
