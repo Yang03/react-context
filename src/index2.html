@@ -6,37 +6,15 @@
     <title>App</title>
     <meta name="viewport" content="width=device-width">
     <base href="/" />  
+    <script src="./src/pinch-zoom.js"></script>
 </head>
 
 <body>
     <div id="app">
-        <button id="b">B</button>
-        <div id="a"></div>
+        <pinch-zoom>
+          <img src="https://cdn.glitch.com/d824d0c2-e771-4c9f-9fe2-a66b3ac139c5%2Fcats.jpg?1541801135989" />
+        </pinch-zoom>
     </div>
     
 </body>
-<script>
-    window.onload = function() {
-       //var query = new URLSearchParams(window.location.search)
-       document.getElementById('b').addEventListener('click', function(){
-         history.pushState({ a: 1 }, 'b', '/react-context/src/index2.html?pageId=B')
-         setTimeout(function() {
-             history.replaceState({ a: 2 }, 'c', '/react-context/src/index2.html?pageId=C')
-         }, 3000)
-       })
-
-       window.onpopstate = function (event) {
-
-            document.getElementById('a').innerHTML = window.location.href;
-
-            //console.log('state: ' + JSON.stringify(event.state));
-
-        };
-
-        window.addEventListener('history', function(){
-             document.getElementById('a').innerHTML = window.location.href;
-        })
-       
-    }
-</script>
 </html>

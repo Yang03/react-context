@@ -16,7 +16,7 @@ import {
 } from 'zarm/lib'
 import Popup from './popup'
 import 'zarm/dist/zarm.min.css'
- import './main3.css'
+import './main3.css'
 
 
  const CASCADE_DATA = [{
