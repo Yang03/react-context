@@ -64,6 +64,10 @@ function App() {
     startMoveY = moveY
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
+    setStyle({
+      transform: `scale3d(${scale}, ${scale}, 1) translate(${
+          moveX / scale}px, ${moveY / scale}px)`
+    })
   }
 
   function onImageTouchStart(event) {
@@ -95,7 +99,7 @@ function App() {
       moveY = range(y, -maxMoveY, maxMoveY)
     }
     console.log(zooming && touches.length === 1)
-    if (zooming && touches.length === 1) {
+    if (zooming && touches.length === 2) {
       console.log('setStyle')
       const distance = getDistance(touches)
       const temp = startScale * distance / startDistance

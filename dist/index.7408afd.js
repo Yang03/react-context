@@ -38692,6 +38692,9 @@ function App() {
     startMoveY = moveY;
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
+    setStyle({
+      transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
+    });
   }
 
   function onImageTouchStart(event) {
@@ -38727,7 +38730,7 @@ function App() {
 
     console.log(zooming && touches.length === 1);
 
-    if (zooming && touches.length === 1) {
+    if (zooming && touches.length === 2) {
       console.log('setStyle');
       var distance = getDistance(touches);
       var temp = startScale * distance / startDistance;
@@ -38795,4 +38798,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.14d3ec2.js.map
+//# sourceMappingURL=index.7408afd.js.map
