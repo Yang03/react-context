@@ -11030,9 +11030,9 @@ var Usage = function Usage(_ref2) {
 react_dom__WEBPACK_IMPORTED_MODULE_7___default.a.render(react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(Usage, {
   width: 375,
   height: 667
-}), document.getElementById('app'));
+}), document.getElementById('root'));
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.77b2d4c.js.map
+//# sourceMappingURL=index.efe7482.js.map

@@ -125,7 +125,6 @@ class PinchZoomPan extends React.Component {
     if (this.lastTouchEnd && this.lastTouchEnd + DOUBLE_TAP_THRESHOLD > event.timeStamp) {
       this.reset();
     }
-
     this.lastTouchEnd = event.timeStamp;
   }
 
@@ -220,4 +219,4 @@ const Usage = ({width, height}) => (
   </div>
 );
 
-ReactDOM.render(<Usage width={375} height={667} />, document.getElementById('app'));
+ReactDOM.render(<Usage width={375} height={667} />, document.getElementById('root'));
