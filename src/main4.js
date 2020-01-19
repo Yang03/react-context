@@ -131,7 +131,7 @@ function App() {
       <div className="carousel__item__pic" key={+i}>
         <img src={item} 
             alt=""
-            style={activeIndex === 0 ? style : {}}
+            style={parseInt(activeIndex, 10) === i ? style : {}}
             draggable={false} 
             onTouchStart={onImageTouchStart}
             onTouchMove={onImageTouchMove}
