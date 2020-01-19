@@ -38638,7 +38638,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ITEMS = ['https://static.zhongan.com/website/health/zarm/images/banners/1.png', 'https://static.zhongan.com/website/health/zarm/images/banners/2.png', 'https://static.zhongan.com/website/health/zarm/images/banners/3.png'];
 
-function getDistance(event) {
+function getDistance(touches) {
   return Math.sqrt(Math.pow(touches[0].clientX - touches[1].clientX, 2) + Math.pow(touches[0].clientY - touches[1].clientY, 2));
 }
 
@@ -38793,4 +38793,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.6deb79b.js.map
+//# sourceMappingURL=index.e24eaa4.js.map
