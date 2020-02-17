@@ -38692,10 +38692,10 @@ function App() {
     startMoveX = moveX;
     startMoveY = moveY;
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
-    maxMoveY = Math.max(0, (rect.height - winHeight) / 2); // console.log({
-    //   transform: `scale3d(${scale}, ${scale}, 1) translate(${
-    //       moveX / scale}px, ${moveY / scale}px)`
-    // })
+    maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
+    console.error({
+      transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
+    }, '_____________>');
   }
 
   function onImageTouchStart(event) {
@@ -38806,4 +38806,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.39e0444.js.map
+//# sourceMappingURL=index.98e2713.js.map

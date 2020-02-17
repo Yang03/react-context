@@ -65,10 +65,10 @@ function App() {
     startMoveY = moveY
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
-    // console.log({
-    //   transform: `scale3d(${scale}, ${scale}, 1) translate(${
-    //       moveX / scale}px, ${moveY / scale}px)`
-    // })
+    console.error({
+      transform: `scale3d(${scale}, ${scale}, 1) translate(${
+          moveX / scale}px, ${moveY / scale}px)`
+    }, '_____________>')
   }
 
   function onImageTouchStart(event) {
