@@ -38643,6 +38643,7 @@ function getDistance(touches) {
 }
 
 function range(num, min, max) {
+  console.log('____________range', num, min, max);
   return Math.min(Math.max(num, min), max);
 }
 
@@ -38693,9 +38694,7 @@ function App() {
     startMoveY = moveY;
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
-    console.error({
-      transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
-    }, '_____________>');
+    console.log(maxMoveY, '<____________________________');
   }
 
   function onImageTouchStart(event) {
@@ -38726,8 +38725,12 @@ function App() {
     if (moving) {
       var x = deltaX + startMoveX;
       var y = deltaY + startMoveY;
+      console.error('moving:', y);
       moveX = range(x, -maxMoveX, maxMoveX);
       moveY = range(y, -maxMoveY, maxMoveY);
+      setStyle({
+        transform: "scale3d(".concat(scale, ", ").concat(scale, ", 1) translate(").concat(moveX / scale, "px, ").concat(moveY / scale, "px)")
+      });
     }
 
     console.log('moving2:', moveX, moveY); // console.log('moveX:', moveX, 'moveY:', moveY)
@@ -38792,7 +38795,9 @@ function App() {
 
 
   console.log(style);
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("img", {
+  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    className: "box"
+  }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("img", {
     src: "https://static.zhongan.com/website/health/zarm/images/banners/1.png",
     style: style,
     onTouchEnd: onImageTouchEnd,
@@ -38806,4 +38811,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.98e2713.js.map
+//# sourceMappingURL=index.932f72d.js.map

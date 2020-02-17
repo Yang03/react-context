@@ -22,6 +22,7 @@ function getDistance(touches) {
 }
 
 function range(num, min, max)  {
+  console.log('____________range', num, min, max)
   return Math.min(Math.max(num, min), max)
 }
 
@@ -65,10 +66,7 @@ function App() {
     startMoveY = moveY
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
-    console.error({
-      transform: `scale3d(${scale}, ${scale}, 1) translate(${
-          moveX / scale}px, ${moveY / scale}px)`
-    }, '_____________>')
+    console.log(maxMoveY, '<____________________________')
   }
 
   function onImageTouchStart(event) {
@@ -98,8 +96,14 @@ function App() {
     if (moving) {
       const x = deltaX + startMoveX
       const y = deltaY + startMoveY
+      console.error('moving:',y)
       moveX = range(x, -maxMoveX, maxMoveX)
       moveY = range(y, -maxMoveY, maxMoveY)
+
+      setStyle({
+        transform: `scale3d(${scale}, ${scale}, 1) translate(${
+          moveX / scale}px, ${moveY / scale}px)`
+      })
     }
 
      console.log('moving2:', moveX, moveY)
@@ -168,7 +172,7 @@ function App() {
 //   });
 // }
   console.log(style)
-  return (<div>
+  return (<div className="box">
      {/* <Popup
           visible={true}
           direction="center"
