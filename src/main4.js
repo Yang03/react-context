@@ -41,6 +41,7 @@ let deltaY = 0
 let startX = 0
 let startY = 0
 let startScale = scale
+let maxScale = 5
 
 function App() {
   const [style, setStyle] = useState({})
@@ -114,7 +115,7 @@ function App() {
      const distance = getDistance(touches)
      const temp = startScale * distance / startDistance
      // console.log('temp-scale:------->:', temp)
-      scale = range(temp, 1, 3)
+      scale = range(temp, 1, maxScale)
 
       console.log(moveY, moveX)
       //console.log('scale:------->:', scale, moveX, moveY)

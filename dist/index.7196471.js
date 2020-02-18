@@ -38662,6 +38662,7 @@ var deltaY = 0;
 var startX = 0;
 var startY = 0;
 var startScale = scale;
+var maxScale = 5;
 
 function App() {
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])({}),
@@ -38740,7 +38741,7 @@ function App() {
       var distance = getDistance(touches);
       var temp = startScale * distance / startDistance; // console.log('temp-scale:------->:', temp)
 
-      scale = range(temp, 1, 3);
+      scale = range(temp, 1, maxScale);
       console.log(moveY, moveX); //console.log('scale:------->:', scale, moveX, moveY)
 
       console.log({
@@ -38811,4 +38812,4 @@ react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.932f72d.js.map
+//# sourceMappingURL=index.7196471.js.map
