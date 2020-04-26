@@ -447,6 +447,7 @@ var PinchZoom = (function () {
       if (this.children.length === 0)
         return;
       this._positioningEl = this.children[0];
+      console.log(this._positioningEl)
       if (this.children.length > 1) {
         console.warn('<pinch-zoom> must not have more than one child.');
       }
@@ -457,7 +458,7 @@ var PinchZoom = (function () {
     }
     _onWheel(event) {
       console.log('onWheel')
-      console.log(this._positioningEl)
+      console.log('------>', this._positioningEl)
       if (!this._positioningEl)
         return;
       event.preventDefault();
@@ -525,8 +526,8 @@ var PinchZoom = (function () {
         // Apply current scale.
         .scale(this.scale);
       // Convert the transform into basic translate & scale.
-
-      console.log(matrix)
+      // console.log()
+      // console.log(matrix)
       this.setTransform({
         allowChangeEvent,
         scale: matrix.a,

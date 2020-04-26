@@ -29,7 +29,7 @@ function range(num, min, max)  {
 let startDistance = 0
 let moving = false
 let zooming = false
-let scale = 1
+let scale = 3
 let startMoveX = 0
 let startMoveY = 0
 let moveX = 0
@@ -67,11 +67,11 @@ function App() {
     startMoveY = moveY
     maxMoveX = Math.max(0, (rect.width - winWidth) / 2);
     maxMoveY = Math.max(0, (rect.height - winHeight) / 2);
-    console.log(maxMoveY, '<____________________________')
+    // console.log(maxMoveY, maxMoveX, '<____________________________')
   }
 
   function onImageTouchStart(event) {
-    console.log('onImageTouchStart')
+    // console.log('onImageTouchStart')
     const { touches } = event
     startX = event.touches[0].clientX;
     startY = event.touches[0].clientY;
@@ -84,7 +84,7 @@ function App() {
   }
 
   function onImageTouchMove(event) {
-    console.log('onImageTouchMove')
+    // console.log('onImageTouchMove')
      const { touches } = event
      deltaX = touches[0].clientX - startX
      deltaY = touches[0].clientY - startY
@@ -94,10 +94,10 @@ function App() {
       event.stopPropagation()
     }
 
-    if (moving) {
+    if (true) {
       const x = deltaX + startMoveX
       const y = deltaY + startMoveY
-      console.error('moving:',y)
+      // console.error('moving:',y)
       moveX = range(x, -maxMoveX, maxMoveX)
       moveY = range(y, -maxMoveY, maxMoveY)
 
@@ -107,7 +107,7 @@ function App() {
       })
     }
 
-     console.log('moving2:', moveX, moveY)
+    // console.log('moving2:', moveX, moveY)
 
     // console.log('moveX:', moveX, 'moveY:', moveY)
     if (zooming && touches.length === 2) {
@@ -117,13 +117,13 @@ function App() {
      // console.log('temp-scale:------->:', temp)
       scale = range(temp, 1, maxScale)
 
-      console.log(moveY, moveX)
-      //console.log('scale:------->:', scale, moveX, moveY)
+      // console.log(moveY, moveX)
+      // //console.log('scale:------->:', scale, moveX, moveY)
 
-      console.log({
-        transform: `scale3d(${scale}, ${scale}, 1) translate(${
-          moveX / scale}px, ${moveY / scale}px)`
-      })
+      // console.log({
+      //   transform: `scale3d(${scale}, ${scale}, 1) translate(${
+      //     moveX / scale}px, ${moveY / scale}px)`
+      // })
       setStyle({
         transform: `scale3d(${scale}, ${scale}, 1) translate(${
           moveX / scale}px, ${moveY / scale}px)`
@@ -132,7 +132,7 @@ function App() {
   }
 
   function onImageTouchEnd(event) {
-    console.log('onImageTouchEnd')
+    // console.log('onImageTouchEnd')
     if (moving || zooming) {
       let stopPropagation = true
 
