@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const distDir = __dirname + "/dist";
 
 module.exports = {
-    entry: './src/Modal.js',
+    entry: './src/render/index.js',
     output: {
         path: distDir,
         filename: 'index.[hash:7].js'
@@ -36,6 +36,16 @@ module.exports = {
                                         flexbox: 'no-2009',
                                     },
                                     stage: 3,
+                                    importFrom: [
+                                      () => {
+                                        const customMedia = { '--small-viewport': '(max-width: 30em)' };
+      const customProperties = { '--color': 'red' };
+      const customSelectors = { ':--heading': 'h1, h2, h3' };
+      const environmentVariables = { '--branding-padding': '20px' };
+
+      return { customMedia, customProperties, customSelectors, environmentVariables };
+                                      }
+                                    ]
                                 }),
                             ],
                         },
