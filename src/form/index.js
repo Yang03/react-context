@@ -1,9 +1,9 @@
 import * as React from "react";
 import ReactDOM from 'react-dom'
 
-import Demo from './demo';
+import Demo from './hookForm';
 
-import 'zarm/dist/zarm.min.css';
+// import 'zarm/dist/zarm.min.css';
 
 export default function App() {
 

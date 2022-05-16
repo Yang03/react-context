@@ -1,18 +1,25 @@
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path')
 
 //const srcDir = __dirname + "../src";
 const distDir = __dirname + "/dist";
 
 module.exports = {
-    entry: './src/render/index.js',
+    entry: './src/demo/index.js',
     output: {
         path: distDir,
         filename: 'index.[hash:7].js'
     },
     devtool: 'source-map',
     mode: process.env.NODE_ENV || 'development',
+    resolve: {
+
+        // alias: {
+        //     react: path.resolve('./node_modules/react')
+        // },
+    },    
     module: {
         rules: [
             {
@@ -70,5 +77,13 @@ module.exports = {
         new ExtractTextPlugin({
             filename: "style.scss"
         })
-    ]    
+    ]    ,
+    devServer: {
+        proxy: {
+            '/users': {
+                target: 'https://api.github.com',
+                secure: false
+            }
+        }
+    }
 }

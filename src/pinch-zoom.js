@@ -247,6 +247,13 @@ var PinchZoom = (function () {
     return cachedSvg || (cachedSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'));
   }
 
+  // class Matrix {
+  //   constructor() {
+  //     this.a = 
+  //   }
+  // }
+
+
   function createMatrix() {
     return getSVG().createSVGMatrix();
   }
@@ -260,6 +267,7 @@ var PinchZoom = (function () {
       super();
       // Current transform.
       this._transform = createMatrix();
+      console.log(this._transform)
       // Watch for children changes.
       // Note this won't fire for initial contents,
       // so _stageElChange is also called in connectedCallback.
@@ -296,6 +304,7 @@ var PinchZoom = (function () {
     }
     get minScale() {
       const attrValue = this.getAttribute(minScaleAttr);
+      console.error(attrValue)
       if (!attrValue)
         return MIN_SCALE;
       const value = parseFloat(attrValue);
@@ -383,6 +392,7 @@ var PinchZoom = (function () {
       }
       // Create points for _positioningEl.
       let topLeft = createPoint();
+      console.log(topLeft)
       topLeft.x = positioningElBounds.left - thisBounds.left;
       topLeft.y = positioningElBounds.top - thisBounds.top;
       let bottomRight = createPoint();
@@ -394,7 +404,11 @@ var PinchZoom = (function () {
         .scale(scale)
         // Undo current transform
         .multiply(this._transform.inverse());
+
+        console.log(this._transform.inverse())
       topLeft = topLeft.matrixTransform(matrix);
+      console.log(topLeft)
+    
       bottomRight = bottomRight.matrixTransform(matrix);
       // Ensure _positioningEl can't move beyond out-of-bounds.
       // Correct for x
@@ -514,6 +528,7 @@ var PinchZoom = (function () {
         panX = 0, panY = 0, originX = 0, originY = 0, scaleDiff = 1, allowChangeEvent = false,
       } = opts;
       
+      console.log(panX, panY, originX, originY)
       const matrix = createMatrix()
         // Translate according to panning.
         .translate(panX, panY)
